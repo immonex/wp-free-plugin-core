@@ -103,7 +103,7 @@ Multiple immonex plugins that possibly require **different versions** of the cor
 ## Development
 
 - [npm (Node.js)](https://nodejs.org/) is required to run included build/utility scripts.
-- Source code style is loosely based on the [WordPress PHP Coding Standars](https://make.wordpress.org/core/handbook/best-practices/coding-standards/php/), but might be "tightened" in the future to simplify the usage of [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer).
+- Source code style is loosely based on the [WordPress PHP Coding Standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/php/), but might be "tightened" in the future to simplify the usage of [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer).
 
 ### API Documentation
 
@@ -131,7 +131,7 @@ $ npm run test
 
 ### Translations
 
-The core classes included in this library only include a few strings. Translations (PO/MO files) can be provided in the `languages` folder (or via another WordPress conform way). This folder also contains a current POT file as base for own translations that can be updated with the following command.
+The core classes of this library do **and should** only include a few strings that have to be translated. Translations (PO/MO files) can be provided in the `languages` folder (or via another WordPress conform way). This folder also contains a current POT file as base for own translations that can be updated with the following command.
 
 ```bash
 $ npm run pot
