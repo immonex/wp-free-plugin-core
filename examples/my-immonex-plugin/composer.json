@@ -1,0 +1,10 @@
+{
+    "name": "myimmonex/myplugin",
+    "version": "1.0.0",
+    "require": {
+        "immonex/wp-free-plugin-core": "^0.9.0"
+    },
+    "autoload": {
+        "psr-4": { "myimmonex\\MyPlugin\\": ["includes"] }
+    }
+}

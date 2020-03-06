@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>immonex WP Free Plugin Core</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src').replace( /\\/g, '/');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">immonex WP Free Plugin Core</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/immonex.html">\immonex</a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">2</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1283541139"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-1283541139" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-995989800"></a>
+                                <a href="../namespaces/immonex.html" style="margin-left: 30px; padding-left: 0">immonex</a>
+            </div>
+            <div id="namespace-995989800" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-909129326"></a>
+                                <a href="../namespaces/immonex.WordPressFreePluginCore.html" style="margin-left: 30px; padding-left: 0">WordPressFreePluginCore</a>
+            </div>
+            <div id="namespace-909129326" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1870060223"></a>
+                                <a href="../namespaces/immonex.WordPressFreePluginCore.V0_9.html" style="margin-left: 30px; padding-left: 0">V0_9</a>
+            </div>
+            <div id="namespace-1870060223" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9.Base.html">Base</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9.Color_Utils.html">Color_Utils</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9.General_Utils.html">General_Utils</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9.Geo_Utils.html">Geo_Utils</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9.Settings_Helper.html">Settings_Helper</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9.String_Utils.html">String_Utils</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9.Template_Utils.html">Template_Utils</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-165047887"></a>
+                                <a href="../namespaces/immonex.WordPressFreePluginCore.V0_9_0.html" style="margin-left: 30px; padding-left: 0">V0_9_0</a>
+            </div>
+            <div id="namespace-165047887" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Base.html">Base</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Color_Utils.html">Color_Utils</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.General_Utils.html">General_Utils</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Geo_Utils.html">Geo_Utils</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Settings_Helper.html">Settings_Helper</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.String_Utils.html">String_Utils</a></li>
+                                                    <li class="class"><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html">Template_Utils</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/immonex.WordPressFreePluginCore.V0_9_0.html">\immonex\WordPressFreePluginCore\V0_9_0</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\immonex\WordPressFreePluginCore\V0_9_0</small>Template_Utils</h1>
+                    <p><em>Utility methods for a very simple kind of templating.</em></p>
+                    
+                    
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_render_php_template" class="">render_php_template()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_parse_template" class="">parse_template()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_fetch_template" class="">fetch_template()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_locate_template_file" class="">locate_template_file()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_get_default_template_folders" class="">get_default_template_folders()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_get_template_file_url" class="">get_template_file_url()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_format_key_value_if_set" class="">format_key_value_if_set()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_get_attr_from_template_var" class="">get_attr_from_template_var()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_get_template_var" class="">get_template_var()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_get_frontend_skins" class="">get_frontend_skins()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_set_skin" class="">set_skin()</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#method_get_page_list" class="">get_page_list()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No public properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#constant_INVALID_SKIN_FOLDER_NAMES" class="">INVALID_SKIN_FOLDER_NAMES</a><br />
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#property_plugin" class="">$plugin</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#property_skin" class="">$skin</a><br />
+                                                                    <a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html#property_frontend_skins" class="">$frontend_skins</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/V0_9_0.Template_Utils.html"><div class="path-wrapper">V0_9_0/Template_Utils.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">immonex-wp-free-plugin-core</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                    <div class="namespace-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div>
+                            </dd>
+
+                        
+                        
+                        
+                                                
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr><td colspan="2"><em>None found</em></td></tr>
+                                        </table>
+                </aside>
+            </div>
+
+                                    <a id="constants" name="constants"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Constants</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_INVALID_SKIN_FOLDER_NAMES" name="constant_INVALID_SKIN_FOLDER_NAMES" class="anchor"></a>
+            <article id="constant_INVALID_SKIN_FOLDER_NAMES" class="constant">
+                <h3 class="">INVALID_SKIN_FOLDER_NAMES</h3>
+                <pre class="signature">INVALID_SKIN_FOLDER_NAMES = array(&#039;core&#039;)</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_plugin" name="property_plugin" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$plugin</h3>
+                <pre class="signature">$plugin : \immonex\WordPressFreePluginCore\V0_9\Base</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../classes/immonex.WordPressFreePluginCore.V0_9.Base.html">\immonex\WordPressFreePluginCore\V0_9\Base</a>
+                &mdash; Main plugin instance                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_skin" name="property_skin" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$skin</h3>
+                <pre class="signature">$skin : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; Folder name of current skin                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_frontend_skins" name="property_frontend_skins" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$frontend_skins</h3>
+                <pre class="signature">$frontend_skins : array&lt;mixed,string&gt;</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                array&lt;mixed,string&gt;
+                &mdash; Folders and display names of available skins                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct(\immonex\WordPressFreePluginCore\V0_9\Base  <span class="argument">$plugin</span>, string  <span class="argument">$skin = &#039;&#039;</span>) : \immonex\WordPressFreePluginCore\V0_9_0\string/bool</pre>
+                <p><em>Constructor: Import some required objects/values.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td><a href="../classes/immonex.WordPressFreePluginCore.V0_9.Base.html">\immonex\WordPressFreePluginCore\V0_9\Base</a></td>
+                                <td>$plugin </td>
+                                <td><p>Main plugin object.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$skin </td>
+                                <td><p>Skin subfolder name.</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \immonex\WordPressFreePluginCore\V0_9_0\string/bool
+                                            &mdash; <p>Full template file path or false if not found.</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.8.3                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_render_php_template" name="method_render_php_template" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">render_php_template()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">render_php_template(string  <span class="argument">$filename</span>, array  <span class="argument">$template_data</span>, array  <span class="argument">$utils = array()</span>) : \immonex\WordPressFreePluginCore\V0_9_0\string/bool</pre>
+                <p><em>Fetch a PHP template file and return it&#039;s rendered content via output buffering.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$filename </td>
+                                <td><p>Template filename (without path).</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$template_data </td>
+                                <td><p>Array with any output related contents.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$utils </td>
+                                <td><p>Array of helper objects for output/formatting.</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \immonex\WordPressFreePluginCore\V0_9_0\string/bool
+                                            &mdash; <p>Parsed template content or false if not found.</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.8.3                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_parse_template" name="method_parse_template" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">parse_template()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">parse_template(string  <span class="argument">$filename</span>, array&lt;mixed,string&gt;  <span class="argument">$template_data = array()</span>) : \immonex\WordPressFreePluginCore\V0_9_0\string/bool</pre>
+                <p><em>Fetch a (simple) template file and replace template variables by given values.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$filename </td>
+                                <td><p>Template filename (without path).</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array&lt;mixed,string&gt;</td>
+                                <td>$template_data </td>
+                                <td><p>Associative array with variable names/contents.</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \immonex\WordPressFreePluginCore\V0_9_0\string/bool
+                                            &mdash; <p>Parsed template content or false if not found.</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.8.3                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_fetch_template" name="method_fetch_template" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">fetch_template()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">fetch_template(string  <span class="argument">$filename</span>) : \immonex\WordPressFreePluginCore\V0_9_0\string/bool</pre>
+                <p><em>Load a given template.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$filename </td>
+                                <td><p>Template filename (without path).</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \immonex\WordPressFreePluginCore\V0_9_0\string/bool
+                                            &mdash; <p>Template content or false if not found.</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.8.3                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_locate_template_file" name="method_locate_template_file" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">locate_template_file()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">locate_template_file(string  <span class="argument">$filename</span>, array&lt;mixed,string&gt;  <span class="argument">$add_folders = array()</span>, string  <span class="argument">$add_folder_mode = &#039;before&#039;</span>, string|boolean  <span class="argument">$force_skin = false</span>) : \immonex\WordPressFreePluginCore\V0_9_0\string/bool</pre>
+                <p><em>Locate a plugin template file (default: child theme dir &gt; theme dir &gt; plugin dir).</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$filename </td>
+                                <td><p>Template filename.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array&lt;mixed,string&gt;</td>
+                                <td>$add_folders </td>
+                                <td><p>Additional search folders (absolute paths).</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$add_folder_mode </td>
+                                <td><p>Where to insert the additional folders (before, after or override).</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string|boolean</td>
+                                <td>$force_skin </td>
+                                <td><p>Temporary use the given skin instead of the main one.</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \immonex\WordPressFreePluginCore\V0_9_0\string/bool
+                                            &mdash; <p>Full template file path or false if not found.</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.8.3                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_default_template_folders" name="method_get_default_template_folders" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_default_template_folders()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_default_template_folders(boolean  <span class="argument">$reverse_order = false</span>, boolean  <span class="argument">$include_skin_folders = true</span>) : array&lt;mixed,string&gt;</pre>
+                <p><em>Return the default folders where plugin template files should reside.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$reverse_order </td>
+                                <td><p>Reverse folder order if required.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$include_skin_folders </td>
+                                <td><p>Include &quot;skin&quot; subfolders, if a skin name is given.</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array&lt;mixed,string&gt;
+                                            &mdash; <p>Array of default template folders.</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.8.3                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_template_file_url" name="method_get_template_file_url" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_template_file_url()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_template_file_url(string  <span class="argument">$file</span>) : string</pre>
+                <p><em>Return the URL of a template file.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$file </td>
+                                <td><p>Full file path.</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>File URL.</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.8.3                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_format_key_value_if_set" name="method_format_key_value_if_set" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">format_key_value_if_set()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">format_key_value_if_set(string  <span class="argument">$label</span>, mixed  <span class="argument">$value</span>, string  <span class="argument">$wrap = &quot;[label]: [value]\n&quot;</span>) : string|boolean</pre>
+                <p><em>Return a key/value pair string, if value is set.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$label </td>
+                                <td><p>Label (key).</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>mixed</td>
+                                <td>$value </td>
+                                <td><p>Value.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$wrap </td>
+                                <td><p>Format string with placeholders (optional).</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string|boolean
+                                            &mdash; <p>Formatted key/value string or false if no value is given.</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.8.3                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_attr_from_template_var" name="method_get_attr_from_template_var" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_attr_from_template_var()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_attr_from_template_var(array&lt;mixed,mixed&gt;  <span class="argument">$template_data</span>, string|array&lt;mixed,string&gt;  <span class="argument">$var</span>, string  <span class="argument">$attr_name</span>) : string</pre>
+                <p><em>Convert template variables to strings usable in HTML tags.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array&lt;mixed,mixed&gt;</td>
+                                <td>$template_data </td>
+                                <td><p>Array of template variables.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string|array&lt;mixed,string&gt;</td>
+                                <td>$var </td>
+                                <td><p>String (variable name) or array with variable levels
+and variable name as last value inside.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$attr_name </td>
+                                <td><p>Attribute name for output.</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>Insertable attribute string.</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.8.3                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_template_var" name="method_get_template_var" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_template_var()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_template_var(array&lt;mixed,mixed&gt;  <span class="argument">$template_data</span>, string|array&lt;mixed,string&gt;  <span class="argument">$var</span>) : string|boolean</pre>
+                <p><em>Return the value a specific template variable.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array&lt;mixed,mixed&gt;</td>
+                                <td>$template_data </td>
+                                <td><p>Array of template variables.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string|array&lt;mixed,string&gt;</td>
+                                <td>$var </td>
+                                <td><p>String (variable name) or array with variable levels
+and variable name as last value inside.</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string|boolean
+                                            &mdash; <p>Variable value or false if nonexistent.</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.8.3                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_frontend_skins" name="method_get_frontend_skins" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_frontend_skins()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_frontend_skins() : array&lt;mixed,string&gt;</pre>
+                <p><em>Generate a list of available frontend &quot;skins&quot;.</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    array&lt;mixed,string&gt;
+                                            &mdash; <p>Array of skins (folder basename =&gt; display name).</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.9                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_set_skin" name="method_set_skin" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">set_skin()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">set_skin(string  <span class="argument">$skin</span>) : string|boolean</pre>
+                <p><em>Generate a list of available frontend &quot;skin&quot; folders.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$skin </td>
+                                <td><p>New skin key (equals folder name).</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string|boolean
+                                            &mdash; <p>Previous skin key or false if not set or changed.</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.9                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_page_list" name="method_get_page_list" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_page_list()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_page_list(array&lt;mixed,mixed&gt;  <span class="argument">$args = array()</span>) : array&lt;mixed,string&gt;</pre>
+                <p><em>Generate a list of pages based on the given arguments.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array&lt;mixed,mixed&gt;</td>
+                                <td>$args </td>
+                                <td><p>Page query constraints
+(see <a href="https://codex.wordpress.org/Function_Reference/get_pages">https://codex.wordpress.org/Function_Reference/get_pages</a>).</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array&lt;mixed,string&gt;
+                                            &mdash; <p>Array of pages (ID =&gt; Title).</p>
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/immonex.WordPressFreePluginCore.V0_9_0.Template_Utils.html"><div class="path-wrapper">\immonex\WordPressFreePluginCore\V0_9_0\Template_Utils</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            since
+                        </th>
+                        <td>
+                                                            0.9                                
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">Template_Utils.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/V0_9_0/Template_Utils.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/immonex.html">\immonex</a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on March 6th, 2020 at 12:10.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

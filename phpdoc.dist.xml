@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+  <title>immonex WP Free Plugin Core</title>
+  <parser>
+    <target>.tmp/api-doc</target>
+  </parser>
+  <transformer>
+    <target>api-doc</target>
+  </transformer>
+  <files>
+    <directory>src</directory>
+  </files>
+  <transformations>
+    <template name="clean" />
+  </transformations>
+</phpdoc>
