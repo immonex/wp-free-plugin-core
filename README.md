@@ -48,7 +48,7 @@ With the [Composer-based installation](#via-composer), the plugin core library g
 `my-immonex-plugin.php` is the **main plugin file** in which the Composer autoloader is being initialized and the main plugin object gets instantiated:
 
 ```php
-require( __DIR__ . '/vendor/autoload.php' );
+require __DIR__ . '/vendor/autoload.php';
 
 $my_immonex_plugin = new My_Plugin( basename( __FILE__, '.php' ) );
 $my_immonex_plugin->init();

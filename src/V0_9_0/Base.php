@@ -32,7 +32,7 @@ namespace immonex\WordPressFreePluginCore\V0_9_0;
  */
 abstract class Base {
 
-	const BASE_VERSION = '0.9.0';
+	const BASE_VERSION = '0_9_0';
 
 	/** @var string Name of the custom field for storing plugin options */
 	protected $plugin_options_name;

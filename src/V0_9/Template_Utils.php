@@ -126,10 +126,7 @@ class Template_Utils {
 		if ( empty( $add_folders ) ) $add_folders = array();
 		if ( empty( $add_folder_mode ) ) $add_folder_mode = 'before';
 
-		if (
-			$force_skin &&
-			in_array( $force_skin, array_keys( $this->get_frontend_skins() ) )
-		) {
+		if ( $force_skin ) {
 			$skin_restore = $this->skin;
 			$this->skin = $force_skin;
 		}
@@ -341,7 +338,7 @@ class Template_Utils {
 		$named_folders = array();
 		if ( count($folders) > 0 ) {
 			foreach ( $folders as $name => $path ) {
-				$index_file = trailingslashit( $path ) . 'index.php';
+				$index_file = $this->locate_template_file( 'index.php', array(), 'before', $name );
 
 				if ( file_exists( $index_file ) ) {
 					// Extract theme name from index.php (if existent).
@@ -357,7 +354,7 @@ class Template_Utils {
 
 				if ( 'default' === $name ) $skin_name .= ' (' . __( 'default', 'immonex-wp-free-plugin-core' ) . ')';
 
-				$named_folders[basename($path)] = $skin_name;
+				$named_folders[$name] = $skin_name;
 			}
 		}
 

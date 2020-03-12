@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Initialize Composer autoloader and instantiate plugin main class.
  */
-require( __DIR__ . '/vendor/autoload.php' );
+require __DIR__ . '/vendor/autoload.php';
 
 $my_immonex_plugin = new My_Plugin( basename( __FILE__, '.php' ) );
 $my_immonex_plugin->init();
