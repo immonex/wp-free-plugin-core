@@ -55,8 +55,17 @@ set -ex
 
 install_wp() {
 
+	if [ -d $WP_TESTS_DIR ]; then
+		# inveris: -rf instead of -r
+		rm -rf $WP_TESTS_DIR
+	fi
+
 	if [ -d $WP_CORE_DIR ]; then
-		return;
+		# inveris
+		# always delete existing test wp core folders
+		rm -rf $WP_CORE_DIR
+		# return;
+		# /inveris
 	fi
 
 	mkdir -p $WP_CORE_DIR
@@ -102,6 +111,13 @@ install_test_suite() {
 	else
 		local ioption='-i'
 	fi
+
+	# inveris
+	# always delete existing test suite folders
+	if [ -d $WP_TESTS_DIR ]; then
+		rm -rf $WP_TESTS_DIR
+	fi
+	# /inveris
 
 	# set up testing suite if it doesn't yet exist
 	if [ ! -d $WP_TESTS_DIR ]; then
