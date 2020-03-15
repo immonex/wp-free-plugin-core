@@ -2,7 +2,7 @@
 /**
  * This file contains a utility class for geocoding.
  */
-namespace immonex\WordPressFreePluginCore\V0_9;
+namespace immonex\WordPressFreePluginCore\V1_0;
 
 /**
  * Geocoding related utility methods.

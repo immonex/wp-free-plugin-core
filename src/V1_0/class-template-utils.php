@@ -2,7 +2,7 @@
 /**
  * This file contains a utility class for simple templating.
  */
-namespace immonex\WordPressFreePluginCore\V0_9;
+namespace immonex\WordPressFreePluginCore\V1_0;
 
 /**
  * Utility methods for a very simple kind of templating.

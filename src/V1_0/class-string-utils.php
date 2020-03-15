@@ -2,7 +2,7 @@
 /**
  * This file contains a utility class for string related methods.
  */
-namespace immonex\WordPressFreePluginCore\V0_9_0;
+namespace immonex\WordPressFreePluginCore\V1_0;
 
 /**
  * String related utility methods.

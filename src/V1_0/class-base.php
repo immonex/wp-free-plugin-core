@@ -22,17 +22,17 @@
  * This file contains the base class for deriving the main classes of
  * immonex plugins.
  */
-namespace immonex\WordPressFreePluginCore\V0_9_0;
+namespace immonex\WordPressFreePluginCore\V1_0;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
  * @package immonex-wp-free-plugin-core
- * @version 0.9.0
+ * @version 1.0
  */
 abstract class Base {
 
-	const BASE_VERSION = '0_9_0';
+	const BASE_VERSION = '1.0';
 
 	/** @var string Name of the custom field for storing plugin options */
 	protected $plugin_options_name;

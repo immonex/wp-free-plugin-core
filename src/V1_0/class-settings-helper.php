@@ -2,7 +2,7 @@
 /**
  * This file contains a utility class for dealing with the WP Settings API.
  */
-namespace immonex\WordPressFreePluginCore\V0_9;
+namespace immonex\WordPressFreePluginCore\V1_0;
 
 /**
  * Helper class for dealing with the WordPress Settings API.

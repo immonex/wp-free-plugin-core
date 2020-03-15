@@ -2,7 +2,7 @@
 /**
  * This file contains a utility class for (mostly) WP related helper methods.
  */
-namespace immonex\WordPressFreePluginCore\V0_9;
+namespace immonex\WordPressFreePluginCore\V1_0;
 
 /**
  * General (mostly WordPress related) utility methods.
