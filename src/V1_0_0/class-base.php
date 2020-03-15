@@ -25,13 +25,13 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\V1_0;
+namespace immonex\WordPressFreePluginCore\V1_0_0;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
  * @package immonex-wp-free-plugin-core
- * @version 1.0
+ * @version 1.0.0
  */
 abstract class Base {
 
@@ -173,14 +173,14 @@ abstract class Base {
 	/**
 	 * Utility object
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V1_0\Settings_Helper
+	 * @var \immonex\WordPressFreePluginCore\V1_0_0\Settings_Helper
 	 */
 	public $settings_helper;
 
 	/**
 	 * Utility object
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V1_0\General_Utils
+	 * @var \immonex\WordPressFreePluginCore\V1_0_0\General_Utils
 	 */
 	public $general_utils;
 

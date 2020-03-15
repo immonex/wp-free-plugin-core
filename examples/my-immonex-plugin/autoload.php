@@ -2,10 +2,21 @@
 /**
  * Autoloader registration
  *
- * @package immonex-wp-free-plugin-core
+ * @package my-immonex-plugin
  */
 
-namespace immonex\WordPressFreePluginCore;
+namespace myimmonex\MyPlugin;
+
+/**
+ * Initialize the Composer autoloader first (optional).
+ */
+// @codingStandardsIgnoreLine
+// require_once __DIR__ . '/vendor/autoload.php';
+
+/**
+ * The base classes of immonex WP Free Plugin core have their own autoloader.
+ */
+require_once __DIR__ . '/vendor/immonex/wp-free-plugin-core/src/autoload.php';
 
 if ( ! is_callable( __NAMESPACE__ . '\autoload' ) ) {
 	/**
@@ -64,14 +75,11 @@ if ( ! is_callable( __NAMESPACE__ . '\autoload' ) ) {
 		 * are the vendor and plugin name parts. The last index is always
 		 * the file so we append that at the end.
 		 */
-		$fully_qualified_path = trailingslashit( dirname( __FILE__ ) );
+		$fully_qualified_path = trailingslashit( dirname( __FILE__ ) ) . 'includes/';
 		$cnt_file_path        = count( $file_path ) - 1;
 
 		for ( $i = 2; $i < $cnt_file_path; $i++ ) {
-			$dir = preg_match( '/^V[0-9]+_[0-9]+(_[0-9]+)?/', $file_path[ $i ] ) ?
-				$file_path[ $i ] :
-				strtolower( $file_path[ $i ] );
-
+			$dir                   = strtolower( $file_path[ $i ] );
 			$fully_qualified_path .= trailingslashit( $dir );
 		}
 		$fully_qualified_path .= $file_name;

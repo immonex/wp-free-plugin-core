@@ -17,6 +17,9 @@ if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
 // Give access to tests_add_filter() function.
 require_once $_tests_dir . '/includes/functions.php';
 
+// inveris/immonex: Register WP style autoloader.
+require_once __DIR__ . '/../src/autoload.php';
+
 /**
  * Manually load the plugin being tested.
  */

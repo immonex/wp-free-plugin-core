@@ -1,4 +1,4 @@
-![immonex Open Source Software](assets/immonex-os-logo-small.png)
+<img src="assets/immonex-os-logo-small.png" width="230" height="48" align="right" alt="immonex Open Source Software" >
 
 # immonex WP Free Plugin Core
 
@@ -30,9 +30,10 @@ The [example plugin folder](examples/my-immonex-plugin):
 ```
 my-immonex-plugin
 ├── includes
-│   └── My_Plugin.php
+│   └── class-my-plugin.php
 ├── languages
-├── vendor
+├── [vendor]
+├── autoload.php
 ├── composer.json
 └── my-immonex-plugin.php
 ```
@@ -41,23 +42,23 @@ With the [Composer-based installation](#via-composer), the plugin core library g
 
 ```json
     "require": {
-        "immonex/wp-free-plugin-core": "^0.9.0"
+        "immonex/wp-free-plugin-core": "^1.0.0"
     },
 ```
 
-`my-immonex-plugin.php` is the **main plugin file** in which the Composer autoloader is being initialized and the main plugin object gets instantiated:
+`my-immonex-plugin.php` is the **main plugin file** in which the central autoloader file is being included and the main plugin object gets instantiated:
 
 ```php
-require __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/autoload.php';
 
 $my_immonex_plugin = new My_Plugin( basename( __FILE__, '.php' ) );
 $my_immonex_plugin->init();
 ```
 
-The **main plugin class** is located in the file `includes/My_Plugin.php`. It is derived from the latest **core Base class**:
+The **main plugin class** is located in the file `includes/class-my-plugin.php`. It is derived from the latest **core Base class**:
 
 ```php
-class My_Plugin extends \immonex\WordPressFreePluginCore\V0_9_0\Base {
+class My_Plugin extends \immonex\WordPressFreePluginCore\V1_0_0\Base {
 
 	const
 		PLUGIN_NAME = 'My immonex Plugin',
@@ -80,17 +81,17 @@ The `src` folder may contain multiple version branches:
 ```
 src
 ├── V0_9 <───┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\V0_9
-├── V0_9_0   │
-├── V0_9_2   │
-├── V0_9_4   │
+├── V0_9_0   │ PB
+├── V0_9_2   │ PB
+├── V0_9_4   │ PB
 ├── V0_9_7 ──┘ Production Branch (PB), NS: immonex\WordPressFreePluginCore\V0_9_7
 ├── V1_0 <───┐ DB
-├── V1_0_0   │
-├── V1_0_1   │
+├── V1_0_0   │ PB
+├── V1_0_1   │ PB
 └── V1_0_5 ──┘ PB
 ```
 
-The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V0_9_7`.
+The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.
 
 Folders without patch level in their name and namespaces (`VX_Y`) are **development branches** that always contain classes of the **latest patch level** of the respective major/minor version.
 
@@ -102,12 +103,38 @@ Multiple immonex plugins that possibly require **different versions** of the cor
 
 ## Development
 
-- [npm (Node.js)](https://nodejs.org/) is required to run included build/utility scripts.
-- Source code style is loosely based on the [WordPress PHP Coding Standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/php/), but might be "tightened" in the future to simplify the usage of [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer).
+### Requirements
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [npm (Node.js)](https://www.npmjs.com/get-npm)
+- [Composer](https://getcomposer.org/)
+- [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
+- [WordPress Coding Standards for PHP_CodeSniffer](https://github.com/WordPress/WordPress-Coding-Standards)
+
+### Git
+
+- Branching strategy: [GitHub flow](https://guides.github.com/introduction/flow/)
+- Commit messages: [Conventional Commits](https://www.conventionalcommits.org/)
+
+### Coding Standard
+
+The source code formatting corresponds to the [WordPress PHP Coding Standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/php/).
+
+It can be checked with PHP_CodeSniffer (if installed globally as described [here](https://github.com/WordPress/WordPress-Coding-Standards#composer) - recommended):
+
+```bash
+$ phpcs
+```
+
+To fix violations automatically as far as possible:
+
+```bash
+$ phpcbf
+```
 
 ### API Documentation
 
-The API documentation based on the sources is available in the [api-doc folder](api-doc) and can be generated with the following command.
+The API documentation based on the sources is available in the [api-doc folder](api-doc) and can be generated with the following command:
 
 ```bash
 $ npm run phpdoc
@@ -115,7 +142,7 @@ $ npm run phpdoc
 
 ### Testing
 
-Locally running unit tests for plugins usually requires a temporary WordPress installation (see [infos on make.wordpress.org](https://make.wordpress.org/cli/handbook/plugin-unit-tests/#running-tests-locally)). To use the test install script included in this repository, the file `.env` containing credentials of a local test database has to be created first (see [.env.example](.env.example)).
+Locally running unit tests ([PHPUnit](https://phpunit.de/)) for plugins usually requires a temporary WordPress installation (see [infos on make.wordpress.org](https://make.wordpress.org/cli/handbook/plugin-unit-tests/#running-tests-locally)). To use the test install script included in this repository, the file `.env` containing credentials of a local test database has to be created first (see [.env.example](.env.example)).
 
 After that, the temporary testing environment can be installed:
 

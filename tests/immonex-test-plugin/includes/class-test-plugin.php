@@ -1,13 +1,16 @@
 <?php
 /**
- * This file contains the main class of the minimal immonex test plugin skeleton.
+ * Class Test_Plugin
+ *
+ * @package immonex-test-plugin
  */
+
 namespace myimmonex\TestPlugin;
 
 /**
  * Main test plugin class.
  */
-class Test_Plugin extends \immonex\WordPressFreePluginCore\V0_9\Base {
+class Test_Plugin extends \immonex\WordPressFreePluginCore\V1_0\Base {
 
 	const
 		PLUGIN_NAME = 'immonex Test Plugin',

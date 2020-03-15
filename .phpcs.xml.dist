@@ -4,6 +4,7 @@
 
 	<!-- What to scan -->
 	<file>src/</file>
+	<file>examples/</file>
 	<exclude-pattern>/lib/</exclude-pattern>
 	<exclude-pattern>/vendor/</exclude-pattern>
 	<exclude-pattern>/node_modules/</exclude-pattern>
@@ -35,14 +36,20 @@
 			<!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
 			<property name="prefixes" type="array">
 				<element value="immonex"/>
-				<element value="inx"/>
+				<element value="inveris"/>
+				<element value="iwpfpc"/>
+				<element value="myimmonex"/>
+				<element value="my_immonex"/>
 			</property>
 		</properties>
 	</rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<!-- Value: replace the text domain used. -->
-			<property name="text_domain" type="array" value="inx"/>
+			<property name="text_domain" type="array">
+				<element value="immonex-wp-free-plugin-core"/>
+				<element value="my-immonex-plugin"/>
+			</property>
 		</properties>
 	</rule>
 	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">

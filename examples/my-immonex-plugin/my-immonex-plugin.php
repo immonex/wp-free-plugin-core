@@ -9,17 +9,21 @@
  * Domain Path: /languages
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * @package my-immonex-plugin
  */
 
 namespace myimmonex\MyPlugin;
 
 // Prevent direct access.
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
- * Initialize Composer autoloader and instantiate plugin main class.
+ * Initialize autoloaders (Composer (optional) AND WP/plugin-specific).
  */
-require __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/autoload.php';
 
 $my_immonex_plugin = new My_Plugin( basename( __FILE__, '.php' ) );
 $my_immonex_plugin->init();
