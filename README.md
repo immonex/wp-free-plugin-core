@@ -148,7 +148,7 @@ $ phpcbf
 
 ### API Documentation
 
-The API documentation based on the sources can be generated with the following command and is available in the [apidoc folder](apidoc) afterwards:
+The API documentation based on the sources can be generated with the following command and is available in the `apidoc folder` afterwards:
 
 ```bash
 $ npm run apidoc
