@@ -187,21 +187,21 @@ abstract class Base {
 	/**
 	 * Utility object
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V0_9\String_Utils
+	 * @var \immonex\WordPressFreePluginCore\V1_0\String_Utils
 	 */
 	public $string_utils;
 
 	/**
 	 * Utility object
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V0_9\Geo_Utils
+	 * @var \immonex\WordPressFreePluginCore\V1_0\Geo_Utils
 	 */
 	public $geo_utils;
 
 	/**
 	 * Utility object
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V0_9\Template_Utils
+	 * @var \immonex\WordPressFreePluginCore\V1_0\Template_Utils
 	 */
 	public $template_utils;
 
@@ -288,6 +288,8 @@ abstract class Base {
 				'plugin_main_file' => $this->plugin_main_file,
 			)
 		);
+
+		add_action( 'wp_ajax_dismiss_admin_notice', array( $this, 'dismiss_admin_notice' ) );
 	} // __construct
 
 	/**
@@ -582,25 +584,6 @@ abstract class Base {
 			is_array( $this->plugin_options['deferred_admin_notices'] ) &&
 			count( $this->plugin_options['deferred_admin_notices'] ) > 0
 		) {
-			// Delete a deferred admin notice (or all of them) if dismissed by the user.
-			if (
-				isset( $_GET['dismiss_inveris_admin_notice'] ) &&
-				1 == $_GET['dismiss_inveris_admin_notice']
-			) {
-				if (
-					isset( $_GET['notice_id'] ) &&
-					isset( $this->plugin_options['deferred_admin_notices'][ $_GET['notice_id'] ] )
-				) {
-					// Delete a single notice.
-					unset( $this->plugin_options['deferred_admin_notices'][ $_GET['notice_id'] ] );
-				} elseif ( ! isset( $_GET['notice_id'] ) ) {
-					// Delete all deferred notices.
-					$this->plugin_options['deferred_admin_notices'] = array();
-				}
-
-				update_option( $this->plugin_options_name, $this->plugin_options );
-			}
-
 			if (
 				is_array( $this->plugin_options['deferred_admin_notices'] ) &&
 				count( $this->plugin_options['deferred_admin_notices'] ) > 0
@@ -782,6 +765,9 @@ abstract class Base {
 			return;
 		}
 
+		/**
+		 * Load plugin-specific CSS if existent.
+		 */
 		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'css/backend.css' ) ) {
 			$this->backend_css_handle = static::PUBLIC_PREFIX . 'backend';
 
@@ -793,7 +779,34 @@ abstract class Base {
 			);
 		}
 
-		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'js/frontend.js' ) ) {
+		/**
+		 * Load core backend JS first.
+		 */
+		$core_js_handle = static::PUBLIC_PREFIX . 'backend-js-core';
+		$ns_split       = explode( '\\', __NAMESPACE__ );
+		$core_version   = array_pop( $ns_split );
+
+		wp_register_script(
+			$core_js_handle,
+			plugins_url( $this->plugin_slug . "/vendor/immonex/wp-free-plugin-core/src/{$core_version}/js/backend.js" ),
+			array( 'jquery' ),
+			$this->plugin_version,
+			true
+		);
+		wp_enqueue_script( $core_js_handle );
+
+		wp_localize_script(
+			$core_js_handle,
+			'iwpfpc_params',
+			array(
+				'ajax_url' => get_admin_url() . 'admin-ajax.php',
+			)
+		);
+
+		/**
+		 * Load plugin-specific backend JS if existent.
+		 */
+		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'js/backend.js' ) ) {
 			$this->backend_js_handle = static::PUBLIC_PREFIX . 'backend-js';
 
 			wp_register_script(
@@ -827,14 +840,22 @@ abstract class Base {
 
 			foreach ( $this->admin_notices as $id => $notice ) {
 				$message = $notice['message'];
+				$classes = array(
+					'notice',
+					'notice-' . $notice['type'],
+					'immonex-notice',
+				);
+
 				if ( $notice['is_dismissable'] ) {
-					$admin_url = admin_url( 'index.php' );
-					$message  .= wp_sprintf( ' | <a href="%s?dismiss_inveris_admin_notice=1&amp;notice_id=%s" style="text-decoration:underline">%s</a>', $admin_url, $id, __( 'Dismiss', 'immonex-wp-free-plugin-core' ) );
-					if ( $dismissables_cnt > 1 ) {
-						$message .= wp_sprintf( ' | <a href="%s?dismiss_inveris_admin_notice=1" style="text-decoration:underline">%s</a>', $admin_url, __( 'Dismiss all', 'immonex-wp-free-plugin-core' ) );
-					}
+					$classes[] = 'is-dismissible';
 				}
-				echo '<div class="' . $notice['type'] . '"><p>' . $message . "</p></div>\n";
+
+				echo wp_sprintf(
+					'<div class="%s" data-notice-id="%s"><p>%s</p></div>' . PHP_EOL,
+					implode( ' ', $classes ),
+					$id,
+					$message
+				);
 			}
 		}
 
@@ -938,7 +959,6 @@ abstract class Base {
 	 * Extend plugin information for displaying on the options page/tab.
 	 *
 	 * @since 0.9
-	 * @access protected
 	 */
 	public function extend_plugin_infos() {
 		$this->plugin_infos = array_merge(
@@ -955,10 +975,28 @@ abstract class Base {
 	} // extend_plugin_infos
 
 	/**
+	 * Delete a dismissible admin notice (AJAX callback).
+	 *
+	 * @since 1.0.0
+	 */
+	public function dismiss_admin_notice() {
+		$notice_id = sanitize_key( $_POST['notice_id'] );
+		if ( ! $notice_id ) {
+			wp_die( '', '', array( 'response' => 400 ) );
+		}
+
+		if ( isset( $this->plugin_options['deferred_admin_notices'][ $notice_id ] ) ) {
+			unset( $this->plugin_options['deferred_admin_notices'][ $notice_id ] );
+			update_option( $this->plugin_options_name, $this->plugin_options );
+		}
+
+		wp_die();
+	} // dismiss_admin_notice
+
+	/**
 	 * Compile arbitrary plugin information and doc/support links if given.
 	 *
 	 * @since 0.9
-	 * @access protected
 	 *
 	 * @return string[] Array of info/link elements.
 	 */
@@ -1007,13 +1045,16 @@ abstract class Base {
 	 * plugin configuration.
 	 *
 	 * @since 0.3.6
-	 * @access protected
 	 *
 	 * @param string $message Message to display.
-	 * @param string $type Message type ("updated", "error" or "update-nag").
+	 * @param string $type Message type: "success" (default), "info", "warning", "error".
 	 */
-	protected function add_deferred_admin_notice( $message, $type = 'updated' ) {
+	protected function add_deferred_admin_notice( $message, $type = 'success' ) {
 		$notice_id = uniqid();
+
+		if ( ! in_array( $type, array( 'success', 'info', 'warning', 'error' ) ) ) {
+			$type = 'info';
+		}
 
 		// (Re)fetch current plugin options.
 		$this->plugin_options = $this->fetch_plugin_options( $this->plugin_options );
@@ -1038,7 +1079,6 @@ abstract class Base {
 	 * Add an administrative message.
 	 *
 	 * @since 0.1
-	 * @access protected
 	 *
 	 * @param string $message Message to display.
 	 * @param string $type Message type ("updated", "error" or "update-nag").
@@ -1056,7 +1096,6 @@ abstract class Base {
 	 * Show error messages during plugin activation.
 	 *
 	 * @since 0.2
-	 * @access protected
 	 *
 	 * @param string $message Options form values.
 	 * @param int    $errno Error number.
@@ -1074,7 +1113,6 @@ abstract class Base {
 	 * Load translations.
 	 *
 	 * @since 0.1
-	 * @access protected
 	 */
 	protected function load_translations() {
 		if ( $this->translations_loaded ) {
@@ -1101,7 +1139,6 @@ abstract class Base {
 	 * Get a link tag related to the current language (or the default url).
 	 *
 	 * @since 0.9
-	 * @access private
 	 *
 	 * @param string[] $urls Array of URLs with language code as keys.
 	 * @param string   $link_text Link text.

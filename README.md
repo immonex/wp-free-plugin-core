@@ -76,7 +76,7 @@ That's it!
 
 ## Folder Based Versioning
 
-The `src` folder may contain multiple version branches:
+The `src` folder **may** contain multiple version branches:
 
 ```
 src
@@ -111,6 +111,20 @@ Multiple immonex plugins that possibly require **different versions** of the cor
 - [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
 - [WordPress Coding Standards for PHP_CodeSniffer](https://github.com/WordPress/WordPress-Coding-Standards)
 
+### Setup
+
+Setting up a simple development environment starts by cloning this repository and installing dependencies:
+
+```bash
+$ cd ~/projects
+$ git clone git@github.com:immonex/wp-free-plugin-core.git immonex-wp-free-plugin-core
+$ cd immonex-wp-free-plugin-core
+$ npm install
+$ composer install
+```
+
+> :warning: PHP_CodeSniffer and the related WP sniffs are **not** part of the default dependencies and should be [installed globally](https://github.com/WordPress/WordPress-Coding-Standards#composer).
+
 ### Git
 
 - Branching strategy: [GitHub flow](https://guides.github.com/introduction/flow/)
@@ -134,11 +148,25 @@ $ phpcbf
 
 ### API Documentation
 
-The API documentation based on the sources is available in the [api-doc folder](api-doc) and can be generated with the following command:
+The API documentation based on the sources can be generated with the following command and is available in the [apidoc folder](apidoc) afterwards:
 
 ```bash
-$ npm run phpdoc
+$ npm run apidoc
 ```
+
+To view it using a local webserver:
+
+```bash
+$ npm run apidoc:view
+```
+
+If these docs are not needed anymore, the respective folders can be deleted with this command:
+
+```bash
+$ npm run apidoc:delete
+```
+
+(The folder `apidoc` is meant to be used locally, it should **not** a part of any repository.)
 
 ### Testing
 

@@ -15,7 +15,9 @@
     "require-dev": {
         "inverisoss/wp-i18n-tools": "^1.0.2",
         "phpunit/phpunit": "^7",
-        "phpdocumentor/phpdocumentor": "^2.9"
+        "phpdocumentor/phpdocumentor": "dev-master",
+        "phpdocumentor/graphviz": "@dev",
+        "doctrine/rst-parser": "@dev"
     },
     "autoload": {
         "psr-4": { "immonex\\WordPressFreePluginCore\\": "src/" }

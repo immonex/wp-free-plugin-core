@@ -150,7 +150,6 @@ class Geo_Utils {
 	 * Geocode a given address using Nominatim (OpenStreetMap).
 	 *
 	 * @since 0.9
-	 * @access private
 	 *
 	 * @param string      $address Address for geocoding.
 	 * @param string      $key API key not required for this service.
@@ -173,7 +172,6 @@ class Geo_Utils {
 	 * Check/return Nominatim geocoding results.
 	 *
 	 * @since 0.9
-	 * @access private
 	 *
 	 * @param object $response Raw response object.
 	 * @param string $return_type "full" or "compact" (the latter one only returns coordinates).
@@ -211,7 +209,6 @@ class Geo_Utils {
 	 * Check/return status information for a Nominatim geocoding request.
 	 *
 	 * @since 0.9
-	 * @access private
 	 *
 	 * @param object $response Raw response object.
 	 *
@@ -226,7 +223,6 @@ class Geo_Utils {
 	 * Geocode a given address using Photon (OpenStreetMap).
 	 *
 	 * @since 0.9
-	 * @access private
 	 *
 	 * @param string      $address Address for geocoding.
 	 * @param string      $key API key not required for this service.
@@ -247,7 +243,6 @@ class Geo_Utils {
 	 * Check/return Photon geocoding results.
 	 *
 	 * @since 0.9
-	 * @access private
 	 *
 	 * @param object $response Raw response object.
 	 * @param string $return_type "full" or "compact" (the latter one only returns coordinates).
@@ -282,7 +277,6 @@ class Geo_Utils {
 	 * Check/return status information for a Photon geocoding request.
 	 *
 	 * @since 0.9
-	 * @access private
 	 *
 	 * @param object $response Raw response object.
 	 *
@@ -300,7 +294,6 @@ class Geo_Utils {
 	 * Geocode a given address using the Google Maps API.
 	 *
 	 * @since 0.5.1
-	 * @access private
 	 *
 	 * @param string      $address Address for geocoding.
 	 * @param string      $key Google Maps API key.
@@ -325,7 +318,6 @@ class Geo_Utils {
 	 * Check/return Google Maps geocoding results.
 	 *
 	 * @since 0.5.1
-	 * @access private
 	 *
 	 * @param object $response Raw response object.
 	 * @param string $return_type "full" or "compact" (the latter one only returns coordinates).
@@ -357,7 +349,6 @@ class Geo_Utils {
 	 * Check/return status information for a Google Maps geocoding request.
 	 *
 	 * @since 0.5.1
-	 * @access private
 	 *
 	 * @param object $response Raw response object.
 	 *
@@ -375,7 +366,6 @@ class Geo_Utils {
 	 * Geocode a given address using the Bing Maps API.
 	 *
 	 * @since 0.5.1
-	 * @access private
 	 *
 	 * @param string      $address Address for geocoding.
 	 * @param string      $key Bing Maps API key (required).
@@ -395,7 +385,6 @@ class Geo_Utils {
 	 * Check/return Bing Maps geocoding results.
 	 *
 	 * @since 0.5.1
-	 * @access private
 	 *
 	 * @param object $response Raw response object.
 	 * @param string $return_type "full" or "compact" (the latter one only returns coordinates).
@@ -429,7 +418,6 @@ class Geo_Utils {
 	 * Check/return status information for a Bing Maps geocoding request.
 	 *
 	 * @since 0.5.1
-	 * @access private
 	 *
 	 * @param object $response Raw response object.
 	 *
@@ -456,7 +444,6 @@ class Geo_Utils {
 	 * Parse and check a given country code list or alias string.
 	 *
 	 * @since 0.9
-	 * @access private
 	 *
 	 * @param string $countrycodes Comma separated code list or alias for a default code set.
 	 *

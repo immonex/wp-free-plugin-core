@@ -46,7 +46,7 @@ class Template_Utils {
 	 * @param \immonex\WordPressFreePluginCore\V0_9\Base $plugin Main plugin object.
 	 * @param string                                     $skin Skin subfolder name.
 	 *
-	 * @return string/bool Full template file path or false if not found.
+	 * @return string|bool Full template file path or false if not found.
 	 */
 	public function __construct( $plugin, $skin = '' ) {
 		$this->plugin = $plugin;
@@ -62,7 +62,7 @@ class Template_Utils {
 	 * @param array  $template_data Array with any output related contents.
 	 * @param array  $utils Array of helper objects for output/formatting.
 	 *
-	 * @return string/bool Parsed template content or false if not found.
+	 * @return string|bool Parsed template content or false if not found.
 	 */
 	public function render_php_template( $filename, $template_data, $utils = array() ) {
 		$add_template_folders = isset( $template_data['template_folders'] ) ?
@@ -94,7 +94,7 @@ class Template_Utils {
 	 * @param string   $filename Template filename (without path).
 	 * @param string[] $template_data Associative array with variable names/contents.
 	 *
-	 * @return string/bool Parsed template content or false if not found.
+	 * @return string|bool Parsed template content or false if not found.
 	 */
 	public function parse_template( $filename, $template_data = array() ) {
 		$template = $this->fetch_template( $filename );
@@ -118,7 +118,7 @@ class Template_Utils {
 	 *
 	 * @param string $filename Template filename (without path).
 	 *
-	 * @return string/bool Template content or false if not found.
+	 * @return string|bool Template content or false if not found.
 	 */
 	public function fetch_template( $filename ) {
 		$file = $this->locate_template_file( $filename );
@@ -139,7 +139,7 @@ class Template_Utils {
 	 * @param string      $add_folder_mode Where to insert the additional folders (before, after or override).
 	 * @param string|bool $force_skin Temporary use the given skin instead of the main one.
 	 *
-	 * @return string/bool Full template file path or false if not found.
+	 * @return string|bool Full template file path or false if not found.
 	 */
 	public function locate_template_file( $filename, $add_folders = array(), $add_folder_mode = 'before', $force_skin = false ) {
 		if ( ! is_string( $filename ) ) {

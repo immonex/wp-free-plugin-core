@@ -28,7 +28,7 @@ class Color_Utils {
 	 *
 	 * @param \immonex\WordPressFreePluginCore\V0_9\Base $plugin Main plugin object.
 	 *
-	 * @return string/bool Full template file path or false if not found.
+	 * @return string|bool Full template file path or false if not found.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;

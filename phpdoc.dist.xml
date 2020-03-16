@@ -2,10 +2,10 @@
 <phpdoc>
   <title>immonex WP Free Plugin Core</title>
   <parser>
-    <target>.tmp/api-doc</target>
+    <target>.tmp/apidoc</target>
   </parser>
   <transformer>
-    <target>api-doc</target>
+    <target>apidoc</target>
   </transformer>
   <files>
     <directory>src</directory>

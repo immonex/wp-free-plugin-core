@@ -191,7 +191,6 @@ class Settings_Helper {
 	 * Display the tab navigation.
 	 *
 	 * @since 0.1
-	 * @access private
 	 */
 	private function display_tab_nav() {
 		if ( count( $this->option_page_tabs ) > 0 ) {
@@ -454,7 +453,6 @@ class Settings_Helper {
 	 * Render a text field.
 	 *
 	 * @since 0.1
-	 * @access private
 	 *
 	 * @param array $args Field properties.
 	 */
@@ -475,7 +473,6 @@ class Settings_Helper {
 	 * Render a textarea.
 	 *
 	 * @since 0.1
-	 * @access private
 	 *
 	 * @param array $args Textarea properties.
 	 */
@@ -495,7 +492,6 @@ class Settings_Helper {
 	 * Render a WYSIWYG editor.
 	 *
 	 * @since 0.9
-	 * @access private
 	 *
 	 * @param array $args Editor properties.
 	 */
@@ -530,7 +526,6 @@ class Settings_Helper {
 	 * Render a select box.
 	 *
 	 * @since 0.1
-	 * @access private
 	 *
 	 * @param array $args Select properties.
 	 */
@@ -561,7 +556,6 @@ class Settings_Helper {
 	 * Render a checkbox.
 	 *
 	 * @since 0.1
-	 * @access private
 	 *
 	 * @param array $args Checkbox properties.
 	 */
@@ -582,7 +576,6 @@ class Settings_Helper {
 	 * Render a group of checkboxes.
 	 *
 	 * @since 0.4.8
-	 * @access private
 	 *
 	 * @param array $args Checkbox properties.
 	 */
@@ -621,7 +614,6 @@ class Settings_Helper {
 	 * Generate the class code for input elements.
 	 *
 	 * @since 0.3.3
-	 * @access private
 	 *
 	 * @param array  $args Element properties.
 	 * @param string $default Default class.

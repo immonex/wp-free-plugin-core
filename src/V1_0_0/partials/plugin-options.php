@@ -45,6 +45,7 @@ $iwpfpc_inveris_oss_logo_url = plugins_url(
 		position: absolute;
 		top: 8px;
 		right: 20px;
+		z-index: 10;
 	}
 
 	.inveris-free-plugin-options h1.options-hl {
