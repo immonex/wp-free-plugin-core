@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: immonex WordPress free Plugin Core 0.9\n"
+"Project-Id-Version: immonex WordPress free Plugin Core 1.0\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2020-03-06 08:35:37+00:00\n"
-"PO-Revision-Date: 2020-03-06 09:36+0100\n"
+"POT-Creation-Date: 2020-03-16 22:42:15+00:00\n"
+"PO-Revision-Date: 2020-03-16 23:43+0100\n"
 "Last-Translator: \n"
 "Language-Team: Carsten Scheuer <scheuer@inveris.de>\n"
 "Language: de\n"
@@ -16,37 +16,37 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: V0_9/Base.php:340 V0_9/Base.php:346 V0_9/Settings_Helper.php:92
+#: V1_0/class-base.php:460 V1_0/class-base.php:466
+#: V1_0/class-settings-helper.php:137 V1_0_0/class-base.php:460
+#: V1_0_0/class-base.php:466 V1_0_0/class-settings-helper.php:137
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: V0_9/Base.php:444
+#: V1_0/class-base.php:566 V1_0_0/class-base.php:566
 msgid "Settings updated."
 msgstr "Einstellungen aktualisiert."
 
-#: V0_9/Base.php:515
+#: V1_0/class-base.php:618 V1_0_0/class-base.php:618
 msgid "weekly"
 msgstr "wöchentlich"
 
-#: V0_9/Base.php:696
-msgid "Dismiss"
-msgstr "Verwerfen"
-
-#: V0_9/Base.php:697
-msgid "Dismiss all"
-msgstr "Alle verwerfen"
-
-#: V0_9/Base.php:840
+#: V1_0/class-base.php:1016 V1_0_0/class-base.php:1016
 msgid "Documentation"
 msgstr "Dokumentation"
 
-#: V0_9/Base.php:860
+#: V1_0/class-base.php:1036 V1_0_0/class-base.php:1036
 msgid "Development"
 msgstr "Entwicklung"
 
-#: V0_9/Template_Utils.php:358
+#: V1_0/class-template-utils.php:399 V1_0_0/class-template-utils.php:399
 msgid "default"
 msgstr "Standard"
+
+#~ msgid "Dismiss"
+#~ msgstr "Verwerfen"
+
+#~ msgid "Dismiss all"
+#~ msgstr "Alle verwerfen"
 
 #~ msgid "DEBUG-MODE"
 #~ msgstr "DEBUG-MODUS"
