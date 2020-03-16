@@ -1081,10 +1081,14 @@ abstract class Base {
 	 * @since 0.1
 	 *
 	 * @param string $message Message to display.
-	 * @param string $type Message type ("updated", "error" or "update-nag").
+	 * @param string $type Message type: "success" (default), "info", "warning", "error".
 	 * @param string $id Message ID (required for deferred messages only).
 	 */
-	protected function add_admin_notice( $message, $type = 'updated', $id = false ) {
+	protected function add_admin_notice( $message, $type = 'success', $id = false ) {
+		if ( ! in_array( $type, array( 'success', 'info', 'warning', 'error' ) ) ) {
+			$type = 'info';
+		}
+
 		$this->admin_notices[ $id ? $id : uniqid() ] = array(
 			'message'        => $message,
 			'type'           => $type,
