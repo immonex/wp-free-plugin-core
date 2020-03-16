@@ -17,6 +17,7 @@
         "phpunit/phpunit": "^7",
         "phpdocumentor/phpdocumentor": "dev-master",
         "phpdocumentor/graphviz": "@dev",
+        "phpdocumentor/reflection-docblock": "@dev",
         "doctrine/rst-parser": "@dev"
     },
     "autoload": {
