@@ -12,7 +12,7 @@ This lightweight **PHP library** provides shared basic functionality for free **
 - special string checking and manipulation
 - color calculations
 
-**immonex** is an umbrella brand for various **real estate related software** solutions and services with a focus on german-speaking countries/users.
+**immonex**® is an umbrella brand for various **real estate related software** solutions and services with a focus on german-speaking countries/users.
 
 ## Installation
 
@@ -130,11 +130,15 @@ $ composer install
 - Branching strategy: [GitHub flow](https://guides.github.com/introduction/flow/)
 - Commit messages: [Conventional Commits](https://www.conventionalcommits.org/)
 
+### PHP compatibility
+
+5.6+ (switch to 7.2+ envisaged for future releases)
+
 ### Coding Standard
 
 The source code formatting corresponds to the [WordPress PHP Coding Standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/php/).
 
-It can be checked with PHP_CodeSniffer (if installed globally as described [here](https://github.com/WordPress/WordPress-Coding-Standards#composer) - recommended):
+The source files can be checked with PHP_CodeSniffer (if, as recommended, installed globally as described [here](https://github.com/WordPress/WordPress-Coding-Standards#composer)):
 
 ```bash
 $ phpcs
@@ -186,7 +190,7 @@ $ npm run test
 
 ### Translations
 
-The core classes of this library do **and should** only include a few strings that have to be translated. Translations (PO/MO files) can be provided in the `languages` folder (or via another WordPress conform way). This folder also contains a current POT file as base for own translations that can be updated with the following command.
+The core classes of this library do **and should** only include a few strings that have to be translated. Translations (PO/MO files) that are distributed as part of this library are provided in the [languages](languages) folder. This folder also contains a current POT file as base for custom translations that can be updated with the following command.
 
 ```bash
 $ npm run pot

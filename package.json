@@ -7,9 +7,10 @@
     "test": "vendor/phpunit/phpunit/phpunit -c tests/phpunit/plugin.xml",
     "apidoc": "vendor/bin/phpdoc run --sourcecode --template=clean --title='immonex WP Free Plugin Core'",
     "apidoc:view": "node_modules/.bin/lws --stack lws-static lws-index -d apidoc -o",
-    "apidoc:delete": "rm -rf ./apidoc && rm -rf .tmp/apidoc"
+    "apidoc:delete": "rimraf apidoc && rimraf .tmp/apidoc"
   },
   "devDependencies": {
+    "rimraf": "^3.0.0",
     "lws": "^3.0.0",
     "lws-index": "^2.0.0",
     "lws-static": "^2.0.0"
