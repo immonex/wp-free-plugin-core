@@ -782,11 +782,11 @@ abstract class Base {
 		/**
 		 * Load core backend JS first.
 		 */
-		$ns_split       = explode( '\\', __NAMESPACE__ );
-		$core_version   = array_pop( $ns_split );
+		$ns_split            = explode( '\\', __NAMESPACE__ );
+		$core_version        = array_pop( $ns_split );
 		$core_version_handle = str_replace( '_', '-', substr( $core_version, 1 ) );
 		$core_version_semver = str_replace( '-', '.', $core_version_handle );
-		$core_js_handle = static::PUBLIC_PREFIX . "backend-js-core-{$core_version_handle}";
+		$core_js_handle      = static::PUBLIC_PREFIX . "backend-js-core-{$core_version_handle}";
 
 		wp_register_script(
 			$core_js_handle,
@@ -802,8 +802,8 @@ abstract class Base {
 			'iwpfpc_params',
 			array(
 				'core_version' => $core_version_semver,
-				'plugin_slug' => $this->plugin_slug,
-				'ajax_url' => get_admin_url() . 'admin-ajax.php',
+				'plugin_slug'  => $this->plugin_slug,
+				'ajax_url'     => get_admin_url() . 'admin-ajax.php',
 			)
 		);
 
@@ -984,7 +984,7 @@ abstract class Base {
 	 * @since 1.0.0
 	 */
 	public function dismiss_admin_notice() {
-		$notice_id = sanitize_key( $_POST['notice_id'] );
+		$notice_id   = sanitize_key( $_POST['notice_id'] );
 		$plugin_slug = sanitize_key( $_POST['plugin_slug'] );
 		if ( ! $notice_id || ! $plugin_slug ) {
 			wp_die( '', '', array( 'response' => 400 ) );
