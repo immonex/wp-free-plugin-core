@@ -782,15 +782,17 @@ abstract class Base {
 		/**
 		 * Load core backend JS first.
 		 */
-		$core_js_handle = static::PUBLIC_PREFIX . 'backend-js-core';
 		$ns_split       = explode( '\\', __NAMESPACE__ );
 		$core_version   = array_pop( $ns_split );
+		$core_version_handle = str_replace( '_', '-', substr( $core_version, 1 ) );
+		$core_version_semver = str_replace( '-', '.', $core_version_handle );
+		$core_js_handle = static::PUBLIC_PREFIX . "backend-js-core-{$core_version_handle}";
 
 		wp_register_script(
 			$core_js_handle,
 			plugins_url( $this->plugin_slug . "/vendor/immonex/wp-free-plugin-core/src/{$core_version}/js/backend.js" ),
 			array( 'jquery' ),
-			$this->plugin_version,
+			$core_version_semver,
 			true
 		);
 		wp_enqueue_script( $core_js_handle );
@@ -799,6 +801,8 @@ abstract class Base {
 			$core_js_handle,
 			'iwpfpc_params',
 			array(
+				'core_version' => $core_version_semver,
+				'plugin_slug' => $this->plugin_slug,
 				'ajax_url' => get_admin_url() . 'admin-ajax.php',
 			)
 		);
@@ -843,7 +847,7 @@ abstract class Base {
 				$classes = array(
 					'notice',
 					'notice-' . $notice['type'],
-					'immonex-notice',
+					$this->plugin_slug . '-notice',
 				);
 
 				if ( $notice['is_dismissable'] ) {
@@ -981,11 +985,15 @@ abstract class Base {
 	 */
 	public function dismiss_admin_notice() {
 		$notice_id = sanitize_key( $_POST['notice_id'] );
-		if ( ! $notice_id ) {
+		$plugin_slug = sanitize_key( $_POST['plugin_slug'] );
+		if ( ! $notice_id || ! $plugin_slug ) {
 			wp_die( '', '', array( 'response' => 400 ) );
 		}
 
-		if ( isset( $this->plugin_options['deferred_admin_notices'][ $notice_id ] ) ) {
+		if (
+			$plugin_slug === $this->plugin_slug &&
+			isset( $this->plugin_options['deferred_admin_notices'][ $notice_id ] )
+		) {
 			unset( $this->plugin_options['deferred_admin_notices'][ $notice_id ] );
 			update_option( $this->plugin_options_name, $this->plugin_options );
 		}
