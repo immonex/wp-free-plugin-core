@@ -987,7 +987,7 @@ abstract class Base {
 		$notice_id   = sanitize_key( $_POST['notice_id'] );
 		$plugin_slug = sanitize_key( $_POST['plugin_slug'] );
 		if ( ! $notice_id || ! $plugin_slug ) {
-			wp_die( '', '', array( 'response' => 400 ) );
+			return;
 		}
 
 		if (
@@ -996,9 +996,8 @@ abstract class Base {
 		) {
 			unset( $this->plugin_options['deferred_admin_notices'][ $notice_id ] );
 			update_option( $this->plugin_options_name, $this->plugin_options );
+			wp_die();
 		}
-
-		wp_die();
 	} // dismiss_admin_notice
 
 	/**
@@ -1067,7 +1066,9 @@ abstract class Base {
 		// (Re)fetch current plugin options.
 		$this->plugin_options = $this->fetch_plugin_options( $this->plugin_options );
 
-		if ( count( $this->plugin_options['deferred_admin_notices'] ) ) {
+		if ( empty( $this->plugin_options['deferred_admin_notices'] ) ) {
+			$this->plugin_options['deferred_admin_notices'] = array();
+		} else {
 			foreach ( $this->plugin_options['deferred_admin_notices'] as $notice ) {
 				if ( $notice['message'] === $message ) {
 					return;
