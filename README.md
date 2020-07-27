@@ -42,7 +42,7 @@ With the [Composer-based installation](#via-composer), the plugin core library g
 
 ```json
     "require": {
-        "immonex/wp-free-plugin-core": "^1.0.0"
+        "immonex/wp-free-plugin-core": "^1.1.0"
     },
 ```
 
@@ -64,7 +64,7 @@ class My_Plugin extends \immonex\WordPressFreePluginCore\V1_0_0\Base {
 		PLUGIN_NAME = 'My immonex Plugin',
 		PLUGIN_PREFIX = 'myplugin_',
 		PUBLIC_PREFIX = 'myplugin-',
-		PLUGIN_VERSION = '1.0.0',
+		PLUGIN_VERSION = '1.1.0',
 		OPTIONS_LINK_MENU_LOCATION = 'settings';
 
 	...
