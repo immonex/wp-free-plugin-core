@@ -5,7 +5,7 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\V1_0;
+namespace immonex\WordPressFreePluginCore\V1_1_1;
 
 /**
  * Utility methods for a very simple kind of templating.
@@ -20,7 +20,7 @@ class Template_Utils {
 	/**
 	 * Main plugin instance
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V1_0\Base
+	 * @var Base
 	 */
 	private $plugin;
 

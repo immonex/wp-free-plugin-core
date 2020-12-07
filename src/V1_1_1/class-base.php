@@ -25,17 +25,17 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\V1_0;
+namespace immonex\WordPressFreePluginCore\V1_1_1;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
  * @package immonex-wp-free-plugin-core
- * @version 1.0
+ * @version 1.1.1
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.1.0';
+	const BASE_VERSION = '1.1.1';
 
 	/**
 	 * Name of the custom field for storing plugin options
@@ -180,35 +180,35 @@ abstract class Base {
 	/**
 	 * Utility object
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V1_0\Settings_Helper
+	 * @var Settings_Helper
 	 */
 	public $settings_helper;
 
 	/**
 	 * Utility object
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V1_0\General_Utils
+	 * @var General_Utils
 	 */
 	public $general_utils;
 
 	/**
 	 * Utility object
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V1_0\String_Utils
+	 * @var String_Utils
 	 */
 	public $string_utils;
 
 	/**
 	 * Utility object
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V1_0\Geo_Utils
+	 * @var Geo_Utils
 	 */
 	public $geo_utils;
 
 	/**
 	 * Utility object
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V1_0\Template_Utils
+	 * @var Template_Utils
 	 */
 	public $template_utils;
 

@@ -58,7 +58,7 @@ $my_immonex_plugin->init();
 The **main plugin class** is located in the file `includes/class-my-plugin.php`. It is derived from the latest **core Base class**:
 
 ```php
-class My_Plugin extends \immonex\WordPressFreePluginCore\V1_0_0\Base {
+class My_Plugin extends \immonex\WordPressFreePluginCore\V1_1_1\Base {
 
 	const
 		PLUGIN_NAME = 'My immonex Plugin',
@@ -76,24 +76,20 @@ That's it!
 
 ## Folder Based Versioning
 
-The `src` folder **may** contain multiple version branches:
+The `src` folder contains one development and multiple release version branches:
 
 ```
 src
-├── V0_9 <───┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\V0_9
-├── V0_9_0   │ PB
-├── V0_9_2   │ PB
-├── V0_9_4   │ PB
-├── V0_9_7 ──┘ Production Branch (PB), NS: immonex\WordPressFreePluginCore\V0_9_7
-├── V1_0 <───┐ DB
+├── DEV <────┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\DEV
 ├── V1_0_0   │ PB
-├── V1_0_1   │ PB
-└── V1_0_5 ──┘ PB
+├── V1_1_0   │ PB
+├── V1_1_1   │ PB
+└── V1_1_7 ──┘ Production Branch (PB), NS: immonex\WordPressFreePluginCore\V1_1_7
 ```
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.
 
-Folders without patch level in their name and namespaces (`VX_Y`) are **development branches** that always contain classes of the **latest patch level** of the respective major/minor version.
+`DEV` always contains the latest **development version**.
 
 **Public (production) releases** of plugins that use this library always refer to the latest **production branch** (including patch level).
 

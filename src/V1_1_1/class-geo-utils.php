@@ -5,7 +5,7 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\V1_0;
+namespace immonex\WordPressFreePluginCore\V1_1_1;
 
 /**
  * Geocoding related utility methods.
@@ -15,7 +15,7 @@ namespace immonex\WordPressFreePluginCore\V1_0;
 class Geo_Utils {
 
 	const NOMINATIM_BASE_URL                 = 'https://nominatim.openstreetmap.org/search';
-	const PHOTON_BASE_URL                    = 'https://photon.komoot.de/api/';
+	const PHOTON_BASE_URL                    = 'https://photon.komoot.io/api/';
 	const PHOTO_LOCATION_BIAS_LAT            = 51.163375; // Latitude of the geographical center of Germany.
 	const PHOTO_LOCATION_BIAS_LNG            = 10.447683; // Longitude of the geographical center of Germany.
 	const GOOGLE_MAPS_API_WITH_KEY_BASE_URL  = 'https://maps.googleapis.com/maps/api/geocode/';
