@@ -42,7 +42,7 @@ With the [Composer-based installation](#via-composer), the plugin core library g
 
 ```json
     "require": {
-        "immonex/wp-free-plugin-core": "^1.1.0"
+        "immonex/wp-free-plugin-core": "^1.1.1"
     },
 ```
 
@@ -76,26 +76,25 @@ That's it!
 
 ## Folder Based Versioning
 
-The `src` folder contains one development and multiple release version branches:
+The `src` folder usually contains two "version branch" folders for the latest development (`DEV`) and production release (`VX_X_X`) versions. It **may** optionally contain multiple production release folders.
 
 ```
 src
 ├── DEV <────┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\DEV
-├── V1_0_0   │ PB
-├── V1_1_0   │ PB
-├── V1_1_1   │ PB
-└── V1_1_7 ──┘ Production Branch (PB), NS: immonex\WordPressFreePluginCore\V1_1_7
+├── V1_0_0   │ optional PB
+├── V1_1_0   │ optional PB
+└── V1_1_7 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V1_1_7
 ```
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.
 
-`DEV` always contains the latest **development version**.
-
-**Public (production) releases** of plugins that use this library always refer to the latest **production branch** (including patch level).
+**Public (production) releases** of plugins that use this library always refer to the latest **production branch**.
 
 ### Background
 
-Multiple immonex plugins that possibly require **different versions** of the core library can be active in the **same WordPress installation**. As these plugins are - more or less - independent components, the Composer dependency management does not work here. Ergo: Each plugin must ensure itself that the used core library files exactly match the required version. This avoids incompatibilities that can occur, for example, if an incompatible version has already been loaded by another active immonex plugin.
+Multiple immonex plugins that possibly require **different versions** of the core library can be active in the **same WordPress installation**. As these plugins are - more or less - independent components, the Composer dependency management does not work here. Ergo: Each plugin must ensure itself that the used core library files exactly match the required version.
+
+The **autoloading chain** supplied by this lib avoids incompatibilities that can occur, for example, if an incompatible version has already been loaded by another active immonex plugin.
 
 ## Development
 

@@ -7,7 +7,7 @@
 
 namespace immonex\WordPressFreePluginCore;
 
-if ( ! is_callable( __NAMESPACE__ . '\autoload' ) ) {
+spl_autoload_register(
 	/**
 	 * Automatically locate and load files based on their namespaces and their
 	 * class/file names whenever they are instantiated.
@@ -18,7 +18,7 @@ if ( ! is_callable( __NAMESPACE__ . '\autoload' ) ) {
 	 *
 	 * @param string $class_name Name of the class to be instantiated.
 	 */
-	function autoload( $class_name ) {
+	function ( $class_name ) {
 		/* Only autoload classes from this namespace. */
 		if ( false === strpos( $class_name, __NAMESPACE__ ) ) {
 			return;
@@ -80,7 +80,5 @@ if ( ! is_callable( __NAMESPACE__ . '\autoload' ) ) {
 		if ( stream_resolve_include_path( $fully_qualified_path ) ) {
 			include_once $fully_qualified_path;
 		}
-	} // autoload
-
-	spl_autoload_register( __NAMESPACE__ . '\autoload' );
-}
+	}
+);
