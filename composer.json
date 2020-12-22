@@ -20,9 +20,6 @@
         "phpdocumentor/reflection-docblock": "@dev",
         "doctrine/rst-parser": "@dev"
     },
-    "autoload": {
-        "psr-4": { "immonex\\WordPressFreePluginCore\\": "src/" }
-    },
     "autoload-dev": {
         "psr-4": { "immonex\\WordPressFreePluginCore\\tests\\": "tests/" }
     }
