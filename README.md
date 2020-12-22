@@ -42,7 +42,7 @@ With the [Composer-based installation](#via-composer), the plugin core library g
 
 ```json
     "require": {
-        "immonex/wp-free-plugin-core": "^1.1.1"
+        "immonex/wp-free-plugin-core": "^1.1.2"
     },
 ```
 
@@ -87,6 +87,8 @@ src
 ```
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.
+
+An arbitrary number **may** be added to the namespace of the files in the `DEV` folder to ensure uniqueness during development, e.g. `immonex\WordPressFreePluginCore\DEV123`.
 
 **Public (production) releases** of plugins that use this library always refer to the latest **production branch**.
 
@@ -185,7 +187,7 @@ $ npm run test
 
 ### Translations
 
-The core classes of this library do **and should** only include a few strings that have to be translated. Translations (PO/MO files) that are distributed as part of this library are provided in the [languages](languages) folder. This folder also contains a current POT file as base for custom translations that can be updated with the following command.
+The core classes of this library do **and should** only include a few strings that have to be translated. Translations (PO/MO files) that are distributed as part of this library are provided in the `languages` subfolders of the version branch directories. These folders also contain a current POT file as base for custom translations that can be updated with the following command.
 
 ```bash
 $ npm run pot

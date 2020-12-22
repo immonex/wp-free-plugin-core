@@ -25,17 +25,17 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\V1_1_1;
+namespace immonex\WordPressFreePluginCore\V1_1_2;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
  * @package immonex-wp-free-plugin-core
- * @version 1.1.1
+ * @version 1.1.2
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.1.1';
+	const BASE_VERSION = '1.1.2';
 
 	/**
 	 * Name of the custom field for storing plugin options
@@ -113,13 +113,6 @@ abstract class Base {
 	 * @var mixed[]
 	 */
 	protected $admin_notices = array();
-
-	/**
-	 * Translations already loaded?
-	 *
-	 * @var bool
-	 */
-	protected $translations_loaded = false;
 
 	/**
 	 * Plugin slug
@@ -1162,24 +1155,33 @@ abstract class Base {
 	 * @since 0.1
 	 */
 	protected function load_translations() {
-		if ( $this->translations_loaded ) {
-			return;
-		}
+		$domain       = $this->textdomain ? $this->textdomain : $this->plugin_slug;
+		$locale       = get_locale();
+		$base_version = basename( __DIR__ );
 
-		$domain = $this->textdomain ? $this->textdomain : $this->plugin_slug;
-		$locale = get_locale();
+		/**
+		 * Load plugin base translations first.
+		 */
+		load_plugin_textdomain(
+			'immonex-wp-free-plugin-core',
+			false,
+			wp_sprintf(
+				'%s/vendor/immonex/wp-free-plugin-core/src/%s/languages',
+				$this->plugin_slug,
+				$base_version
+			)
+		);
 
-		// Load plugin base translations first.
-		load_plugin_textdomain( 'immonex-wp-free-plugin-core', false, $this->plugin_slug . '/vendor/immonex/wp-free-plugin-core/languages' );
+		/**
+		 * Load plugin translations.
+		 */
+		$global_mo_file = trailingslashit( WP_LANG_DIR ) . "plugins/{$this->plugin_slug}-{$locale}.mo";
 
-		// Load plugin translations.
-		if ( file_exists( trailingslashit( WP_LANG_DIR ) . 'plugins/' . $this->plugin_slug . '-' . $locale . '.mo' ) ) {
-			load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . 'plugins/' . $this->plugin_slug . '-' . $locale . '.mo' );
+		if ( file_exists( $global_mo_file ) ) {
+			load_textdomain( $domain, $global_mo_file );
 		} else {
 			load_plugin_textdomain( $domain, false, $this->plugin_slug . '/languages' );
 		}
-
-		$this->translations_loaded;
 	} // load_translations
 
 	/**
