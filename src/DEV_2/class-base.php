@@ -25,17 +25,17 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\DEV;
+namespace immonex\WordPressFreePluginCore\DEV_2;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
  * @package immonex-wp-free-plugin-core
- * @version 1.1.2
+ * @version 1.1.3
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.1.2';
+	const BASE_VERSION = '1.1.3';
 
 	/**
 	 * Name of the custom field for storing plugin options

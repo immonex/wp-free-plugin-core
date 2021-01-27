@@ -76,7 +76,7 @@ That's it!
 
 ## Folder Based Versioning
 
-The `src` folder usually contains two "version branch" folders for the latest development (`DEV`) and production release (`VX_X_X`) versions. It **may** optionally contain multiple production release folders.
+The `src` folder usually contains two "version branch" folders for the latest development (`DEV[0-9_]+`) and production release (`VX_X_X`) versions. It **may** optionally contain multiple production release folders.
 
 ```
 src
@@ -88,7 +88,7 @@ src
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.
 
-An arbitrary number **may** be added to the namespace of the files in the `DEV` folder to ensure uniqueness during development, e.g. `immonex\WordPressFreePluginCore\DEV123`.
+An arbitrary number and an underscore may be added to the folder name and class namespaces of the `DEV` folder to ensure uniqueness during development, e.g. `immonex\WordPressFreePluginCore\DEV12_3`.
 
 **Public (production) releases** of plugins that use this library always refer to the latest **production branch**.
 

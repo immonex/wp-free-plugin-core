@@ -68,8 +68,8 @@ spl_autoload_register(
 		$cnt_file_path        = count( $file_path ) - 1;
 
 		for ( $i = 2; $i < $cnt_file_path; $i++ ) {
-			$dir = preg_match( '/^((V[0-9]+_[0-9]+(_[0-9]+)?)|DEV([0-9]+)?)/', $file_path[ $i ] ) ?
-				preg_replace( '/DEV([0-9]+)/', 'DEV', $file_path[ $i ] ) :
+			$dir = preg_match( '/^((V[0-9]+_[0-9]+(_[0-9]+)?)|DEV([0-9_]+)?)/', $file_path[ $i ] ) ?
+				$file_path[ $i ] :
 				strtolower( $file_path[ $i ] );
 
 			$fully_qualified_path .= trailingslashit( $dir );

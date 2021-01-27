@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: immonex WordPress free Plugin Core 1.1\n"
+"Project-Id-Version: immonex WordPress free Plugin Core 1.1.3\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2020-12-22 20:09:25+00:00\n"
-"PO-Revision-Date: 2020-12-22 21:13+0100\n"
+"POT-Creation-Date: 2021-01-27 09:53:58+00:00\n"
+"PO-Revision-Date: 2021-01-27 10:54+0100\n"
 "Last-Translator: \n"
 "Language-Team: Carsten Scheuer <scheuer@inveris.de>\n"
 "Language: de\n"
@@ -16,29 +16,38 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: DEV/class-base.php:487 DEV/class-base.php:493
-#: DEV/class-settings-helper.php:137 V1_1_1/class-base.php:494
-#: V1_1_1/class-base.php:500 V1_1_1/class-settings-helper.php:137
+#: DEV_2/class-base.php:487 DEV_2/class-base.php:493
+#: DEV_2/class-settings-helper.php:137 V1_1_2/class-base.php:487
+#: V1_1_2/class-base.php:493 V1_1_2/class-settings-helper.php:137
+#: V1_1_3/class-base.php:487 V1_1_3/class-base.php:493
+#: V1_1_3/class-settings-helper.php:137
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: DEV/class-base.php:593 V1_1_1/class-base.php:600
+#: DEV_2/class-base.php:593 V1_1_2/class-base.php:593 V1_1_3/class-base.php:593
 msgid "Settings updated."
 msgstr "Einstellungen aktualisiert."
 
-#: DEV/class-base.php:645 V1_1_1/class-base.php:652
+#: DEV_2/class-base.php:645 V1_1_2/class-base.php:645 V1_1_3/class-base.php:645
 msgid "weekly"
 msgstr "wöchentlich"
 
-#: DEV/class-base.php:1050 V1_1_1/class-base.php:1057
+#: DEV_2/class-base.php:1050 V1_1_2/class-base.php:1050
+#: V1_1_3/class-base.php:1050
 msgid "Documentation"
 msgstr "Dokumentation"
 
-#: DEV/class-base.php:1070 V1_1_1/class-base.php:1077
+#: DEV_2/class-base.php:1070 V1_1_2/class-base.php:1070
+#: V1_1_3/class-base.php:1070
 msgid "Development"
 msgstr "Entwicklung"
 
-#: DEV/class-template-utils.php:399 V1_1_1/class-template-utils.php:399
+#: DEV_2/class-geo-utils.php:184 V1_1_3/class-geo-utils.php:184
+msgid "unknown"
+msgstr "unbekannt"
+
+#: DEV_2/class-template-utils.php:399 V1_1_2/class-template-utils.php:399
+#: V1_1_3/class-template-utils.php:399
 msgid "default"
 msgstr "Standard"
 

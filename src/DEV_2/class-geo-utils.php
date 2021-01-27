@@ -5,7 +5,7 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\DEV;
+namespace immonex\WordPressFreePluginCore\DEV_2;
 
 /**
  * Geocoding related utility methods.
@@ -31,10 +31,22 @@ class Geo_Utils {
 	 * @var mixed[]
 	 */
 	private static $providers = array(
-		'nominatim'   => array( 'key_required' => false ),
-		'photon'      => array( 'key_required' => false ),
-		'google_maps' => array( 'key_required' => true ),
-		'bing_maps'   => array( 'key_required' => true ),
+		'nominatim'   => array(
+			'name'         => 'Nominatim/OSM',
+			'key_required' => false,
+		),
+		'photon'      => array(
+			'name'         => 'Photon/OSM',
+			'key_required' => false,
+		),
+		'google_maps' => array(
+			'name'         => 'Google Maps',
+			'key_required' => true,
+		),
+		'bing_maps'   => array(
+			'name'         => 'Bing Maps',
+			'key_required' => true,
+		),
 	);
 
 	/**
@@ -85,8 +97,8 @@ class Geo_Utils {
 						continue;
 					}
 
-					$provider_geocode_method = "_geocode_$provider";
-					$provider_result_method  = "_get_result_$provider";
+					$provider_geocode_method = "geocode_$provider";
+					$provider_result_method  = "get_result_$provider";
 
 					$geocode_response = self::$provider_geocode_method( $address, isset( $keys[ $provider ] ) ? $keys[ $provider ] : false, $language, $countrycodes );
 					if ( $geocode_response ) {
@@ -94,7 +106,14 @@ class Geo_Utils {
 					}
 
 					if ( $geocode_response ) {
-						return self::$provider_result_method( $geocode_response, $return_type );
+						$geocode_result = self::$provider_result_method( $geocode_response, $return_type );
+						if ( $geocode_result ) {
+							if ( 'compact' === $return_type ) {
+								$geocode_result['provider'] = isset( $api_attribs['name'] ) ? $api_attribs['name'] : '';
+							}
+
+							return $geocode_result;
+						}
 					}
 				}
 			}
@@ -126,13 +145,26 @@ class Geo_Utils {
 			$providers = self::$providers;
 		}
 
+		if ( $countrycodes ) {
+			$countrycodes = self::parse_countrycodes( $countrycodes );
+		}
+
+		$provider_states = array();
+
 		foreach ( $providers as $provider => $api_attribs ) {
-			if ( $countrycodes ) {
-				$countrycodes = self::parse_countrycodes( $countrycodes );
+			if (
+				$api_attribs['key_required'] &&
+				(
+					! isset( $keys[ $provider ] )
+					|| ! $keys[ $provider ]
+				)
+			) {
+				// Skip provider if no required key has been provided.
+				continue;
 			}
 
-			$provider_geocode_method = "_geocode_$provider";
-			$provider_status_method  = "_get_status_$provider";
+			$provider_geocode_method = "geocode_{$provider}";
+			$provider_status_method  = "get_status_{$provider}";
 
 			$geocode_response = self::$provider_geocode_method( $address, isset( $keys[ $provider ] ) ? $keys[ $provider ] : false, $language, $countrycodes );
 			if ( $geocode_response ) {
@@ -142,8 +174,18 @@ class Geo_Utils {
 				}
 			}
 
-			return $geocode_response ? self::$provider_status_method( $geocode_response ) : false;
+			if ( $geocode_response ) {
+				$provider_status = self::$provider_status_method( $geocode_response );
+			}
+
+			$provider_states[] = wp_sprintf(
+				'[%s] %s',
+				$api_attribs['name'],
+				! empty( $provider_status ) && is_string( $provider_status ) ? $provider_status : __( 'unknown', 'immonex-wp-free-plugin-core' )
+			);
 		}
+
+		return ! empty( $provider_states ) ? implode( ', ', $provider_states ) : false;
 	} // get_geocoding_status
 
 	/**
@@ -210,11 +252,15 @@ class Geo_Utils {
 	 *
 	 * @since 0.9
 	 *
-	 * @param object $response Raw response object.
+	 * @param object|string $response Raw response object or string.
 	 *
 	 * @return string|bool Status or false on error.
 	 */
 	private static function get_status_nominatim( $response ) {
+		if ( ! is_string( $response ) ) {
+			return false;
+		}
+
 		$title = preg_match( '/\<title\>(.*)\<\/title\>/', $response, $matches );
 		return $title ? '[Nominatim] ' . $matches[1] : false;
 	} // get_status_nominatim
