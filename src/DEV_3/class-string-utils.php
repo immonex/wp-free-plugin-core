@@ -5,7 +5,7 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_2;
+namespace immonex\WordPressFreePluginCore\DEV_3;
 
 /**
  * String related utility methods.
@@ -477,18 +477,41 @@ class String_Utils {
 	} // convert_urls_cb
 
 	/**
-	 * Return the current page URL without /page/X.
+	 * Return the current page URL without /page/X or ?paged=X.
 	 *
 	 * @since 0.9
 	 *
 	 * @return string Current URL without page number.
 	 */
-	public function get_nopaging_url() {
+	public function get_nopaging_url( $separate_query_vars = false ) {
 		global $wp;
-		$current_url  = home_url( add_query_arg( array(), $wp->request ) );
+
+		$current_url = home_url( add_query_arg( array(), $wp->request ) );
+		$query_vars  = array();
+
+		if ( ! empty( $wp->query_vars ) ) {
+			foreach ( $wp->query_vars as $var_name => $value ) {
+				if ( $value && ! in_array( $var_name, array( 'page', 'paged' ) ) ) {
+					$query_vars[ $var_name ] = $value;
+				}
+			}
+		}
+
+		if ( ! $wp->request && ! empty( $query_vars ) ) {
+			// Add GET vars if pretty permalink URLs are NOT activated.
+			$current_url = add_query_arg( $query_vars, trailingslashit( $current_url ) );
+		}
+
 		$nopaging_url = preg_replace( '/page\\/[0-9]+(\\/)?/i', '', $current_url );
 
-		return $nopaging_url;
+		if ( $separate_query_vars ) {
+			return array(
+				'url'        => $nopaging_url,
+				'query_vars' => $query_vars,
+			);
+		} else {
+			return $nopaging_url;
+		}
 	} // get_nopaging_url
 
 	/**

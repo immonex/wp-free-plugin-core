@@ -25,17 +25,17 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_2;
+namespace immonex\WordPressFreePluginCore\V1_1_4;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
  * @package immonex-wp-free-plugin-core
- * @version 1.1.3
+ * @version 1.1.4
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.1.3';
+	const BASE_VERSION = '1.1.4';
 
 	/**
 	 * Name of the custom field for storing plugin options
@@ -520,7 +520,7 @@ abstract class Base {
 
 		$this->plugin_options_access_capability = apply_filters(
 			// @codingStandardsIgnoreLine
-			$this->plugin_slug . 'plugin_options_access_capability',
+			$this->plugin_slug . '_plugin_options_access_capability',
 			$this->plugin_options_access_capability
 		);
 
@@ -981,7 +981,11 @@ abstract class Base {
 			}
 		}
 
-		$options = $this->settings_helper->merge_options( $this->plugin_options, $valid );
+		$options = apply_filters(
+			// @codingStandardsIgnoreLine
+			$this->plugin_slug . '_options_before_save',
+			$this->settings_helper->merge_options( $this->plugin_options, $valid )
+		);
 
 		return $options;
 	} // sanitize_plugin_options
