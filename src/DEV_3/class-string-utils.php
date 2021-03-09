@@ -481,7 +481,11 @@ class String_Utils {
 	 *
 	 * @since 0.9
 	 *
-	 * @return string Current URL without page number.
+	 * @param bool $separate_query_vars True if an array with URL and separate
+	 *                                  query vars shall be returned.
+	 *
+	 * @return string|mixed[] Current URL without page number or
+	 *                        array (URL + vars).
 	 */
 	public function get_nopaging_url( $separate_query_vars = false ) {
 		global $wp;

@@ -209,28 +209,36 @@ class Template_Utils {
 	 * @return string[] Array of default template folders.
 	 */
 	public function get_default_template_folders( $reverse_order = false, $include_skin_folders = true ) {
-		if ( $include_skin_folders && $this->skin ) {
-			$skin_folders = array(
-				trailingslashit( get_stylesheet_directory() ) . $this->plugin->plugin_slug . '/' . $this->skin,
-				trailingslashit( get_template_directory() ) . $this->plugin->plugin_slug . '/' . $this->skin,
-				trailingslashit( $this->plugin->plugin_dir ) . 'skins/' . $this->skin,
-				trailingslashit( $this->plugin->plugin_dir ) . 'templates/' . $this->skin,
-			);
-		} else {
-			$skin_folders = array();
-		}
-
-		$default_template_folders = array_merge(
-			$skin_folders,
-			array(
-				trailingslashit( get_stylesheet_directory() ) . $this->plugin->plugin_slug,
-				trailingslashit( get_template_directory() ) . $this->plugin->plugin_slug,
-				trailingslashit( $this->plugin->plugin_dir ) . 'skins',
-				trailingslashit( $this->plugin->plugin_dir ) . 'templates',
-			)
+		$skin_folders    = array();
+		$default_folders = array(
+			trailingslashit( get_stylesheet_directory() ) . $this->plugin->plugin_slug,
+			trailingslashit( get_template_directory() ) . $this->plugin->plugin_slug,
+			trailingslashit( $this->plugin->plugin_dir ) . 'skins',
+			trailingslashit( $this->plugin->plugin_dir ) . 'templates',
 		);
 
-		$default_template_folders = array_unique( $default_template_folders );
+		$base_folders = apply_filters(
+			// @codingStandardsIgnoreLine
+			"{$this->plugin->plugin_prefix}template_search_folders",
+			array_unique( $default_folders )
+		);
+
+		if ( empty( $base_folders ) ) {
+			$base_folders = $default_folders;
+		}
+
+		if ( $include_skin_folders && $this->skin ) {
+			foreach ( $base_folders as $folder ) {
+				$skin_folders[] = trailingslashit( $folder ) . $this->skin;
+			}
+		}
+
+		$default_template_folders = array_unique(
+			array_merge(
+				$skin_folders,
+				$base_folders
+			)
+		);
 
 		return $reverse_order ? array_reverse( $default_template_folders ) : $default_template_folders;
 	} // get_default_template_folders
@@ -245,29 +253,36 @@ class Template_Utils {
 	 * @return string File URL.
 	 */
 	public function get_template_file_url( $file ) {
-		$path_parts = pathinfo( $file );
+		if ( WP_CONTENT_DIR === substr( $file, 0, strlen( WP_CONTENT_DIR ) ) ) {
+			$rel_path = substr( $file, strlen( WP_CONTENT_DIR ) );
 
-		$file_dir                  = isset( $path_parts['dirname'] ) ? $path_parts['dirname'] : '';
-		$theme_dir                 = trailingslashit( get_template_directory() ) . $this->plugin->plugin_slug;
-		$child_theme_dir           = trailingslashit( get_stylesheet_directory() ) . $this->plugin->plugin_slug;
-		$template_root_folder_name = false === strpos( $file, '/skins/' ) ? 'templates' : 'skins';
-		$plugin_dir                = trailingslashit( $this->plugin->plugin_dir ) . $template_root_folder_name;
+			if ( '/' !== DIRECTORY_SEPARATOR ) {
+				$rel_path = str_replace( DIRECTORY_SEPARATOR, '/', $rel_path );
+			}
 
-		if ( substr( $file_dir, 0, strlen( $theme_dir ) ) === $theme_dir ) {
-			// Theme folder.
-			$file_part = substr( $file, strlen( $theme_dir ) );
-			return trailingslashit( get_template_directory_uri() ) . $this->plugin->plugin_slug . $file_part;
-		} elseif ( substr( $file_dir, 0, strlen( $child_theme_dir ) ) === $child_theme_dir ) {
-			// Child theme folder.
-			$file_part = substr( $file, strlen( $child_theme_dir ) );
-			return trailingslashit( get_stylesheet_directory_uri() ) . $this->plugin->plugin_slug . $file_part;
-		} elseif ( substr( $file_dir, 0, strlen( $plugin_dir ) ) === $plugin_dir ) {
-			// Plugin folder.
-			$file_part = substr( $file, strlen( $plugin_dir ) );
-			return plugins_url(
-				$template_root_folder_name . '/' . $file_part,
-				$this->plugin->plugin_dir . '/' . $this->plugin->plugin_slug . '.php' 
-			);
+			return content_url( $rel_path );
+		}
+
+		$folder_mappings = apply_filters(
+			// @codingStandardsIgnoreLine
+			"{$this->plugin->plugin_prefix}template_folder_url_mappings",
+			array()
+		);
+
+		if ( empty( $folder_mappings ) || ! is_array( $folder_mappings ) ) {
+			return false;
+		}
+
+		foreach ( $folder_mappings as $fs_folder => $htdocs_folder_or_url ) {
+			$fs_folder = trailingslashit( $fs_folder );
+
+			if ( substr( $file, 0, strlen( $fs_folder ) ) === $fs_folder ) {
+				$rel_path = substr( $file, strlen( $fs_folder ) );
+				$base_url = 'http' === substr( $htdocs_folder_or_url, 0, 4 ) ?
+					$htdocs_folder_or_url : home_url( $htdocs_folder_or_url );
+
+				return trailingslashit( $base_url ) . $rel_path;
+			}
 		}
 
 		return false;
