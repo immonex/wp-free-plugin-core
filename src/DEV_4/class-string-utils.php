@@ -5,7 +5,7 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\V1_1_4;
+namespace immonex\WordPressFreePluginCore\DEV_4;
 
 /**
  * String related utility methods.

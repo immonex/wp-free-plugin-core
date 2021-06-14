@@ -5,7 +5,7 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_3;
+namespace immonex\WordPressFreePluginCore\DEV_4;
 
 /**
  * Geocoding related utility methods.
@@ -14,6 +14,7 @@ namespace immonex\WordPressFreePluginCore\DEV_3;
  */
 class Geo_Utils {
 
+	const EARTH_RADIUS                       = 6378.388;
 	const NOMINATIM_BASE_URL                 = 'https://nominatim.openstreetmap.org/search';
 	const PHOTON_BASE_URL                    = 'https://photon.komoot.io/api/';
 	const PHOTO_LOCATION_BIAS_LAT            = 51.163375; // Latitude of the geographical center of Germany.
@@ -48,6 +49,29 @@ class Geo_Utils {
 			'key_required' => true,
 		),
 	);
+
+	/**
+	 * Calculate the distance (beeline) in km between two coordinate pairs.
+	 *
+	 * @param float $lat1 Location 1 latitude.
+	 * @param float $lnt1 Location 1 longitude.
+	 * @param float $lat2 Location 2 latitude.
+	 * @param float $lnt2 Location 2 longitude.
+	 *
+	 * @return float Distance in km.
+	 */
+	public static function calculate_distance_km( $lat1, $lng1, $lat2, $lng2 ) {
+		$lat1_rad = deg2rad( $lat1 );
+		$lng1_rad = deg2rad( $lng1 );
+		$lat2_rad = deg2rad( $lat2 );
+		$lng2_rad = deg2rad( $lng2 );
+
+		return static::EARTH_RADIUS * acos(
+			sin( $lat1_rad ) * sin( $lat2_rad )
+			+ cos( $lat1_rad ) * cos( $lat2_rad )
+			* cos( $lng2_rad - $lng1_rad )
+		);
+	} // calculate_distance_km
 
 	/**
 	 * Get geo information for a given address.

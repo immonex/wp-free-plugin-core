@@ -5,7 +5,8 @@
  * @package immonex-wp-free-plugin-core
  */
 
-$iwpfpc_options_logo = $this->plugin_dir . '/assets/options-logo.png';
+$iwpfpc_options_logo   = $this->plugin_dir . '/assets/options-logo.png';
+$iwpfpc_is_custom_logo = false;
 
 if ( file_exists( $iwpfpc_options_logo ) ) {
 	$iwpfpc_options_logo_url = plugins_url(
@@ -14,13 +15,18 @@ if ( file_exists( $iwpfpc_options_logo ) ) {
 	);
 	$iwpfpc_options_logo_alt = $this->plugin_infos['name'];
 	$iwpfpc_is_custom_logo   = true;
-} else {
+} elseif ( $this->plugin_infos['has_free_license'] ) {
 	$iwpfpc_options_logo_url = plugins_url(
 		'/vendor/immonex/wp-free-plugin-core/assets/immonex-os-logo-small.png',
 		$this->plugin_infos['plugin_main_file']
 	);
 	$iwpfpc_options_logo_alt = 'Logo: immonex Open Source Software';
-	$iwpfpc_is_custom_logo   = false;
+} else {
+	$iwpfpc_options_logo_url = plugins_url(
+		'/vendor/immonex/wp-free-plugin-core/assets/immonex-wp-logo-small.png',
+		$this->plugin_infos['plugin_main_file']
+	);
+	$iwpfpc_options_logo_alt = 'Logo: immonex Solutions for WordPress';
 }
 
 $iwpfpc_immonex_os_logo_url = plugins_url(
@@ -32,8 +38,67 @@ $iwpfpc_inveris_oss_logo_url = plugins_url(
 	'/vendor/immonex/wp-free-plugin-core/assets/inveris-oss-logo-tiny.png',
 	$this->plugin_infos['plugin_main_file']
 );
+
+$iwpfpc_inveris_plugin_logo_url = plugins_url(
+	'/vendor/immonex/wp-free-plugin-core/assets/inveris-plugin-logo-tiny.png',
+	$this->plugin_infos['plugin_main_file']
+);
 ?>
 <style>
+	.inveris-free-plugin-options .special-info {
+		display: flex;
+		align-items: center;
+		margin-bottom: 32px;
+		padding: 8px;
+		color: #FFF;
+		background-color: #733578;
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.inveris-free-plugin-options-icon {
+		margin: 12px;
+	    border: 2px solid #303030;
+	    display: inline-block;
+	    position: relative;
+	    vertical-align: top;
+	    box-sizing: content-box;
+	}
+	.inveris-free-plugin-options-icon:after,
+	.inveris-free-plugin-options-icon:before {
+	    background: #fed;
+	    border: 2px solid #303030;
+	    content: '';
+	    position: absolute;
+	}
+
+	.inveris-free-plugin-options-icon-info {
+	    height: 26px;
+	    width: 26px;
+	    border-radius: 100%;
+	    border-color: #FFF;
+	}
+	.inveris-free-plugin-options-icon-info:before {
+	    height: 1px;
+	    left: 10px;
+	    top: 5px;
+	    width: 2px;
+	    background: #FFF;
+	    border-color: #FFF;
+	}
+	.inveris-free-plugin-options-icon-info:after {
+	    height: 6px;
+	    left: 10px;
+	    top: 12px;
+	    width: 2px;
+	    background: #FFF;
+	    border-color: #FFF;
+	}
+
+	.inveris-free-plugin-options .special-info a {
+		color: #FFF;
+	}
+
 	.inveris-free-plugin-options .tab-footer-info {
 		padding: 8px;
 		color: #A0A0A0;
@@ -77,6 +142,17 @@ $iwpfpc_inveris_oss_logo_url = plugins_url(
 
 	<?php echo isset( $this->plugin_infos['name'] ) ? '<h1 class="options-hl">' . $this->plugin_infos['name'] . '</h1>' : ''; ?>
 
+	<?php if ( ! empty( $this->plugin_infos['special_info'] ) ) : ?>
+	<div class="special-info">
+		<div>
+			<div class="inveris-free-plugin-options-icon inveris-free-plugin-options-icon-info"></div>
+		</div>
+		<div>
+			<?php echo $this->plugin_infos['special_info']; ?>
+		</div>
+	</div>
+	<?php endif; ?>
+
 	<?php $this->display_tab_nav(); ?>
 
 	<?php
@@ -117,10 +193,14 @@ $iwpfpc_inveris_oss_logo_url = plugins_url(
 		</div>
 
 		<div class="developer-logos">
-			<?php if ( $iwpfpc_is_custom_logo ) : ?>
+			<?php if ( $iwpfpc_is_custom_logo && $this->plugin_infos['has_free_license'] ) : ?>
 			<a href="https://immonex.dev/" target="_blank"><img src="<?php echo esc_url( $iwpfpc_immonex_os_logo_url ); ?>" alt="Logo: immonex Open Source Software"></a>
 			<?php endif; ?>
+			<?php if ( $this->plugin_infos['has_free_license'] ) : ?>
 			<a href="https://inveris.de/" target="_blank"><img src="<?php echo esc_url( $iwpfpc_inveris_oss_logo_url ); ?>" alt="Logo: inveris Open Source Software"></a>
+			<?php else : ?>
+			<a href="https://inveris.de/" target="_blank"><img src="<?php echo esc_url( $iwpfpc_inveris_plugin_logo_url ); ?>" alt="Logo: WordPress Plugins by inveris"></a>
+			<?php endif; ?>
 		</div>
 	</div>
 </div>

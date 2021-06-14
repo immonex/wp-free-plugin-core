@@ -25,17 +25,17 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_3;
+namespace immonex\WordPressFreePluginCore\DEV_4;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
  * @package immonex-wp-free-plugin-core
- * @version 1.1.5
+ * @version 1.2.0
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.1.5';
+	const BASE_VERSION = '1.2.0';
 
 	/**
 	 * Name of the custom field for storing plugin options
@@ -141,6 +141,13 @@ abstract class Base {
 	 * @var string
 	 */
 	public $plugin_main_file;
+
+	/**
+	 * Main plugin file (path relative to WP plugin dir)
+	 *
+	 * @var string
+	 */
+	public $plugin_main_file_rel;
 
 	/**
 	 * Handle for enqueuing the main backend CSS file
@@ -287,6 +294,7 @@ abstract class Base {
 				'public_prefix'    => static::PUBLIC_PREFIX,
 				'plugin_dir'       => $this->plugin_dir,
 				'plugin_main_file' => $this->plugin_main_file,
+				'has_free_license' => ! defined( 'static::FREE_LICENSE' ) || static::FREE_LICENSE,
 			)
 		);
 
@@ -572,8 +580,13 @@ abstract class Base {
 			}
 		}
 
-		// Add base WP-Cron intervals.
-		add_filter( 'cron_schedules', array( $this, 'add_base_wp_cron_intervals' ) );
+		// Add WP-Cron-based actions.
+		if ( method_exists( $this, 'do_daily' ) ) {
+			add_action( static::PLUGIN_PREFIX . 'do_daily', array( $this, 'do_daily' ) );
+		}
+		if ( method_exists( $this, 'do_weekly' ) ) {
+			add_action( static::PLUGIN_PREFIX . 'do_weekly', array( $this, 'do_weekly' ) );
+		}
 
 		// Enqueue frontend CSS and JS files.
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts_and_styles' ) );
@@ -630,24 +643,6 @@ abstract class Base {
 			$this->activate_plugin();
 		}
 	} // init_plugin_admin
-
-	/**
-	 * Add base WP-Cron interval(s).
-	 *
-	 * @param mixed[] $schedules Current schedules.
-	 *
-	 * @since 0.7
-	 */
-	public function add_base_wp_cron_intervals( $schedules ) {
-		if ( ! isset( $schedules['weekly'] ) ) {
-			$schedules['weekly'] = array(
-				'interval' => 604800, // Time in seconds.
-				'display'  => __( 'weekly', 'immonex-wp-free-plugin-core' ),
-			);
-		}
-
-		return $schedules;
-	} // add_base_wp_cron_intervals
 
 	/**
 	 * Load and register widgets (to be overwritten in derived classes).
@@ -785,7 +780,7 @@ abstract class Base {
 	 *
 	 * @since 0.1
 	 *
-	 * @param string $hook_suffix The current admin page..
+	 * @param string $hook_suffix The current admin page.
 	 */
 	public function admin_scripts_and_styles( $hook_suffix ) {
 		if ( ! is_admin() ) {
@@ -933,16 +928,14 @@ abstract class Base {
 
 				if (
 					isset( $field['min'] ) &&
-					is_numeric( $value ) &&
-					$value < $field['min']
+					(float) $value < $field['min']
 				) {
 					$value = $field['min'];
 				}
 
 				if (
 					isset( $field['max'] ) &&
-					is_numeric( $value ) &&
-					$value > $field['max']
+					(float) $value > $field['max']
 				) {
 					$value = $field['max'];
 				}
@@ -999,10 +992,11 @@ abstract class Base {
 		$this->plugin_infos = array_merge(
 			$this->plugin_infos,
 			array(
-				'name'          => defined( 'static::PLUGIN_NAME' ) ? static::PLUGIN_NAME : '',
-				'prefix'        => defined( 'static::PLUGIN_PREFIX' ) ? static::PLUGIN_PREFIX : '',
-				'logo_link_url' => defined( 'static::PLUGIN_HOME_URL' ) ? static::PLUGIN_HOME_URL : '',
-				'footer'        => array(),
+				'name'             => defined( 'static::PLUGIN_NAME' ) ? static::PLUGIN_NAME : '',
+				'prefix'           => defined( 'static::PLUGIN_PREFIX' ) ? static::PLUGIN_PREFIX : '',
+				'logo_link_url'    => defined( 'static::PLUGIN_HOME_URL' ) ? static::PLUGIN_HOME_URL : '',
+				'footer'           => array(),
+				'has_free_license' => ! defined( 'static::FREE_LICENSE' ) || static::FREE_LICENSE,
 			)
 		);
 

@@ -5,7 +5,7 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_3;
+namespace immonex\WordPressFreePluginCore\DEV_4;
 
 /**
  * General (mostly WordPress related) utility methods.
@@ -329,31 +329,50 @@ class General_Utils {
 	 * @since 0.7
 	 *
 	 * @param string $url URL.
-	 * @param array  $params Array of parameters to send.
+	 * @param array  $data Data to send.
 	 *
 	 * @return string|bool Output part of response or false on error.
 	 */
-	public static function post( $url, $params ) {
-		if ( ! function_exists( 'curl_init' ) ) {
-			return false;
+	public static function post( $url, $data ) {
+		if ( function_exists( 'curl_init' ) ) {
+			// Use cURL if available...
+			$post_data = '';
+
+			foreach ( $data as $key => $value ) {
+				$post_data .= $key . '=' . $value . '&';
+			}
+			$post_data = rtrim( $post_data, '&' );
+
+			$ch = curl_init();
+			curl_setopt_array( $ch, array(
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_SSL_VERIFYHOST => false,
+				CURLOPT_CONNECTTIMEOUT => 0,
+				CURLOPT_TIMEOUT        => 15,
+				CURLOPT_HEADER         => false,
+				CURLOPT_POST           => true,
+				CURLOPT_POSTFIELDS     => $post_data,
+				CURLOPT_URL            => $url,
+			) );
+
+			$result = curl_exec( $ch );
+			curl_close( $ch );
+
+			return $result;
+		} else {
+			// Fallback method via file_get_contents.
+			$options = array(
+				'http' => array(
+					'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+					'method'  => 'POST',
+					'content' => http_build_query( $data ),
+				),
+			);
+			$context = stream_context_create( $options );
+
+			return file_get_contents( $url, false, $context );
 		}
-
-		$post_data = '';
-		foreach ( $params as $key => $value ) {
-			$post_data .= $key . '=' . $value . '&';
-		}
-		$post_data = rtrim( $post_data, '&' );
-
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $url );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_HEADER, false );
-		curl_setopt( $ch, CURLOPT_POST, true );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $post_data );
-		$return = curl_exec( $ch );
-		curl_close( $ch );
-
-		return $return;
 	} // post
 
 	/**

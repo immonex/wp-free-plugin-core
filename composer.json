@@ -6,6 +6,7 @@
     "keywords": ["immonex", "wordpress", "wp", "real estate", "plugin", "openimmo", "immobilien"],
     "homepage": "https://github.com/immonex/wp-free-plugin-core",
     "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev",
     "repositories": [
         {
             "type": "vcs",

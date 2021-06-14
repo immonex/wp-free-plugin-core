@@ -5,7 +5,7 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_3;
+namespace immonex\WordPressFreePluginCore\DEV_4;
 
 /**
  * Utility methods for a very simple kind of templating.
@@ -146,6 +146,28 @@ class Template_Utils {
 			return false;
 		}
 
+		$path_parts = pathinfo( $filename );
+		if ( ! isset( $path_parts['extension'] ) || ! $path_parts['extension'] ) {
+			$filename .= '.php';
+		}
+
+		if ( preg_match( '/\[-([a-z]{2}(_[A-Z]{2})?(_formal)?)\]/', $filename, $matches ) ) {
+			$locale              = $matches[1];
+			$localized_filenames = array( str_replace( $matches[0], "-{$locale}", $filename ) );
+
+			if ( false !== strpos( $locale, '_formal' ) ) {
+				$lang_country          = substr( $locale, 0, strpos( $locale, '_formal' ) );
+				$localized_filenames[] = str_replace( $matches[0], "-{$lang_country}", $filename );
+			}
+			if ( strlen( $locale ) > 2 && '_' === $locale[2] ) {
+				$lang                  = substr( $locale, 0, 2 );
+				$localized_filenames[] = str_replace( $matches[0], "-{$lang}", $filename );
+			}
+			$localized_filenames[] = str_replace( $matches[0], '', $filename );
+		} else {
+			$localized_filenames = array( $filename );
+		}
+
 		if ( empty( $add_folders ) ) {
 			$add_folders = array();
 		}
@@ -159,10 +181,6 @@ class Template_Utils {
 		}
 
 		$template_file = false;
-		$path_parts    = pathinfo( $filename );
-		if ( ! isset( $path_parts['extension'] ) || ! $path_parts['extension'] ) {
-			$filename .= '.php';
-		}
 
 		if (
 			'override' === $add_folder_mode &&
@@ -184,10 +202,12 @@ class Template_Utils {
 		}
 
 		foreach ( $search_folders as $folder ) {
-			$file = trailingslashit( $folder ) . $filename;
-			if ( file_exists( $file ) ) {
-				$template_file = $file;
-				break;
+			foreach ( $localized_filenames as $filename ) {
+				$file = trailingslashit( $folder ) . $filename;
+				if ( file_exists( $file ) ) {
+					$template_file = $file;
+					break;
+				}
 			}
 		}
 
