@@ -31,11 +31,11 @@ namespace immonex\WordPressFreePluginCore\DEV_4;
  * Base class for free immonex WordPress plugins.
  *
  * @package immonex-wp-free-plugin-core
- * @version 1.2.0
+ * @version 1.2.1
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.2.0';
+	const BASE_VERSION = '1.2.1';
 
 	/**
 	 * Name of the custom field for storing plugin options
@@ -688,46 +688,63 @@ abstract class Base {
 		}
 
 		if ( ! empty( $this->plugin_options['skin'] ) ) {
-			/**
-			 * Skin CSS
-			 */
-			$skin_css = $this->utils['template']->locate_template_file( 'css/index.css' );
-			if ( $skin_css ) {
-				$skin_css_url = $this->utils['template']->get_template_file_url( $skin_css );
+			$lookup_basenames = array( 'index', 'extend' );
 
-				if ( $skin_css_url ) {
-					$skin_css_deps = array();
-					if ( wp_style_is( $this->frontend_base_css_handle ) ) {
-						$skin_css_deps[] = $this->frontend_base_css_handle;
+			foreach ( $lookup_basenames as $basename ) {
+				/**
+				 * Skin CSS
+				 */
+				$skin_css = $this->utils['template']->locate_template_file( "css/{$basename}.css" );
+				if ( $skin_css ) {
+					$skin_css_url = $this->utils['template']->get_template_file_url( $skin_css );
+
+					if ( $skin_css_url ) {
+						$skin_css_deps = array();
+						if ( wp_style_is( $this->frontend_base_css_handle ) ) {
+							$skin_css_deps[] = $this->frontend_base_css_handle;
+						}
+
+						$handle = static::PUBLIC_PREFIX . 'skin';
+						if ( 'index' !== $basename ) {
+							$handle .= "-{$basename}";
+						}
+
+						wp_enqueue_style(
+							$handle,
+							$skin_css_url,
+							$skin_css_deps,
+							$this->plugin_version
+						);
 					}
-
-					wp_enqueue_style(
-						static::PUBLIC_PREFIX . 'skin',
-						$skin_css_url,
-						$skin_css_deps,
-						$this->plugin_version
-					);
 				}
-			}
 
-			$skin_js = $this->utils['template']->locate_template_file( 'js/index.js' );
-			if ( $skin_js ) {
-				$skin_js_url = $this->utils['template']->get_template_file_url( $skin_js );
+				/**
+				 * Skin JS
+				 */
+				$skin_js = $this->utils['template']->locate_template_file( "js/{$basename}.js" );
+				if ( $skin_js ) {
+					$skin_js_url = $this->utils['template']->get_template_file_url( $skin_js );
 
-				if ( $skin_js_url ) {
-					$skin_js_deps = array( 'jquery' );
-					if ( wp_script_is( $this->frontend_base_js_handle ) ) {
-						$skin_js_deps[] = $this->frontend_base_js_handle;
+					if ( $skin_js_url ) {
+						$skin_js_deps = array( 'jquery' );
+						if ( wp_script_is( $this->frontend_base_js_handle ) ) {
+							$skin_js_deps[] = $this->frontend_base_js_handle;
+						}
+
+						$handle = static::PUBLIC_PREFIX . 'skin-js';
+						if ( 'index' !== $basename ) {
+							$handle .= "-{$basename}";
+						}
+
+						wp_register_script(
+							$handle,
+							$skin_js_url,
+							$skin_js_deps,
+							$this->plugin_version,
+							true
+						);
+						wp_enqueue_script( $handle );
 					}
-
-					wp_register_script(
-						static::PUBLIC_PREFIX . 'skin-js',
-						$skin_js_url,
-						$skin_js_deps,
-						$this->plugin_version,
-						true
-					);
-					wp_enqueue_script( static::PUBLIC_PREFIX . 'skin-js' );
 				}
 			}
 		}

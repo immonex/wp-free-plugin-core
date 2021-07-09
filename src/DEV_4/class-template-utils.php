@@ -204,9 +204,10 @@ class Template_Utils {
 		foreach ( $search_folders as $folder ) {
 			foreach ( $localized_filenames as $filename ) {
 				$file = trailingslashit( $folder ) . $filename;
+
 				if ( file_exists( $file ) ) {
 					$template_file = $file;
-					break;
+					break 2;
 				}
 			}
 		}

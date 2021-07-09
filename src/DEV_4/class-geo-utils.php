@@ -54,9 +54,9 @@ class Geo_Utils {
 	 * Calculate the distance (beeline) in km between two coordinate pairs.
 	 *
 	 * @param float $lat1 Location 1 latitude.
-	 * @param float $lnt1 Location 1 longitude.
+	 * @param float $lng1 Location 1 longitude.
 	 * @param float $lat2 Location 2 latitude.
-	 * @param float $lnt2 Location 2 longitude.
+	 * @param float $lng2 Location 2 longitude.
 	 *
 	 * @return float Distance in km.
 	 */

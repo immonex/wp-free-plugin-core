@@ -344,17 +344,20 @@ class General_Utils {
 			$post_data = rtrim( $post_data, '&' );
 
 			$ch = curl_init();
-			curl_setopt_array( $ch, array(
-				CURLOPT_RETURNTRANSFER => true,
-				CURLOPT_FOLLOWLOCATION => true,
-				CURLOPT_SSL_VERIFYHOST => false,
-				CURLOPT_CONNECTTIMEOUT => 0,
-				CURLOPT_TIMEOUT        => 15,
-				CURLOPT_HEADER         => false,
-				CURLOPT_POST           => true,
-				CURLOPT_POSTFIELDS     => $post_data,
-				CURLOPT_URL            => $url,
-			) );
+			curl_setopt_array(
+				$ch,
+				array(
+					CURLOPT_RETURNTRANSFER => true,
+					CURLOPT_FOLLOWLOCATION => true,
+					CURLOPT_SSL_VERIFYHOST => false,
+					CURLOPT_CONNECTTIMEOUT => 0,
+					CURLOPT_TIMEOUT        => 15,
+					CURLOPT_HEADER         => false,
+					CURLOPT_POST           => true,
+					CURLOPT_POSTFIELDS     => $post_data,
+					CURLOPT_URL            => $url,
+				)
+			);
 
 			$result = curl_exec( $ch );
 			curl_close( $ch );

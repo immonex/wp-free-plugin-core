@@ -58,41 +58,41 @@ $iwpfpc_inveris_plugin_logo_url = plugins_url(
 
 	.inveris-free-plugin-options-icon {
 		margin: 12px;
-	    border: 2px solid #303030;
-	    display: inline-block;
-	    position: relative;
-	    vertical-align: top;
-	    box-sizing: content-box;
+		border: 2px solid #303030;
+		display: inline-block;
+		position: relative;
+		vertical-align: top;
+		box-sizing: content-box;
 	}
 	.inveris-free-plugin-options-icon:after,
 	.inveris-free-plugin-options-icon:before {
-	    background: #fed;
-	    border: 2px solid #303030;
-	    content: '';
-	    position: absolute;
+		background: #fed;
+		border: 2px solid #303030;
+		content: '';
+		position: absolute;
 	}
 
 	.inveris-free-plugin-options-icon-info {
-	    height: 26px;
-	    width: 26px;
-	    border-radius: 100%;
-	    border-color: #FFF;
+		height: 26px;
+		width: 26px;
+		border-radius: 100%;
+		border-color: #FFF;
 	}
 	.inveris-free-plugin-options-icon-info:before {
-	    height: 1px;
-	    left: 10px;
-	    top: 5px;
-	    width: 2px;
-	    background: #FFF;
-	    border-color: #FFF;
+		height: 1px;
+		left: 10px;
+		top: 5px;
+		width: 2px;
+		background: #FFF;
+		border-color: #FFF;
 	}
 	.inveris-free-plugin-options-icon-info:after {
-	    height: 6px;
-	    left: 10px;
-	    top: 12px;
-	    width: 2px;
-	    background: #FFF;
-	    border-color: #FFF;
+		height: 6px;
+		left: 10px;
+		top: 12px;
+		width: 2px;
+		background: #FFF;
+		border-color: #FFF;
 	}
 
 	.inveris-free-plugin-options .special-info a {
