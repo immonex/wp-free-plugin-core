@@ -476,6 +476,12 @@ class Template_Utils {
 	 * @return string[] Array of pages (ID => Title).
 	 */
 	public function get_page_list( $args = array() ) {
+		if ( empty( $args ) ) {
+			$args = array(
+				'post_status' => array( 'publish', 'private' ),
+			);
+		}
+
 		$all_pages = get_pages( $args );
 		$pages     = array();
 
