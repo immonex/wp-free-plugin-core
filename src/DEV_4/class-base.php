@@ -136,6 +136,13 @@ abstract class Base {
 	public $plugin_dir;
 
 	/**
+	 * Plugin filesystem directory (full path), may differ from $this->plugin_dir)
+	 *
+	 * @var string
+	 */
+	public $plugin_fs_dir;
+
+	/**
 	 * Main plugin file (full path)
 	 *
 	 * @var string
@@ -246,14 +253,16 @@ abstract class Base {
 	 * @since 0.1
 	 *
 	 * @param string      $plugin_slug Plugin slug.
-	 * @param string|bool $textdomain Plugin text domain.
+	 * @param string|bool $textdomain Plugin text domain (optional).
+	 * @param string|bool $plugin_fs_dir Plugin filesystem directory (optional).
 	 *
 	 * @throws \Exception Exception thrown if plugin slug is missing.
 	 */
-	public function __construct( $plugin_slug, $textdomain = false ) {
+	public function __construct( $plugin_slug, $textdomain = false, $plugin_fs_dir = false ) {
 		if ( $plugin_slug ) {
 			$this->plugin_slug            = $plugin_slug;
 			$this->plugin_dir             = WP_PLUGIN_DIR . '/' . $plugin_slug;
+			$this->plugin_fs_dir          = $plugin_fs_dir ? $plugin_fs_dir : $this->plugin_dir;
 			$this->plugin_main_file       = $this->plugin_dir . '/' . $this->plugin_slug . '.php';
 			$this->plugin_main_file_rel   = $this->plugin_slug . '/' . $this->plugin_slug . '.php';
 			$this->plugin_options_name    = $plugin_slug . '_options';
@@ -293,6 +302,7 @@ abstract class Base {
 				'plugin_prefix'    => static::PLUGIN_PREFIX,
 				'public_prefix'    => static::PUBLIC_PREFIX,
 				'plugin_dir'       => $this->plugin_dir,
+				'plugin_fs_dir'    => $this->plugin_fs_dir,
 				'plugin_main_file' => $this->plugin_main_file,
 				'has_free_license' => ! defined( 'static::FREE_LICENSE' ) || static::FREE_LICENSE,
 			)
