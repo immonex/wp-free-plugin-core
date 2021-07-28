@@ -25,7 +25,7 @@
  * @package immonex-wp-free-plugin-core
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_4;
+namespace immonex\WordPressFreePluginCore\DEV_5;
 
 /**
  * Base class for free immonex WordPress plugins.
@@ -307,6 +307,8 @@ abstract class Base {
 				'has_free_license' => ! defined( 'static::FREE_LICENSE' ) || static::FREE_LICENSE,
 			)
 		);
+
+		add_action( static::PLUGIN_PREFIX . 'update_plugin_options', array( $this, 'update_plugin_options' ), 10, 2 );
 
 		add_action( 'wp_ajax_dismiss_admin_notice', array( $this, 'dismiss_admin_notice' ) );
 	} // __construct
@@ -788,6 +790,37 @@ abstract class Base {
 
 		return $new_options;
 	} // fetch_plugin_options
+
+	/**
+	 * Update changed plugin options (action callback).
+	 *
+	 * @since 1.2.2
+	 *
+	 * @param mixed[] $update_options Subset of options to be updated.
+	 * @param string  $context        Update context (optional).
+	 */
+	public function update_plugin_options( $update_options, $context = '' ) {
+		if ( empty( $this->plugin_options ) ) {
+			// (Re)fetch current plugin options.
+			$this->plugin_options = $this->fetch_plugin_options();
+		}
+
+		$options_changed = false;
+
+		foreach ( $this->plugin_options as $key => $old_value ) {
+			if (
+				isset( $update_options[ $key ] )
+				&& $update_options[ $key ] !== $old_value
+			) {
+				$this->plugin_options[ $key ] = $update_options[ $key ];
+				$options_changed = true;
+			}
+		}
+
+		if ( $options_changed ) {
+			update_option( $this->plugin_options_name, $this->plugin_options );
+		}
+	} // update_plugin_options
 
 	/**
 	 * Possibly set a new capability for accessing and updating plugin options.
