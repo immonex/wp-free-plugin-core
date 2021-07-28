@@ -309,6 +309,7 @@ abstract class Base {
 		);
 
 		add_action( static::PLUGIN_PREFIX . 'update_plugin_options', array( $this, 'update_plugin_options' ), 10, 2 );
+		add_action( static::PLUGIN_PREFIX . 'add_deferred_admin_notice', array( $this, 'add_deferred_admin_notice' ), 10, 3 );
 
 		add_action( 'wp_ajax_dismiss_admin_notice', array( $this, 'dismiss_admin_notice' ) );
 	} // __construct
@@ -813,7 +814,7 @@ abstract class Base {
 				&& $update_options[ $key ] !== $old_value
 			) {
 				$this->plugin_options[ $key ] = $update_options[ $key ];
-				$options_changed = true;
+				$options_changed              = true;
 			}
 		}
 
@@ -1134,14 +1135,15 @@ abstract class Base {
 
 	/**
 	 * Add a "deferred" administrative message that will be saved as part of the
-	 * plugin configuration.
+	 * plugin options (also used as action callback).
 	 *
 	 * @since 0.3.6
 	 *
 	 * @param string $message Message to display.
-	 * @param string $type Message type: "success" (default), "info", "warning", "error".
+	 * @param string $type    Message type: "success" (default), "info", "warning", "error".
+	 * @param string $context Message context (e.g. if called as action hook callback; optional).
 	 */
-	protected function add_deferred_admin_notice( $message, $type = 'success' ) {
+	public function add_deferred_admin_notice( $message, $type = 'success', $context = '' ) {
 		$notice_id = uniqid();
 
 		if ( ! in_array( $type, array( 'success', 'info', 'warning', 'error' ) ) ) {
@@ -1199,7 +1201,7 @@ abstract class Base {
 	 * @param int    $errno Error number.
 	 */
 	protected function br_trigger_error( $message, $errno ) {
-		if ( isset( $_GET['action'] ) && 'error_scrape' == $_GET['action'] ) {
+		if ( isset( $_GET['action'] ) && 'error_scrape' === $_GET['action'] ) {
 			echo '<strong>' . $message . '</strong>';
 			exit;
 		} else {
