@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<phpdocumentor>
-  <title>immonex WP Free Plugin Core</title>
-  <parser>
-    <target>.tmp/apidoc</target>
-  </parser>
-  <transformer>
-    <target>apidoc</target>
-  </transformer>
-  <files>
-    <directory>src</directory>
-  </files>
-  <transformations>
-    <template name="clean" />
-  </transformations>
+<phpdocumentor
+        configVersion="3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://www.phpdoc.org"
+        xsi:noNamespaceSchemaLocation="https://docs.phpdoc.org/latest/phpdoc.xsd"
+>
+    <title>immonex WP Free Plugin Core</title>
+    <paths>
+        <output>apidoc</output>
+        <cache>.tmp/apidoc</cache>
+    </paths>
+    <version number="latest">
+        <api>
+            <source dsn=".">
+                <path>src</path>
+            </source>
+            <include-source>true</include-source>
+        </api>
+    </version>
 </phpdocumentor>

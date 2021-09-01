@@ -2,15 +2,13 @@
 /**
  * Class Settings_Helper
  *
- * @package immonex-wp-free-plugin-core
+ * @package immonex\WordPressFreePluginCore
  */
 
 namespace immonex\WordPressFreePluginCore\DEV_5;
 
 /**
  * Helper class for dealing with the WordPress Settings API.
- *
- * @package immonex-wp-free-plugin-core
  */
 class Settings_Helper {
 
@@ -167,8 +165,8 @@ class Settings_Helper {
 	 * @return string|bool Tab ID or false if not existing.
 	 */
 	public function get_current_tab() {
-		if ( isset( $_REQUEST['tab'] ) && $_REQUEST['tab'] ) {
-			return $_REQUEST['tab'];
+		if ( ! empty( sanitize_key( $_REQUEST['tab'] ) ) ) {
+			return sanitize_key( $_REQUEST['tab'] );
 		} else {
 			return false;
 		}
@@ -197,7 +195,7 @@ class Settings_Helper {
 			echo '<h2 class="nav-tab-wrapper">';
 			foreach ( $this->option_page_tabs as $tab_id => $tab ) {
 				$class     = ( $tab_id === $this->current_tab ) ? ' nav-tab-active' : '';
-				$post_type = isset( $_GET['post_type'] ) ? 'post_type=' . sanitize_title( $_GET['post_type'] ) . '&' : '';
+				$post_type = isset( $_GET['post_type'] ) ? 'post_type=' . sanitize_title( wp_unslash( $_GET['post_type'] ) ) . '&' : '';
 
 				echo wp_sprintf(
 					'<a class="nav-tab%1$s" href="?%2$spage=%3$s_settings&tab=%4$s">%5$s</a>',
@@ -208,7 +206,7 @@ class Settings_Helper {
 					$tab['title']
 				);
 			}
-			echo "</h2>\n";
+			echo '</h2>' . PHP_EOL;
 		}
 	} // display_tab_nav
 
@@ -398,8 +396,8 @@ class Settings_Helper {
 			$option_page_tab_keys = array_keys( $this->option_page_tabs );
 
 			// Select current tab bases on related GET variable.
-			if ( isset( $_GET['tab'] ) && in_array( $_GET['tab'], array_keys( $this->option_page_tabs ) ) ) {
-				$this->current_tab = $_GET['tab'];
+			if ( isset( $_GET['tab'] ) && in_array( $_GET['tab'], array_keys( $this->option_page_tabs ), true ) ) {
+				$this->current_tab = sanitize_key( $_GET['tab'] );
 			} else {
 				$this->current_tab = $option_page_tab_keys[0];
 			}
@@ -423,10 +421,10 @@ class Settings_Helper {
 	 */
 	public function render_section( $args ) {
 		// Make current tab info available after submit.
-		echo '<input type="hidden" name="tab" value="' . $this->current_tab . '">' . "\n";
+		echo '<input type="hidden" name="tab" value="' . $this->current_tab . '">' . PHP_EOL;
 
 		if ( ! empty( $this->sections[ $args['id'] ]['description'] ) ) {
-			echo '<p class="section-description">' . $this->sections[ $args['id'] ]['description'] . "</p>\n";
+			echo '<p class="section-description">' . $this->sections[ $args['id'] ]['description'] . '</p>' . PHP_EOL;
 		}
 	} // render_section
 
@@ -440,12 +438,17 @@ class Settings_Helper {
 	public function render_field( $args ) {
 		$type = isset( $args['type'] ) ? $args['type'] : 'text';
 
-		if ( method_exists( $this, "render_$type" ) ) {
-			$this->{"render_$type"}( $args );
+		if (
+			! empty( $args['render_method'] )
+			&& is_callable( $args['render_method'] )
+		) {
+			$args['render_method']( $args );
+		} elseif ( method_exists( $this, "render_{$type}" ) ) {
+			$this->{"render_{$type}"}( $args );
 		}
 
 		if ( isset( $args['description'] ) ) {
-			echo '<p class="description">' . $args['description'] . "</p>\n";
+			echo '<p class="description">' . $args['description'] . '</p>' . PHP_EOL;
 		}
 	} // render_field
 
@@ -458,7 +461,7 @@ class Settings_Helper {
 	 */
 	private function render_text( $args ) {
 		printf(
-			'<input type="text" name="%1$s[%2$s]" id="%3$s"%4$s value="%5$s"%6$s>%7$s' . "\n",
+			'<input type="text" name="%1$s[%2$s]" id="%3$s"%4$s value="%5$s"%6$s>%7$s' . PHP_EOL,
 			$args['option_name'],
 			$args['name'],
 			$args['id'],
@@ -478,7 +481,7 @@ class Settings_Helper {
 	 */
 	private function render_textarea( $args ) {
 		printf(
-			'<textarea name="%1$s[%2$s]" id="%3$s" rows="10" cols="30"%6$s%5$s>%4$s</textarea>' . "\n",
+			'<textarea name="%1$s[%2$s]" id="%3$s" rows="10" cols="30"%6$s%5$s>%4$s</textarea>' . PHP_EOL,
 			$args['option_name'],
 			$args['name'],
 			$args['id'],
@@ -549,7 +552,7 @@ class Settings_Helper {
 			);
 		}
 
-		echo "</select>\n";
+		echo '</select>' . PHP_EOL;
 	} // render_select
 
 	/**
@@ -561,7 +564,7 @@ class Settings_Helper {
 	 */
 	private function render_checkbox( $args ) {
 		printf(
-			'<input type="checkbox" name="%1$s[%2$s]" id="%3$s" value="1"%4$s%7$s%5$s>%6$s' . "\n",
+			'<input type="checkbox" name="%1$s[%2$s]" id="%3$s" value="1"%4$s%7$s%5$s>%6$s' . PHP_EOL,
 			$args['option_name'],
 			$args['name'],
 			$args['id'],
@@ -590,11 +593,11 @@ class Settings_Helper {
 
 		foreach ( $args['options'] as $value => $title ) {
 			$checkbox = sprintf(
-				'<input type="checkbox" name="%1$s[%2$s][]" id="%3$s_%8$s" value="%8$s"%4$s%7$s%5$s>%9$s%6$s' . "\n",
+				'<input type="checkbox" name="%1$s[%2$s][]" id="%3$s_%8$s" value="%8$s"%4$s%7$s%5$s>%9$s%6$s' . PHP_EOL,
 				$args['option_name'],
 				$args['name'],
 				$args['id'],
-				checked( is_array( $args['value'] ) && in_array( $value, $args['value'] ), true, false ),
+				checked( is_array( $args['value'] ) && in_array( $value, $args['value'], true ), true, false ),
 				disabled( isset( $args['disabled'] ) && $args['disabled'], true, false ),
 				isset( $args['field_suffix'] ) && $args['field_suffix'] ? ' ' . $args['field_suffix'] : '',
 				$this->get_class_code( $args, '' ),
@@ -603,7 +606,7 @@ class Settings_Helper {
 			);
 
 			if ( isset( $args['wrap'] ) ) {
-				$checkbox = str_replace( '{element}', trim( $checkbox ), $args['wrap'] ) . "\n";
+				$checkbox = str_replace( '{element}', trim( $checkbox ), $args['wrap'] ) . PHP_EOL;
 			}
 
 			echo $checkbox;

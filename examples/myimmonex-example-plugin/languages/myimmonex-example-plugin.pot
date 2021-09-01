@@ -1,0 +1,49 @@
+# Copyright (C) 2020 My immonex Plugin
+# This file is distributed under the same license as the My immonex Plugin package.
+msgid ""
+msgstr ""
+"Project-Id-Version: My immonex Plugin 1.0.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/myimmonex-example-plugin\n"
+"POT-Creation-Date: 2020-03-05 13:51:22+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2020-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: includes/My_Plugin.php:33
+msgid "MyPlugin Options"
+msgstr ""
+
+#: includes/My_Plugin.php:49
+msgid "General"
+msgstr ""
+
+#: includes/My_Plugin.php:66
+msgid "Demo Section"
+msgstr ""
+
+#: includes/My_Plugin.php:85
+msgid "Test Option"
+msgstr ""
+
+#: includes/My_Plugin.php:88
+msgid "Just a demo..."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "My immonex Plugin"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "A minimal immonex plugin skeleton"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "immonex"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://immonex.dev/"
+msgstr ""

@@ -2,15 +2,13 @@
 /**
  * Class Color_Utils
  *
- * @package immonex-wp-free-plugin-core
+ * @package immonex\WordPressFreePluginCore
  */
 
 namespace immonex\WordPressFreePluginCore\V1_2_1;
 
 /**
  * Utility methods for color calculations.
- *
- * @package immonex-wp-free-plugin-core
  */
 class Color_Utils {
 
@@ -27,8 +25,6 @@ class Color_Utils {
 	 * @since 0.9
 	 *
 	 * @param \immonex\WordPressFreePluginCore\V0_9\Base $plugin Main plugin object.
-	 *
-	 * @return string|bool Full template file path or false if not found.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;

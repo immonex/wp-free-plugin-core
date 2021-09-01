@@ -2,7 +2,7 @@
 /**
  * Class Test_Plugin
  *
- * @package immonex-test-plugin
+ * @package myimmonex\TestPlugin
  */
 
 namespace myimmonex\TestPlugin;
@@ -10,10 +10,10 @@ namespace myimmonex\TestPlugin;
 /**
  * Main test plugin class.
  */
-class Test_Plugin extends \immonex\WordPressFreePluginCore\V1_0\Base {
+class Test_Plugin extends \immonex\WordPressFreePluginCore\V1_2_1\Base {
 
 	const
-		PLUGIN_NAME = 'immonex Test Plugin',
+		PLUGIN_NAME = 'My immonex Test Plugin',
 		PLUGIN_PREFIX = 'testplugin_',
 		PUBLIC_PREFIX = 'testplugin-',
 		PLUGIN_VERSION = '1.0.0';

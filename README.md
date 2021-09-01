@@ -26,39 +26,39 @@ $ composer require immonex/wp-free-plugin-core
 
 In most cases, a boilerplate template will be used to kickstart plugin development based on this library. Anyway, here comes a basic working example...
 
-The [example plugin folder](examples/my-immonex-plugin):
+The [example plugin folder](examples/myimmonex-example-plugin):
 ```
-my-immonex-plugin
+myimmonex-example-plugin
 ├── includes
-│   └── class-my-plugin.php
+│   └── class-example-plugin.php
 ├── languages
 ├── [vendor]
 ├── autoload.php
 ├── composer.json
-└── my-immonex-plugin.php
+└── myimmonex-example-plugin.php
 ```
 
 With the [Composer-based installation](#via-composer), the plugin core library gets added to the **require section** in `composer.json`:
 
 ```json
     "require": {
-        "immonex/wp-free-plugin-core": "^1.1.2"
+        "immonex/wp-free-plugin-core": "^1.2.1"
     },
 ```
 
-`my-immonex-plugin.php` is the **main plugin file** in which the central autoloader file is being included and the main plugin object gets instantiated:
+`myimmonex-example-plugin.php` is the **main plugin file** in which the central autoloader file is being included and the main plugin object gets instantiated:
 
 ```php
 require_once __DIR__ . '/autoload.php';
 
-$my_immonex_plugin = new My_Plugin( basename( __FILE__, '.php' ) );
-$my_immonex_plugin->init();
+$myimmonex_example_plugin = new My_Plugin( basename( __FILE__, '.php' ) );
+$myimmonex_example_plugin->init();
 ```
 
-The **main plugin class** is located in the file `includes/class-my-plugin.php`. It is derived from the latest **core Base class**:
+The **main plugin class** is located in the file `includes/class-example-plugin.php`. It is derived from the latest **core Base class**:
 
 ```php
-class My_Plugin extends \immonex\WordPressFreePluginCore\V1_1_1\Base {
+class Example_Plugin extends \immonex\WordPressFreePluginCore\V1_2_1\Base {
 
 	const
 		PLUGIN_NAME = 'My immonex Plugin',
@@ -69,7 +69,7 @@ class My_Plugin extends \immonex\WordPressFreePluginCore\V1_1_1\Base {
 
 	...
 
-} // class My_Plugin
+} // class Example_Plugin
 ```
 
 That's it!

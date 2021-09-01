@@ -7,7 +7,9 @@
 	<file>examples/</file>
 	<exclude-pattern>/lib/</exclude-pattern>
 	<exclude-pattern>/vendor/</exclude-pattern>
+	<exclude-pattern>/third_party/</exclude-pattern>
 	<exclude-pattern>/node_modules/</exclude-pattern>
+	<exclude-pattern>/V1_2_1/</exclude-pattern>
 
 	<!-- How to scan -->
 	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->
@@ -29,7 +31,10 @@
 	<!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
 	<config name="minimum_supported_wp_version" value="4.6"/>
 	<rule ref="WordPress">
-		<exclude name="WordPress-VIP-Go"/>
+		<exclude name="WordPress.Security.EscapeOutput.OutputNotEscaped"/>
+		<exclude name="WordPress.DB.SlowDBQuery.slow_db_query_tax_query"/>
+		<exclude name="WordPress.DB.SlowDBQuery.slow_db_query_meta_query"/>
+		<exclude name="WordPress.Security.NonceVerification.Recommended"/>
 	</rule>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
@@ -48,7 +53,7 @@
 			<!-- Value: replace the text domain used. -->
 			<property name="text_domain" type="array">
 				<element value="immonex-wp-free-plugin-core"/>
-				<element value="my-immonex-plugin"/>
+				<element value="myimmonex-example-plugin"/>
 			</property>
 		</properties>
 	</rule>

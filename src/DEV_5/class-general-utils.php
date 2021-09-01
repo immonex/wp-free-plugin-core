@@ -2,15 +2,13 @@
 /**
  * Class General_Utils
  *
- * @package immonex-wp-free-plugin-core
+ * @package immonex\WordPressFreePluginCore
  */
 
 namespace immonex\WordPressFreePluginCore\DEV_5;
 
 /**
  * General (mostly WordPress related) utility methods.
- *
- * @package immonex-wp-free-plugin-core
  *
  * @todo Split into separate classes with clear purpose (e.g. Remote_FS).
  */
@@ -111,7 +109,7 @@ class General_Utils {
 		$meta = get_post_meta( $post_id );
 		if ( count( $meta ) > 0 ) {
 			foreach ( $meta as $meta_key => $meta_value ) {
-				if ( 0 === count( $exclude_meta ) || ! in_array( $meta_key, $exclude_meta ) ) {
+				if ( 0 === count( $exclude_meta ) || ! in_array( $meta_key, $exclude_meta, true ) ) {
 					delete_post_meta( $post_id, $meta_key );
 				}
 			}
@@ -188,7 +186,16 @@ class General_Utils {
 	public static function get_url_contents( $url, $useragent = false ) {
 		$output = false;
 
-		if ( function_exists( 'curl_init' ) ) {
+		$response = wp_remote_get( $url );
+		if (
+			! is_wp_error( $response )
+			&& 200 === wp_remote_retrieve_response_code( $response )
+		) {
+			$output = wp_remote_retrieve_response_body( $response );
+		}
+
+		// @codingStandardsIgnoreStart
+		if ( ! $output && function_exists( 'curl_init' ) ) {
 			$ch = curl_init();
 			curl_setopt( $ch, CURLOPT_URL, $url );
 			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -202,8 +209,10 @@ class General_Utils {
 			$output = curl_exec( $ch );
 			curl_close( $ch );
 		}
+		// @codingStandardsIgnoreEnd
 
 		if ( ! $output ) {
+			// @codingStandardsIgnoreLine
 			$output = file_get_contents( $url );
 		}
 
@@ -250,6 +259,7 @@ class General_Utils {
 
 		// Alternative solution via cURL.
 		if ( function_exists( 'curl_init' ) ) {
+			// @codingStandardsIgnoreStart
 			$ch = curl_init();
 			curl_setopt_array(
 				$ch,
@@ -266,6 +276,7 @@ class General_Utils {
 
 			$file_exists = 200 === curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 			curl_close( $ch );
+			// @codingStandardsIgnoreEnd
 		}
 
 		return $file_exists;
@@ -301,6 +312,7 @@ class General_Utils {
 		if ( ! $clen ) {
 			// Alternative solution via cURL.
 			if ( function_exists( 'curl_init' ) ) {
+				// @codingStandardsIgnoreStart
 				$ch = curl_init();
 				curl_setopt_array(
 					$ch,
@@ -317,6 +329,7 @@ class General_Utils {
 
 				$clen = curl_getinfo( $ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD );
 				curl_close( $ch );
+				// @codingStandardsIgnoreEnd
 			}
 		}
 
@@ -343,6 +356,7 @@ class General_Utils {
 			}
 			$post_data = rtrim( $post_data, '&' );
 
+			// @codingStandardsIgnoreStart
 			$ch = curl_init();
 			curl_setopt_array(
 				$ch,
@@ -361,6 +375,7 @@ class General_Utils {
 
 			$result = curl_exec( $ch );
 			curl_close( $ch );
+			// @codingStandardsIgnoreEnd
 
 			return $result;
 		} else {
@@ -374,6 +389,7 @@ class General_Utils {
 			);
 			$context = stream_context_create( $options );
 
+			// @codingStandardsIgnoreLine
 			return file_get_contents( $url, false, $context );
 		}
 	} // post

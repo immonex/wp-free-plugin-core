@@ -2,7 +2,7 @@
 /**
  * This file contains the rendering code for the plugin options page (if any).
  *
- * @package immonex-wp-free-plugin-core
+ * @package immonex\WordPressFreePluginCore
  */
 
 $iwpfpc_options_logo   = $this->plugin_dir . '/assets/options-logo.png';

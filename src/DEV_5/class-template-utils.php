@@ -2,15 +2,13 @@
 /**
  * Class Template_Utils
  *
- * @package immonex-wp-free-plugin-core
+ * @package immonex\WordPressFreePluginCore
  */
 
 namespace immonex\WordPressFreePluginCore\DEV_5;
 
 /**
  * Utility methods for a very simple kind of templating.
- *
- * @package immonex-wp-free-plugin-core
  */
 class Template_Utils {
 
@@ -39,14 +37,19 @@ class Template_Utils {
 	private $frontend_skins = array();
 
 	/**
+	 * Environment for rendering Twig templates
+	 *
+	 * @var \Twig\Environment
+	 */
+	public $twig;
+
+	/**
 	 * Constructor: Import some required objects/values.
 	 *
 	 * @since 0.8.3
 	 *
 	 * @param \immonex\WordPressFreePluginCore\V0_9\Base $plugin Main plugin object.
 	 * @param string                                     $skin Skin subfolder name.
-	 *
-	 * @return string|bool Full template file path or false if not found.
 	 */
 	public function __construct( $plugin, $skin = '' ) {
 		$this->plugin = $plugin;
@@ -54,23 +57,44 @@ class Template_Utils {
 	} // __construct
 
 	/**
+	 * Fetch a Twig template file and return it's rendered content.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param string $filename Template filename (without path).
+	 * @param array  $template_data Array with any output related contents (optional).
+	 *
+	 * @return string|bool Parsed template content or false if not found.
+	 */
+	public function render_twig_template( $filename, $template_data = array() ) {
+		$template_file = $this->locate_template_file( $filename, $template_data );
+		if ( ! $template_file ) {
+			return false;
+		}
+
+		$twig = $this->get_twig();
+		if ( ! $twig ) {
+			return false;
+		}
+
+		$twig->getLoader()->setTemplate( 'template', $this->plugin->fs->get_contents( $template_file ) );
+
+		return $twig->render( 'template', $template_data );
+	} // render_twig_template
+
+	/**
 	 * Fetch a PHP template file and return it's rendered content via output buffering.
 	 *
 	 * @since 0.8.3
 	 *
 	 * @param string $filename Template filename (without path).
-	 * @param array  $template_data Array with any output related contents.
-	 * @param array  $utils Array of helper objects for output/formatting.
+	 * @param array  $template_data Array with any output related contents (optional).
+	 * @param array  $utils Array of helper objects for output/formatting (optional).
 	 *
 	 * @return string|bool Parsed template content or false if not found.
 	 */
-	public function render_php_template( $filename, $template_data, $utils = array() ) {
-		$add_template_folders = isset( $template_data['template_folders'] ) ?
-			$template_data['template_folders'] : array();
-		if ( ! is_array( $add_template_folders ) ) {
-			$add_template_folders = array( $add_template_folders );
-		}
-		$template_file = $this->locate_template_file( $filename, $add_template_folders );
+	public function render_php_template( $filename, $template_data = array(), $utils = array() ) {
+		$template_file = $this->locate_template_file( $filename, $template_data );
 		if ( ! $template_file ) {
 			return false;
 		}
@@ -126,7 +150,7 @@ class Template_Utils {
 			return false;
 		}
 
-		return file_get_contents( $file );
+		return $this->plugin->fs->get_contents( $file );
 	} // fetch_template
 
 	/**
@@ -168,7 +192,12 @@ class Template_Utils {
 			$localized_filenames = array( $filename );
 		}
 
-		if ( empty( $add_folders ) ) {
+		if ( is_array( $add_folders ) && ! empty( $add_folders['template_folders'] ) ) {
+			$add_folders = $add_folders['template_folders'];
+			if ( ! is_array( $add_folders ) ) {
+				$add_folders = array( $add_folders );
+			}
+		} else {
 			$add_folders = array();
 		}
 		if ( empty( $add_folder_mode ) ) {
@@ -202,6 +231,10 @@ class Template_Utils {
 		}
 
 		foreach ( $search_folders as $folder ) {
+			if ( ! is_string( $folder ) ) {
+				continue;
+			}
+
 			foreach ( $localized_filenames as $filename ) {
 				$file = trailingslashit( $folder ) . $filename;
 
@@ -405,7 +438,7 @@ class Template_Utils {
 
 			if ( count( $temp_folders ) > 0 ) {
 				foreach ( $temp_folders as $temp_folder ) {
-					if ( ! in_array( basename( $temp_folder ), self::INVALID_SKIN_FOLDER_NAMES ) ) {
+					if ( ! in_array( basename( $temp_folder ), self::INVALID_SKIN_FOLDER_NAMES, true ) ) {
 						$folders[ basename( $temp_folder ) ] = $temp_folder;
 					}
 				}
@@ -419,12 +452,12 @@ class Template_Utils {
 
 				if ( file_exists( $index_file ) ) {
 					// Extract theme name from index.php (if existent).
-					$index_contents = file_get_contents( $index_file );
+					$index_contents = $this->plugin->fs->get_contents( $index_file );
 					/* Skin Name: Quiwi */
 					$name_exists = preg_match( '/ \* Skin Name: ([a-zA-Z0-9 -_\.,]+)\n/', $index_contents, $matches );
 					$skin_name   = $name_exists ? $matches[1] : $name;
 
-					if ( in_array( $skin_name, array_values( $named_folders ) ) ) {
+					if ( in_array( $skin_name, array_values( $named_folders ), true ) ) {
 						$skin_name .= " [$name]";
 					}
 				} else {
@@ -454,7 +487,7 @@ class Template_Utils {
 	public function set_skin( $skin ) {
 		if (
 			$skin &&
-			in_array( $skin, array_keys( $this->get_frontend_skins() ) ) &&
+			in_array( $skin, array_keys( $this->get_frontend_skins() ), true ) &&
 			$skin !== $this->skin
 		) {
 			$previous_skin = $this->skin;
@@ -493,5 +526,24 @@ class Template_Utils {
 
 		return $pages;
 	} // get_page_list
+
+	/**
+	 * Create and return a Twig Environment instance.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return \Twig\Environment Twig Environment object.
+	 */
+	private function get_twig() {
+		if ( ! empty( $this->twig ) ) {
+			return $this->twig;
+		}
+
+		$this->twig = new \Twig\Environment(
+			new \Twig\Loader\ArrayLoader()
+		);
+
+		return $this->twig;
+	} // get_twig
 
 } // Template_Utils

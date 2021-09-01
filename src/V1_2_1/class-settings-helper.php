@@ -2,15 +2,13 @@
 /**
  * Class Settings_Helper
  *
- * @package immonex-wp-free-plugin-core
+ * @package immonex\WordPressFreePluginCore
  */
 
 namespace immonex\WordPressFreePluginCore\V1_2_1;
 
 /**
  * Helper class for dealing with the WordPress Settings API.
- *
- * @package immonex-wp-free-plugin-core
  */
 class Settings_Helper {
 

@@ -2,15 +2,13 @@
 /**
  * Class Geo_Utils
  *
- * @package immonex-wp-free-plugin-core
+ * @package immonex\WordPressFreePluginCore
  */
 
 namespace immonex\WordPressFreePluginCore\DEV_5;
 
 /**
  * Geocoding related utility methods.
- *
- * @package immonex-wp-free-plugin-core
  */
 class Geo_Utils {
 
@@ -96,7 +94,7 @@ class Geo_Utils {
 			if ( $use_providers && is_array( $use_providers ) && count( $use_providers ) > 0 ) {
 				$providers = array();
 				foreach ( $use_providers as $provider ) {
-					if ( in_array( $provider, array_keys( self::$providers ) ) ) {
+					if ( isset( self::$providers[ $provider ] ) ) {
 						$providers[ $provider ] = self::$providers[ $provider ];
 					}
 				}
@@ -163,7 +161,7 @@ class Geo_Utils {
 	 * @return string|bool Status information or false on retrieval error.
 	 */
 	public static function get_geocoding_status( $address = 'Platz der Republik 1, Berlin, Germany', $use_provider = false, $keys = array(), $language = 'de', $countrycodes = false ) {
-		if ( $use_provider && in_array( $use_provider, array_keys( self::$providers ) ) ) {
+		if ( $use_provider && isset( self::$providers[ $use_provider ] ) ) {
 			$providers = array( $use_provider => self::$providers[ $use_provider ] );
 		} else {
 			$providers = self::$providers;
@@ -226,7 +224,7 @@ class Geo_Utils {
 	 * @return string|bool Geo data or false on error.
 	 */
 	private static function geocode_nominatim( $address, $key = false, $language = 'de', $countrycodes = false ) {
-		$url = self::NOMINATIM_BASE_URL . '?q=' . urlencode( $address ) . '&format=json&accept-language=' . $language;
+		$url = self::NOMINATIM_BASE_URL . '?q=' . rawurlencode( $address ) . '&format=json&accept-language=' . $language;
 		if ( $countrycodes ) {
 			$url .= '&countrycodes=' . $countrycodes;
 		}
@@ -303,7 +301,7 @@ class Geo_Utils {
 	 * @return string|bool Geo data or false on error.
 	 */
 	private static function geocode_photon( $address, $key = false, $language = 'de', $countrycodes = false ) {
-		$url = self::PHOTON_BASE_URL . '?q=' . urlencode( $address ) . '&lang=' . $language .
+		$url = self::PHOTON_BASE_URL . '?q=' . rawurlencode( $address ) . '&lang=' . $language .
 			'&lat=' . self::PHOTO_LOCATION_BIAS_LAT . '&lon=' . self::PHOTO_LOCATION_BIAS_LNG . '&limit=100';
 
 		return General_Utils::get_url_contents( $url, self::USERAGENT );
@@ -379,7 +377,7 @@ class Geo_Utils {
 		}
 
 		$url  = self::GOOGLE_MAPS_API_WITH_KEY_BASE_URL;
-		$url .= 'json?address=' . urlencode( $address ) . '&sensor=false&language=' . $language . ( $key ? '&key=' . trim( $key ) : '' );
+		$url .= 'json?address=' . rawurlencode( $address ) . '&sensor=false&language=' . $language . ( $key ? '&key=' . trim( $key ) : '' );
 
 		return General_Utils::get_url_contents( $url, self::USERAGENT );
 	} // geocode_google_maps
@@ -446,7 +444,7 @@ class Geo_Utils {
 	 * @return string|bool Geo data or false on error.
 	 */
 	private static function geocode_bing_maps( $address, $key, $language = 'de', $countrycodes = false ) {
-		$url = self::BING_MAPS_API_BASE_URL . '?q=' . urlencode( $address ) . '&maxResults=1&includeNeighborhood=0&key=' . trim( $key );
+		$url = self::BING_MAPS_API_BASE_URL . '?q=' . rawurlencode( $address ) . '&maxResults=1&includeNeighborhood=0&key=' . trim( $key );
 
 		return General_Utils::get_url_contents( $url, self::USERAGENT );
 	} // geocode_bing_maps
@@ -464,7 +462,7 @@ class Geo_Utils {
 	private static function get_result_bing_maps( $response, $return_type ) {
 		// @codingStandardsIgnoreLine
 		if ( isset( $response->resourceSets[0]->resources[0]->geocodePoints[0]->coordinates ) ) {
-			if ( 'compact' == $return_type ) {
+			if ( 'compact' === $return_type ) {
 				// @codingStandardsIgnoreLine
 				$lat = $response->resourceSets[0]->resources[0]->geocodePoints[0]->coordinates[0];
 				// @codingStandardsIgnoreLine

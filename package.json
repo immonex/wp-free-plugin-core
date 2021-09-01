@@ -5,14 +5,14 @@
     "pot": "bin/generate_pot.sh",
     "test:install": "bin/invoke_test_installer.sh",
     "test": "vendor/phpunit/phpunit/phpunit -c tests/phpunit/plugin.xml",
-    "apidoc": "vendor/bin/phpdoc run --sourcecode --template=clean --title='immonex WP Free Plugin Core'",
+    "apidoc": "bin/phpdoc run --sourcecode",
     "apidoc:view": "node_modules/.bin/lws --stack lws-static lws-index -d apidoc -o",
     "apidoc:delete": "rimraf apidoc && rimraf .tmp/apidoc"
   },
   "devDependencies": {
-    "lws": "^3.1.0",
-    "lws-index": "^2.0.0",
-    "lws-static": "^2.0.0",
-    "rimraf": "^3.0.0"
+    "lws": "^4.1.0",
+    "lws-index": "^3.1.0",
+    "lws-static": "^3.1.0",
+    "rimraf": "^3.0.2"
   }
 }

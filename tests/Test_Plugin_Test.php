@@ -14,7 +14,7 @@ class My_Plugin_Test extends WP_UnitTestCase {
 
 	public function test_bootstrap_data() {
 		$expected = array(
-			'plugin_name' => 'immonex Test Plugin',
+			'plugin_name' => 'My immonex Test Plugin',
 			'plugin_slug' => 'immonex-test-plugin',
 			'plugin_prefix' => 'testplugin_',
 			'public_prefix' => 'testplugin-'

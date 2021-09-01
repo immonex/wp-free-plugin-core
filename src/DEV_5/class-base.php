@@ -22,7 +22,7 @@
  * This file contains the base class for deriving the main classes of
  * immonex plugins.
  *
- * @package immonex-wp-free-plugin-core
+ * @package immonex\WordPressFreePluginCore
  */
 
 namespace immonex\WordPressFreePluginCore\DEV_5;
@@ -30,19 +30,25 @@ namespace immonex\WordPressFreePluginCore\DEV_5;
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @package immonex-wp-free-plugin-core
- * @version 1.2.1
+ * @version 1.3.0
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.2.1';
+	const BASE_VERSION = '1.3.0';
+
+	/**
+	 * Stable/Release version flag
+	 *
+	 * @var bool
+	 */
+	public $is_stable;
 
 	/**
 	 * Name of the custom field for storing plugin options
 	 *
 	 * @var string
 	 */
-	protected $plugin_options_name;
+	public $plugin_options_name;
 
 	/**
 	 * Plugin options array
@@ -241,6 +247,13 @@ abstract class Base {
 	public $wp_filesystem;
 
 	/**
+	 * WP_Filesystem object (alias)
+	 *
+	 * @var \WP_Filesystem_Base
+	 */
+	public $fs;
+
+	/**
 	 * Has the plugin been activated network-wide?
 	 *
 	 * @var bool
@@ -276,6 +289,7 @@ abstract class Base {
 			throw new \Exception( 'inveris WP Free Plugin Core: Plugin slug (= directory name) not provided.' );
 		}
 
+		$this->is_stable  = preg_match( '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/', static::PLUGIN_VERSION ) ? true : false;
 		$this->textdomain = $textdomain;
 
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -284,6 +298,7 @@ abstract class Base {
 		global $wp_filesystem;
 		WP_Filesystem();
 		$this->wp_filesystem = $wp_filesystem;
+		$this->fs            = $wp_filesystem;
 
 		if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -296,15 +311,16 @@ abstract class Base {
 		$this->bootstrap_data = array_merge(
 			$this->bootstrap_data,
 			array(
-				'plugin_name'      => static::PLUGIN_NAME,
-				'plugin_slug'      => $plugin_slug,
-				'plugin_version'   => static::PLUGIN_VERSION,
-				'plugin_prefix'    => static::PLUGIN_PREFIX,
-				'public_prefix'    => static::PUBLIC_PREFIX,
-				'plugin_dir'       => $this->plugin_dir,
-				'plugin_fs_dir'    => $this->plugin_fs_dir,
-				'plugin_main_file' => $this->plugin_main_file,
-				'has_free_license' => ! defined( 'static::FREE_LICENSE' ) || static::FREE_LICENSE,
+				'plugin_name'         => static::PLUGIN_NAME,
+				'plugin_slug'         => $plugin_slug,
+				'plugin_version'      => static::PLUGIN_VERSION,
+				'plugin_prefix'       => static::PLUGIN_PREFIX,
+				'public_prefix'       => static::PUBLIC_PREFIX,
+				'plugin_dir'          => $this->plugin_dir,
+				'plugin_fs_dir'       => $this->plugin_fs_dir,
+				'plugin_main_file'    => $this->plugin_main_file,
+				'plugin_options_name' => $this->plugin_options_name,
+				'has_free_license'    => ! defined( 'static::FREE_LICENSE' ) || static::FREE_LICENSE,
 			)
 		);
 
@@ -367,6 +383,7 @@ abstract class Base {
 			global $wpdb;
 
 			// Retrieve all site IDs from this network (SQL query for compatibility reasons).
+			// @codingStandardsIgnoreLine
 			$site_ids = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs} WHERE site_id = {$wpdb->siteid}" );
 
 			foreach ( $site_ids as $site_id ) {
@@ -587,7 +604,7 @@ abstract class Base {
 		if ( ! empty( $this->plugin_options['skin'] ) ) {
 			// Check if skin folder still exists.
 			$skins = $this->utils['template']->get_frontend_skins();
-			if ( ! in_array( $this->plugin_options['skin'], array_keys( $skins ) ) ) {
+			if ( ! isset( $skins[ $this->plugin_options['skin'] ] ) ) {
 				$this->plugin_options['skin'] = 'default';
 				update_option( $this->plugin_options_name, $this->plugin_options );
 			}
@@ -611,10 +628,12 @@ abstract class Base {
 	 * @since 0.1
 	 */
 	public function init_plugin_admin() {
+		$script = isset( $_SERVER['SCRIPT_NAME'] ) ? basename( sanitize_file_name( wp_unslash( $_SERVER['SCRIPT_NAME'] ) ), '.php' ) : '';
+
 		if (
 			( isset( $_GET['settings-updated'] ) && 'true' === $_GET['settings-updated'] ) &&
 			( isset( $_GET['page'] ) && $this->plugin_slug . '_settings' === $_GET['page'] ) &&
-			'options-general' !== basename( $_SERVER['SCRIPT_NAME'], '.php' )
+			'options-general' !== $script
 		) {
 			$this->add_admin_notice( __( 'Settings updated.', 'immonex-wp-free-plugin-core' ) );
 		}
@@ -801,12 +820,9 @@ abstract class Base {
 	 * @param string  $context        Update context (optional).
 	 */
 	public function update_plugin_options( $update_options, $context = '' ) {
-		if ( empty( $this->plugin_options ) ) {
-			// (Re)fetch current plugin options.
-			$this->plugin_options = $this->fetch_plugin_options();
-		}
-
-		$options_changed = false;
+		// (Re)fetch current plugin options.
+		$this->plugin_options = $this->fetch_plugin_options();
+		$options_changed      = false;
 
 		foreach ( $this->plugin_options as $key => $old_value ) {
 			if (
@@ -973,6 +989,8 @@ abstract class Base {
 					$value = $input[ $name ];
 				} elseif ( isset( $field['default'] ) ) {
 					$value = $field['default'];
+				} else {
+					continue;
 				}
 
 				if ( isset( $field['force_type'] ) ) {
@@ -1005,7 +1023,7 @@ abstract class Base {
 					case 'select':
 						if (
 							$exists &&
-							in_array( $value, array_keys( $field['options'] ) )
+							isset( $field['options'][ $value ] )
 						) {
 							$valid[ $name ] = $value;
 						} elseif ( isset( $field['options'][0] ) ) {
@@ -1038,7 +1056,8 @@ abstract class Base {
 		$options = apply_filters(
 			// @codingStandardsIgnoreLine
 			$this->plugin_slug . '_options_before_save',
-			$this->settings_helper->merge_options( $this->plugin_options, $valid )
+			$this->settings_helper->merge_options( $this->plugin_options, $valid ),
+			$this->plugin_options
 		);
 
 		return $options;
@@ -1070,8 +1089,10 @@ abstract class Base {
 	 * @since 1.0.0
 	 */
 	public function dismiss_admin_notice() {
-		$notice_id   = sanitize_key( $_POST['notice_id'] );
-		$plugin_slug = sanitize_key( $_POST['plugin_slug'] );
+		// @codingStandardsIgnoreStart
+		$notice_id   = isset( $_POST['notice_id'] ) ? sanitize_key( $_POST['notice_id'] ) : false;
+		$plugin_slug = isset( $_POST['plugin_slug'] ) ? sanitize_key( $_POST['plugin_slug'] ) : false;
+		// @codingStandardsIgnoreEnd
 		if ( ! $notice_id || ! $plugin_slug ) {
 			return;
 		}
@@ -1146,7 +1167,7 @@ abstract class Base {
 	public function add_deferred_admin_notice( $message, $type = 'success', $context = '' ) {
 		$notice_id = uniqid();
 
-		if ( ! in_array( $type, array( 'success', 'info', 'warning', 'error' ) ) ) {
+		if ( ! in_array( $type, array( 'success', 'info', 'warning', 'error' ), true ) ) {
 			$type = 'info';
 		}
 
@@ -1181,7 +1202,7 @@ abstract class Base {
 	 * @param string $id Message ID (required for deferred messages only).
 	 */
 	protected function add_admin_notice( $message, $type = 'success', $id = false ) {
-		if ( ! in_array( $type, array( 'success', 'info', 'warning', 'error' ) ) ) {
+		if ( ! in_array( $type, array( 'success', 'info', 'warning', 'error' ), true ) ) {
 			$type = 'info';
 		}
 
@@ -1205,6 +1226,7 @@ abstract class Base {
 			echo '<strong>' . $message . '</strong>';
 			exit;
 		} else {
+			// @codingStandardsIgnoreLine
 			trigger_error( $message, $errno );
 		}
 	} // br_trigger_error
@@ -1222,25 +1244,39 @@ abstract class Base {
 		/**
 		 * Load plugin base translations first.
 		 */
-		load_plugin_textdomain(
+		load_textdomain(
 			'immonex-wp-free-plugin-core',
-			false,
 			wp_sprintf(
-				'%s/vendor/immonex/wp-free-plugin-core/src/%s/languages',
+				'%s/%s/vendor/immonex/wp-free-plugin-core/src/%s/languages/immonex-wp-free-plugin-core-%s.mo',
+				WP_PLUGIN_DIR,
 				$this->plugin_slug,
-				$base_version
+				$base_version,
+				$locale
 			)
 		);
 
 		/**
 		 * Load plugin translations.
 		 */
-		$global_mo_file = trailingslashit( WP_LANG_DIR ) . "plugins/{$this->plugin_slug}-{$locale}.mo";
+		$always_load_global_translations = apply_filters(
+			// @codingStandardsIgnoreLine
+			$this->plugin_slug . '_always_load_global_translations',
+			false
+		);
 
-		if ( file_exists( $global_mo_file ) ) {
-			load_textdomain( $domain, $global_mo_file );
-		} else {
+		if ( $this->is_stable || $always_load_global_translations ) {
 			load_plugin_textdomain( $domain, false, $this->plugin_slug . '/languages' );
+		} else {
+			$local_mo_file = wp_sprintf(
+				'%s/%s/languages/%s-%s.mo',
+				WP_PLUGIN_DIR,
+				$this->plugin_slug,
+				$this->textdomain,
+				$locale
+			);
+			if ( file_exists( $local_mo_file ) ) {
+				load_textdomain( $domain, $local_mo_file );
+			}
 		}
 	} // load_translations
 

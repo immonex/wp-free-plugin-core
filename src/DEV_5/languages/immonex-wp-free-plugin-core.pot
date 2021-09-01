@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2021-01-27 09:53:57+00:00\n"
+"POT-Creation-Date: 2021-09-01 07:15:40+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,37 +12,28 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: DEV_2/class-base.php:487 DEV_2/class-base.php:493
-#: DEV_2/class-settings-helper.php:137 V1_1_2/class-base.php:487
-#: V1_1_2/class-base.php:493 V1_1_2/class-settings-helper.php:137
-#: V1_1_3/class-base.php:487 V1_1_3/class-base.php:493
-#: V1_1_3/class-settings-helper.php:137
+#: DEV_5/class-base.php:517 DEV_5/class-base.php:523
+#: DEV_5/class-settings-helper.php:135 V1_2_1/class-base.php:494
+#: V1_2_1/class-base.php:500 V1_2_1/class-settings-helper.php:135
 msgid "Settings"
 msgstr ""
 
-#: DEV_2/class-base.php:593 V1_1_2/class-base.php:593 V1_1_3/class-base.php:593
+#: DEV_5/class-base.php:630 V1_2_1/class-base.php:605
 msgid "Settings updated."
 msgstr ""
 
-#: DEV_2/class-base.php:645 V1_1_2/class-base.php:645 V1_1_3/class-base.php:645
-msgid "weekly"
-msgstr ""
-
-#: DEV_2/class-base.php:1050 V1_1_2/class-base.php:1050
-#: V1_1_3/class-base.php:1050
+#: DEV_5/class-base.php:1122 V1_2_1/class-base.php:1064
 msgid "Documentation"
 msgstr ""
 
-#: DEV_2/class-base.php:1070 V1_1_2/class-base.php:1070
-#: V1_1_3/class-base.php:1070
+#: DEV_5/class-base.php:1142 V1_2_1/class-base.php:1084
 msgid "Development"
 msgstr ""
 
-#: DEV_2/class-geo-utils.php:184 V1_1_3/class-geo-utils.php:184
+#: DEV_5/class-geo-utils.php:206 V1_2_1/class-geo-utils.php:206
 msgid "unknown"
 msgstr ""
 
-#: DEV_2/class-template-utils.php:399 V1_1_2/class-template-utils.php:399
-#: V1_1_3/class-template-utils.php:399
+#: DEV_5/class-template-utils.php:464 V1_2_1/class-template-utils.php:431
 msgid "default"
 msgstr ""

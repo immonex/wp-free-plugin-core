@@ -2,15 +2,13 @@
 /**
  * Class String_Utils.
  *
- * @package immonex-wp-free-plugin-core
+ * @package immonex\WordPressFreePluginCore
  */
 
 namespace immonex\WordPressFreePluginCore\V1_2_1;
 
 /**
  * String related utility methods.
- *
- * @package immonex-wp-free-plugin-core
  */
 class String_Utils {
 

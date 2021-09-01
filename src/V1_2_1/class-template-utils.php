@@ -2,15 +2,13 @@
 /**
  * Class Template_Utils
  *
- * @package immonex-wp-free-plugin-core
+ * @package immonex\WordPressFreePluginCore
  */
 
 namespace immonex\WordPressFreePluginCore\V1_2_1;
 
 /**
  * Utility methods for a very simple kind of templating.
- *
- * @package immonex-wp-free-plugin-core
  */
 class Template_Utils {
 
@@ -45,8 +43,6 @@ class Template_Utils {
 	 *
 	 * @param \immonex\WordPressFreePluginCore\V0_9\Base $plugin Main plugin object.
 	 * @param string                                     $skin Skin subfolder name.
-	 *
-	 * @return string|bool Full template file path or false if not found.
 	 */
 	public function __construct( $plugin, $skin = '' ) {
 		$this->plugin = $plugin;

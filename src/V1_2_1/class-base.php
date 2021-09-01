@@ -22,7 +22,7 @@
  * This file contains the base class for deriving the main classes of
  * immonex plugins.
  *
- * @package immonex-wp-free-plugin-core
+ * @package immonex\WordPressFreePluginCore
  */
 
 namespace immonex\WordPressFreePluginCore\V1_2_1;
@@ -30,7 +30,6 @@ namespace immonex\WordPressFreePluginCore\V1_2_1;
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @package immonex-wp-free-plugin-core
  * @version 1.2.1
  */
 abstract class Base {
