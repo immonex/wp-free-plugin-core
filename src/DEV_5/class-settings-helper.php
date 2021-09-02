@@ -165,7 +165,7 @@ class Settings_Helper {
 	 * @return string|bool Tab ID or false if not existing.
 	 */
 	public function get_current_tab() {
-		if ( ! empty( sanitize_key( $_REQUEST['tab'] ) ) ) {
+		if ( ! empty( $_REQUEST['tab'] ) ) {
 			return sanitize_key( $_REQUEST['tab'] );
 		} else {
 			return false;
