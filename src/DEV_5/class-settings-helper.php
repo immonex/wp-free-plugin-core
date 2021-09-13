@@ -289,19 +289,23 @@ class Settings_Helper {
 
 			$sections_html = ob_get_contents();
 			$section_count = 0;
-			$sections_html = preg_replace_callback(
-				'/\<h2\>.*?\<\/table\>/',
-				function ( $matches ) use ( &$section_count, $current_section_tab ) {
-					$section_count++;
-					$section_id = "tab-section-{$section_count}";
-					return wp_sprintf(
-						'<div id="%s" class="tabbed-section%s">%s</div>',
-						$section_id,
-						$section_count === $current_section_tab ? ' is-active ' : '',
-						$matches[0]
-					);
-				},
-				str_replace( PHP_EOL, '', $sections_html )
+			$sections_html = str_replace(
+				'|X|',
+				PHP_EOL,
+				preg_replace_callback(
+					'/\<h2\>.*?\<\/table\>/',
+					function ( $matches ) use ( &$section_count, $current_section_tab ) {
+						$section_count++;
+						$section_id = "tab-section-{$section_count}";
+						return wp_sprintf(
+							'<div id="%s" class="tabbed-section%s">%s</div>',
+							$section_id,
+							$section_count === $current_section_tab ? ' is-active ' : '',
+							$matches[0]
+						);
+					},
+					str_replace( PHP_EOL, '', $sections_html )
+				)
 			);
 
 			ob_end_clean();
