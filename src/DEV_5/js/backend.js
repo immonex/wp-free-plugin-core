@@ -23,7 +23,6 @@ function iwpfpcSetActiveSectionTab( newSectionTab ) {
 		} else {
 			ref[0].value += '&section_tab=' + newSectionTab
 		}
-		console.log(ref[0].value)
 	}
 } // iwpfpcSetActiveSectionTab
 

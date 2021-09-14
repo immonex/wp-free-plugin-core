@@ -222,7 +222,10 @@ class Template_Utils {
 
 		$search_folders = array_unique( $search_folders );
 
-		if ( count( $add_folders ) > 0 ) {
+		if (
+			count( $add_folders ) > 0
+			&& 'override' !== $add_folder_mode
+		) {
 			if ( 'before' === $add_folder_mode ) {
 				$search_folders = array_merge( $add_folders, $search_folders );
 			} elseif ( 'after' === $add_folder_mode ) {
