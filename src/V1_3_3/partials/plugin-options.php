@@ -43,8 +43,22 @@ $iwpfpc_inveris_plugin_logo_url = plugins_url(
 	'/vendor/immonex/wp-free-plugin-core/assets/inveris-plugin-logo-tiny.png',
 	$this->plugin_infos['plugin_main_file']
 );
+
+$iwpfpc_has_tabbed_sections = ! empty( $this->option_page_tabs[ $this->current_tab ]['attributes']['tabbed_sections'] );
 ?>
 <style>
+	.inveris-free-plugin-options code {
+		white-space: nowrap;
+	}
+
+	.inveris-free-plugin-options-inside {
+		margin-top: 16px;
+	}
+
+	.inveris-free-plugin-options .form-table th {
+		vertical-align: top;
+	}
+
 	.inveris-free-plugin-options .special-info {
 		display: flex;
 		align-items: center;
@@ -99,6 +113,10 @@ $iwpfpc_inveris_plugin_logo_url = plugins_url(
 		color: #FFF;
 	}
 
+	.inveris-free-plugin-options .desc-indent {
+		padding-left: 2em;
+	}
+
 	.inveris-free-plugin-options .tab-footer-info {
 		padding: 8px;
 		color: #A0A0A0;
@@ -120,6 +138,52 @@ $iwpfpc_inveris_plugin_logo_url = plugins_url(
 	.inveris-free-plugin-options .developer-logos a {
 		margin-bottom: 16px;
 		margin-right: 24px;
+	}
+
+	.inveris-free-plugin-options .tab-description,
+	.inveris-free-plugin-options .section-description {
+		padding: 16px;
+	}
+
+	.inveris-free-plugin-options .tab-description {
+		margin-top: 8px;
+	}
+	.inveris-free-plugin-options .tab-description.tab-description-tabbed-sections {
+		margin-bottom: 16px;
+	}
+
+	.inveris-free-plugin-options .tab-description p {
+		font-size: 14px;
+	}
+
+	.inveris-free-plugin-options .section-description a {
+		color: #7DC1E8;
+	}
+
+	.inveris-free-plugin-options .section-description {
+		color: #E0E0E0;
+		border-left: 4px solid #E77906;
+		background-color: #434341;
+	}
+
+	.inveris-free-plugin-options .tab-description p:first-child,
+	.inveris-free-plugin-options .section-description p:first-child {
+		margin-top: 0;
+	}
+	.inveris-free-plugin-options .tab-description p:last-child,
+	.inveris-free-plugin-options .section-description p:last-child {
+		margin-bottom: 0;
+	}
+
+	.inveris-free-plugin-options .tabbed-section:not(.is-active) {
+		display: none;
+	}
+	.inveris-free-plugin-options .tabbed-section.is-active {
+		display: block
+	}
+
+	.inveris-free-plugin-options .tabbed-section > h2 {
+		display: none;
 	}
 
 	@media screen and (min-width: 800px) {
@@ -162,11 +226,34 @@ $iwpfpc_inveris_plugin_logo_url = plugins_url(
 	) :
 		echo $this->option_page_tabs[ $this->current_tab ]['content'];
 	else :
+		$iwpfpc_tab_description       = ! empty( $this->option_page_tabs[ $this->current_tab ]['attributes']['description'] ) ?
+			$this->option_page_tabs[ $this->current_tab ]['attributes']['description'] : '';
+		$iwpfpc_tab_description_class = 'tab-description';
+
+		if ( $iwpfpc_tab_description ) {
+			if ( is_array( $iwpfpc_tab_description ) ) {
+				$iwpfpc_tab_description = wp_sprintf(
+					'<p>%s</p>',
+					implode( '</p>' . PHP_EOL . '<p>', $iwpfpc_tab_description )
+				);
+			} else {
+				$iwpfpc_tab_description = "<p>{$iwpfpc_tab_description}</p>";
+			}
+			if ( $iwpfpc_has_tabbed_sections ) {
+				$iwpfpc_tab_description_class .= ' tab-description-tabbed-sections';
+			}
+		}
 		?>
 	<form method="post" action="options.php" style="clear:both">
 		<div class="inveris-free-plugin-options-inside">
+			<?php if ( $iwpfpc_tab_description ) : ?>
+			<div class="<?php echo $iwpfpc_tab_description_class; ?>">
+				<?php echo $iwpfpc_tab_description; ?>
+			</div>
+			<?php endif; ?>
+
 			<?php settings_fields( isset( $this->option_page_tabs[ $this->current_tab ]['attributes']['plugin_slug'] ) ? $this->option_page_tabs[ $this->current_tab ]['attributes']['plugin_slug'] . '_options' : $this->plugin_slug . '_options' ); ?>
-			<?php do_settings_sections( $section_page ); ?>
+			<?php $this->display_tab_sections( $this->current_tab, $section_page ); ?>
 			<?php if ( isset( $this->option_page_tabs[ $this->current_tab ]['attributes']['footer_info'] ) ) : ?>
 			<div class="tab-footer-info"><?php echo $this->option_page_tabs[ $this->current_tab ]['attributes']['footer_info']; ?></div>
 			<?php endif; ?>

@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_3_0;
+namespace immonex\WordPressFreePluginCore\V1_3_3;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.3.0
+ * @version 1.3.3
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.3.0';
+	const BASE_VERSION = '1.3.3';
 
 	/**
 	 * Stable/Release version flag
@@ -495,6 +495,10 @@ abstract class Base {
 		add_action( 'widgets_init', array( $this, 'init_plugin_widgets' ) );
 		add_action( 'admin_init', array( $this, 'init_plugin_admin' ) );
 		add_action( 'admin_menu', array( $this, 'register_plugin_settings' ) );
+
+		// Exclude plugin JS/CSS from Autoptimize "optimizations".
+		add_filter( 'option_autoptimize_js_exclude', array( $this, 'autoptimize_exclude' ), 10, 2 );
+		add_filter( 'option_autoptimize_css_exclude', array( $this, 'autoptimize_exclude' ), 10, 2 );
 
 		// Add a filter for modifying the required user/role capability for
 		// accessing and updating plugin options.
@@ -989,7 +993,7 @@ abstract class Base {
 					$value = $input[ $name ];
 				} elseif ( isset( $field['default'] ) ) {
 					$value = $field['default'];
-				} else {
+				} elseif ( 'checkbox' !== $field['type'] ) {
 					continue;
 				}
 
@@ -1191,6 +1195,24 @@ abstract class Base {
 
 		update_option( $this->plugin_options_name, $this->plugin_options );
 	} // add_deferred_admin_notice
+
+	/**
+	 * Exclude plugin JS/CSS from Autoptimize "optimizations".
+	 *
+	 * @since 1.3.2
+	 *
+	 * @param string $value  Current exclusion patterns/terms.
+	 * @param string $option Option name.
+	 *
+	 * @return string Extended list of exclusion patterns/terms.
+	 */
+	public function autoptimize_exclude( $value, $option ) {
+		if ( false === strpos( $value, 'immonex' ) ) {
+			return implode( ', ', array( $value, 'immonex' ) );
+		}
+
+		return $value;
+	} // autoptimize_exclude
 
 	/**
 	 * Add an administrative message.

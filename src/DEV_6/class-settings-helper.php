@@ -290,8 +290,15 @@ class Settings_Helper {
 			$sections_html = ob_get_contents();
 			$section_count = 0;
 
-			// Maybe replace mixed line endings of textarea contents.
-			$sections_html = str_replace( "\r\n", PHP_EOL, $sections_html );
+			/**
+			 * Unify line breaks (possibly mixed in Windows environments or
+			 * due to included textarea contents.
+			 */
+			$sections_html = str_replace(
+				array( "\r\n", "\n" ),
+				array( PHP_EOL, PHP_EOL ),
+				$sections_html
+			);
 
 			$sections_html = str_replace(
 				'|X|',

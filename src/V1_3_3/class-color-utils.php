@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_2_1;
+namespace immonex\WordPressFreePluginCore\V1_3_3;
 
 /**
  * Utility methods for color calculations.
@@ -444,7 +444,7 @@ class Color_Utils {
 		$del_max = $max - $min;
 
 		$l = ( $max + $min ) / 2;
-		if ( 0 == $del_max ) {
+		if ( 0 === $del_max ) {
 			$h = 0;
 			$s = 0;
 		} else {
@@ -458,7 +458,7 @@ class Color_Utils {
 			$del_g = ( ( ( $max - $g ) / 6 ) + ( $del_max / 2 ) ) / $del_max;
 			$del_b = ( ( ( $max - $b ) / 6 ) + ( $del_max / 2 ) ) / $del_max;
 
-			if ( $r == $max ) {
+			if ( $r === $max ) {
 				$h = $del_b - $del_g;
 			} elseif ( $g === $max ) {
 				$h = ( 1 / 3 ) + $del_r - $del_b;

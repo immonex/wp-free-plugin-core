@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_2_1;
+namespace immonex\WordPressFreePluginCore\V1_3_3;
 
 /**
  * String related utility methods.
@@ -279,7 +279,7 @@ class String_Utils {
 		$entities     = array( '%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D' );
 		$replacements = array( '!', '*', "'", '(', ')', ';', ':', '@', '&', '=', '+', '$', ',', '/', '?', '%', '#', '[', ']' );
 
-		return str_replace( $entities, $replacements, urlencode( $string ) );
+		return str_replace( $entities, $replacements, rawurlencode( $string ) );
 	} // urlencode_special
 
 	/**
@@ -294,7 +294,7 @@ class String_Utils {
 	 * @return string Text excerpt.
 	 */
 	public static function get_excerpt( $source_text, $length = 120, $suffix = '' ) {
-		$raw   = strip_tags( $source_text );
+		$raw   = wp_strip_all_tags( $source_text );
 		$words = str_word_count( $raw, 1, '01234567989&.,:;/-äöüÄÖÜß„“–' );
 
 		$text = '';
@@ -493,7 +493,7 @@ class String_Utils {
 
 		if ( ! empty( $wp->query_vars ) ) {
 			foreach ( $wp->query_vars as $var_name => $value ) {
-				if ( $value && ! in_array( $var_name, array( 'page', 'paged' ) ) ) {
+				if ( $value && ! in_array( $var_name, array( 'page', 'paged' ), true ) ) {
 					$query_vars[ $var_name ] = $value;
 				}
 			}
