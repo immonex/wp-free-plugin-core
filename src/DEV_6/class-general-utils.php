@@ -191,7 +191,7 @@ class General_Utils {
 			! is_wp_error( $response )
 			&& 200 === wp_remote_retrieve_response_code( $response )
 		) {
-			$output = wp_remote_retrieve_response_body( $response );
+			$output = wp_remote_retrieve_body( $response );
 		}
 
 		// @codingStandardsIgnoreStart

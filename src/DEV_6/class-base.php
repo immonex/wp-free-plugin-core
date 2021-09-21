@@ -711,7 +711,7 @@ abstract class Base {
 		 * Plugin base JS
 		 */
 		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'js/frontend.js' ) ) {
-			$this->frontend_base_js_handle = static::PUBLIC_PREFIX . 'frontend-js';
+			$this->frontend_base_js_handle = static::PUBLIC_PREFIX . 'frontend';
 
 			wp_register_script(
 				$this->frontend_base_js_handle,
@@ -767,7 +767,7 @@ abstract class Base {
 							$skin_js_deps[] = $this->frontend_base_js_handle;
 						}
 
-						$handle = static::PUBLIC_PREFIX . 'skin-js';
+						$handle = static::PUBLIC_PREFIX . 'skin';
 						if ( 'index' !== $basename ) {
 							$handle .= "-{$basename}";
 						}
@@ -889,7 +889,7 @@ abstract class Base {
 		$core_version        = array_pop( $ns_split );
 		$core_version_handle = str_replace( '_', '-', substr( $core_version, 1 ) );
 		$core_version_semver = str_replace( '-', '.', $core_version_handle );
-		$core_js_handle      = static::PUBLIC_PREFIX . "backend-js-core-{$core_version_handle}";
+		$core_js_handle      = static::PUBLIC_PREFIX . "backend-core-{$core_version_handle}";
 
 		wp_register_script(
 			$core_js_handle,
@@ -914,7 +914,7 @@ abstract class Base {
 		 * Load plugin-specific backend JS if existent.
 		 */
 		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'js/backend.js' ) ) {
-			$this->backend_js_handle = static::PUBLIC_PREFIX . 'backend-js';
+			$this->backend_js_handle = static::PUBLIC_PREFIX . 'backend';
 
 			wp_register_script(
 				$this->backend_js_handle,
