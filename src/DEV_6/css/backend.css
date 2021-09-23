@@ -1,0 +1,18 @@
+.editor-styles-wrapper .immonex-be-widget-form p,
+.wp-block-legacy-widget__edit-form .widget-inside .immonex-be-widget-form label {
+	line-height: 1.1em;
+}
+
+.editor-styles-wrapper .immonex-be-widget-form p.description {
+	font-size: 13px;
+	margin: 4px 0 8px 0;
+}
+
+.editor-styles-wrapper .immonex-be-widget-form p.option-wrap,
+.editor-styles-wrapper .immonex-be-widget-form p.option-end {
+	margin-bottom: 24px;
+}
+
+.editor-styles-wrapper .immonex-be-widget-form p.description.option-end {
+	margin-top: 16px;
+}

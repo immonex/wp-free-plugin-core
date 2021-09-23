@@ -868,6 +868,22 @@ abstract class Base {
 			return;
 		}
 
+		$ns_split            = explode( '\\', __NAMESPACE__ );
+		$core_version        = array_pop( $ns_split );
+		$core_version_handle = str_replace( '_', '-', substr( $core_version, 1 ) );
+		$core_version_semver = str_replace( '-', '.', $core_version_handle );
+		$core_handle         = static::PUBLIC_PREFIX . "backend-core-{$core_version_handle}";
+
+		/**
+		 * Load core backend CSS.
+		 */
+		wp_enqueue_style(
+			$core_handle,
+			plugins_url( $this->plugin_slug . "/vendor/immonex/wp-free-plugin-core/src/{$core_version}/css/backend.css" ),
+			array(),
+			$this->core_version_semver
+		);
+
 		/**
 		 * Load plugin-specific CSS if existent.
 		 */
@@ -885,23 +901,18 @@ abstract class Base {
 		/**
 		 * Load core backend JS first.
 		 */
-		$ns_split            = explode( '\\', __NAMESPACE__ );
-		$core_version        = array_pop( $ns_split );
-		$core_version_handle = str_replace( '_', '-', substr( $core_version, 1 ) );
-		$core_version_semver = str_replace( '-', '.', $core_version_handle );
-		$core_js_handle      = static::PUBLIC_PREFIX . "backend-core-{$core_version_handle}";
 
 		wp_register_script(
-			$core_js_handle,
+			$core_handle,
 			plugins_url( $this->plugin_slug . "/vendor/immonex/wp-free-plugin-core/src/{$core_version}/js/backend.js" ),
 			array( 'jquery' ),
 			$core_version_semver,
 			true
 		);
-		wp_enqueue_script( $core_js_handle );
+		wp_enqueue_script( $core_handle );
 
 		wp_localize_script(
-			$core_js_handle,
+			$core_handle,
 			'iwpfpc_params',
 			array(
 				'core_version' => $core_version_semver,
