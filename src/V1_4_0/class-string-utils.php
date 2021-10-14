@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_3_1;
+namespace immonex\WordPressFreePluginCore\V1_4_0;
 
 /**
  * String related utility methods.
@@ -564,5 +564,58 @@ class String_Utils {
 
 		return $string;
 	} // xor_string
+
+	/**
+	 * Multibyte version of str_pad.
+	 *
+	 * @since 1.3.4
+	 *
+	 * @param string $input    The string to be padded.
+	 * @param int    $length   The length of the resultant padded string.
+	 * @param string $padding  The string to use as padding. Defaults to space.
+	 * @param int    $pad_type The type of padding. Defaults to STR_PAD_RIGHT.
+	 * @param string $encoding The encoding to use, defaults to UTF-8.
+	 *
+	 * @return string Current URL without page number.
+	 */
+	public function mb_str_pad( $input, $length, $padding = ' ', $pad_type = STR_PAD_RIGHT, $encoding = 'UTF-8' ) {
+		$pad_required = $length - mb_strlen( $input, $encoding );
+		if ( ! $pad_required ) {
+			return $input;
+		}
+
+		switch ( $pad_type ) {
+			case STR_PAD_LEFT:
+				return mb_substr( str_repeat( $padding, $pad_required ), 0, $pad_required, $encoding ) . $input;
+			case STR_PAD_BOTH:
+				$left_pad_len  = floor( $pad_required / 2 );
+				$right_pad_len = $pad_required - $left_pad_len;
+				return mb_substr( str_repeat( $padding, $left_pad_len ), 0, $left_pad_len, $encoding ) . $input .
+					mb_substr( str_repeat( $padding, $right_pad_len ), 0, $right_pad_len, $encoding );
+			default:
+				return $input . mb_substr( str_repeat( $padding, $pad_required ), 0, $pad_required, $encoding );
+		}
+	} // mb_str_pad
+
+	/**
+	 * Simple HTML to plain text conversion.
+	 *
+	 * @since 1.3.5
+	 *
+	 * @param string $html HTML string.
+	 *
+	 * @return string Plain text version.
+	 */
+	public function html_to_plain_text( $html ) {
+		$plain = stripslashes( $html );
+		if ( false === strpos( $plain, '<' ) ) {
+			// Return stripslashed original content if it does'nt contain any HTML tags.
+			return $plain;
+		}
+
+		$plain = strip_tags( $plain, '<br><p><li>' );
+
+		return preg_replace( '/<[^>]*>/', PHP_EOL, $plain );
+	} // html_to_plain_text
 
 } // String_Utils

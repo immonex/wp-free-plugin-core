@@ -188,7 +188,18 @@ class Settings_Helper {
 				return ! empty( $section['tab'] ) && $tab === $section['tab'];
 			}
 		);
-	} // get_tab_fields
+	} // get_tab_sections
+
+	/**
+	 * Return all field definitions.
+	 *
+	 * @since 1.3.5
+	 *
+	 * @return mixed[] Array of field data.
+	 */
+	public function get_fields() {
+		return $this->fields;
+	} // get_fields
 
 	/**
 	 * Get the field definitions added within the given tab.
@@ -202,6 +213,32 @@ class Settings_Helper {
 	public function get_tab_fields( $tab = 'default' ) {
 		return isset( $this->fields[ $tab ] ) ? $this->fields[ $tab ] : array();
 	} // get_tab_fields
+
+	/**
+	 * Check if the current set of registered fields contains media elements.
+	 * If so, return the related data.
+	 *
+	 * @since 1.3.5
+	 *
+	 * @return mixed[] Field data or empty array if none exist.
+	 */
+	public function get_media_fields() {
+		$media_fields = array();
+
+		if ( ! empty( $this->fields ) ) {
+			foreach ( $this->fields as $tab => $fields ) {
+				if ( count( $fields ) > 0 ) {
+					foreach ( $fields as $field ) {
+						if ( ! empty( $field['type'] ) && 'media_' === substr( $field['type'], 0, 6 ) ) {
+							$media_fields[] = $field;
+						}
+					}
+				}
+			}
+		}
+
+		return $media_fields;
+	} // get_media_fields
 
 	/**
 	 * Display the tab navigation.
@@ -253,7 +290,7 @@ class Settings_Helper {
 				'<a id="section-nav-tab-%d" class="nav-tab nav-tab-section%s" href="%s">%s</a>',
 				$i,
 				$class,
-				"javascript:iwpfpcSetActiveSectionTab( {$i} )",
+				'javascript:void(0)',
 				$section['title']
 			);
 		}
@@ -290,19 +327,10 @@ class Settings_Helper {
 			$sections_html = ob_get_contents();
 			$section_count = 0;
 
-			/**
-			 * Unify line breaks (possibly mixed in Windows environments or
-			 * due to included textarea contents.
-			 */
 			$sections_html = str_replace(
+				array( '|X|', '|Y|' ),
+				// Take mixed line breaks into account (e.g. due to textarea contents or in Windows environments).
 				array( "\r\n", "\n" ),
-				array( PHP_EOL, PHP_EOL ),
-				$sections_html
-			);
-
-			$sections_html = str_replace(
-				'|X|',
-				PHP_EOL,
 				preg_replace_callback(
 					'/\<h2\>.*?\<\/table\>/',
 					function ( $matches ) use ( &$section_count, $current_section_tab ) {
@@ -315,7 +343,11 @@ class Settings_Helper {
 							$matches[0]
 						);
 					},
-					str_replace( PHP_EOL, '', $sections_html )
+					str_replace(
+						array( "\r\n", "\n" ),
+						array( '|X|', '|Y|' ),
+						$sections_html
+					)
 				)
 			);
 
@@ -539,8 +571,21 @@ class Settings_Helper {
 		// Make current tab info available after submit.
 		echo '<input type="hidden" name="tab" value="' . $this->current_tab . '">' . PHP_EOL;
 
-		if ( ! empty( $this->sections[ $args['id'] ]['description'] ) ) {
-			echo '<p class="section-description">' . $this->sections[ $args['id'] ]['description'] . '</p>' . PHP_EOL;
+		$ext_description = '';
+		$description     = ! empty( $this->sections[ $args['id'] ]['description'] ) ?
+			$this->sections[ $args['id'] ]['description'] : '';
+
+		if ( is_array( $description ) ) {
+			$ext_description = ! empty( $description[1] ) ? $description[1] : '';
+			$description     = $description[0];
+		}
+
+		if ( $description ) {
+			echo wp_sprintf(
+				'<div class="section-description">%s%s</div>' . PHP_EOL,
+				$description,
+				$ext_description ? $this->get_extended_description_section( $ext_description ) : ''
+			);
 		}
 	} // render_section
 
@@ -567,6 +612,24 @@ class Settings_Helper {
 			echo '<p class="description">' . $args['description'] . '</p>' . PHP_EOL;
 		}
 	} // render_field
+
+	/**
+	 * Create the HTML markup for an extended description section.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param string $content Extended description content.
+	 */
+	private function get_extended_description_section( $content ) {
+		return wp_sprintf(
+			'<div class="immonex-plugin-options__ext-description">%s%s%s</div>',
+			'<div class="immonex-plugin-options__ext-description-show"><button class="button button-primary"><span class="dashicons dashicons-arrow-down-alt2"></span>' .
+				__( 'more details', 'immonex-wp-free-plugin-core' ) . '</button></div>',
+			'<div class="immonex-plugin-options__ext-description-hide"><button class="button button-primary"><span class="dashicons dashicons-arrow-up-alt2"></span>' .
+				__( 'hide details', 'immonex-wp-free-plugin-core' ) . '</button></div>',
+			'<div class="immonex-plugin-options__ext-description-content">' . $content . '</div>'
+		);
+	} // get_extended_description_section
 
 	/**
 	 * Render a text field.
@@ -728,6 +791,63 @@ class Settings_Helper {
 			echo $checkbox;
 		}
 	} // render_checkbox_group
+
+	/**
+	 * Render an image select element.
+	 *
+	 * @since 1.3.4
+	 *
+	 * @param array $args Checkbox properties.
+	 */
+	private function render_media_image_select( $args ) {
+		$image_preview = '';
+		if ( $args['value'] ) {
+			$attachment_ids = explode( ',', $args['value'] );
+			foreach ( $attachment_ids as $attachment_id ) {
+				$thumb_url = wp_get_attachment_thumb_url( trim( $attachment_id ) );
+
+				if ( $thumb_url ) {
+					$image_preview .= wp_sprintf(
+						'<div class="immonex-plugin-options__thumbnail" data-field-id="%1$s" data-att-id="%2$s">' .
+							'<img src="%3$s" alt="Thumbnail">' .
+							'<div class="immonex-plugin-options__delete-icon"></div>' .
+							'</div>' . PHP_EOL,
+						$args['id'],
+						$attachment_id,
+						$thumb_url
+					);
+				}
+			}
+		}
+
+		$max_files = ! empty( $args['max_files'] ) && (int) $args['max_files'] > 0 ? (int) $args['max_files'] : 1;
+		if ( ! empty( $args['select_button_text'] ) ) {
+			$select_button_text = $args['select_button_text'];
+		} else {
+			$select_button_text = $max_files > 1 ?
+				__( 'Select images', 'immonex-wp-free-plugin-core' ) :
+				__( 'Select image', 'immonex-wp-free-plugin-core' );
+		}
+
+		$image_select = wp_sprintf(
+			PHP_EOL . '<div id="%3$s-media-wrapper" class="immonex-plugin-options__media-wrapper">' .
+				'%6$s</div>' .
+				'<input id="%3$s-select-button" type="button" class="button" value="%5$s">' .
+				'<input id="%3$s" type="hidden" name="%1$s[%2$s]" value="%4$s" autocomplete="off">' . PHP_EOL,
+			$args['option_name'],
+			$args['name'],
+			$args['id'],
+			$args['value'],
+			$select_button_text,
+			$image_preview
+		);
+
+		if ( isset( $args['wrap'] ) ) {
+			$image_select = str_replace( '{element}', trim( $image_select ), $args['wrap'] ) . PHP_EOL;
+		}
+
+		echo $image_select;
+	} // render_media_image_select
 
 	/**
 	 * Generate the class code for input elements.

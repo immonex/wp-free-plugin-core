@@ -30,11 +30,11 @@ namespace immonex\WordPressFreePluginCore\DEV_6;
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.3.3
+ * @version 1.4.0
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.3.3';
+	const BASE_VERSION = '1.4.0';
 
 	/**
 	 * Stable/Release version flag
@@ -388,7 +388,6 @@ abstract class Base {
 
 			foreach ( $site_ids as $site_id ) {
 				switch_to_blog( $site_id );
-				$this->plugin_options = $this->fetch_plugin_options();
 				$this->activate_plugin_single_site();
 				restore_current_blog();
 			}
@@ -404,6 +403,8 @@ abstract class Base {
 	 */
 	protected function activate_plugin_single_site() {
 		// Fetch plugin options and update version.
+		$this->plugin_options = $this->fetch_plugin_options();
+
 		if ( static::PLUGIN_VERSION !== $this->plugin_options['plugin_version'] ) {
 			$this->plugin_options['plugin_version'] = static::PLUGIN_VERSION;
 			update_option( $this->plugin_options_name, $this->plugin_options );
@@ -586,12 +587,14 @@ abstract class Base {
 				''
 		);
 		$this->color_utils     = new Color_Utils( $this );
+		$this->mail_utils      = new Mail_Utils( $this->plugin_slug, $this->string_utils, $this->template_utils );
 
 		$this->core_utils = array(
 			'general'  => $this->general_utils,
 			'settings' => $this->settings_helper,
 			'string'   => $this->string_utils,
 			'geo'      => $this->geo_utils,
+			'mail'     => $this->mail_utils,
 			'template' => $this->template_utils,
 			'color'    => $this->color_utils,
 		);
@@ -864,15 +867,17 @@ abstract class Base {
 	 * @param string $hook_suffix The current admin page.
 	 */
 	public function admin_scripts_and_styles( $hook_suffix ) {
-		if ( ! is_admin() ) {
-			return;
-		}
-
 		$ns_split            = explode( '\\', __NAMESPACE__ );
 		$core_version        = array_pop( $ns_split );
-		$core_version_handle = str_replace( '_', '-', substr( $core_version, 1 ) );
-		$core_version_semver = str_replace( '-', '.', $core_version_handle );
-		$core_handle         = static::PUBLIC_PREFIX . "backend-core-{$core_version_handle}";
+		$core_version_handle = str_replace( '_', '-', $core_version );
+		if ( 'V' === $core_version_handle[0] ) {
+			$core_version_handle = substr( $core_version, 1 );
+			$core_version_semver = str_replace( '-', '.', $core_version_handle );
+		} else {
+			$dev_number          = str_replace( 'DEV-', '', $core_version_handle );
+			$core_version_semver = "{$dev_number}.0.0-alpha";
+		}
+		$core_handle = "{$this->plugin_slug}-backend-core-{$core_version_handle}";
 
 		/**
 		 * Load core backend CSS.
@@ -901,7 +906,6 @@ abstract class Base {
 		/**
 		 * Load core backend JS first.
 		 */
-
 		wp_register_script(
 			$core_handle,
 			plugins_url( $this->plugin_slug . "/vendor/immonex/wp-free-plugin-core/src/{$core_version}/js/backend.js" ),
@@ -911,13 +915,18 @@ abstract class Base {
 		);
 		wp_enqueue_script( $core_handle );
 
+		$media_fields = $this->settings_helper->get_media_fields();
+
 		wp_localize_script(
 			$core_handle,
 			'iwpfpc_params',
 			array(
-				'core_version' => $core_version_semver,
-				'plugin_slug'  => $this->plugin_slug,
-				'ajax_url'     => get_admin_url() . 'admin-ajax.php',
+				'core_version'                    => $core_version_semver,
+				'plugin_slug'                     => $this->plugin_slug,
+				'ajax_url'                        => get_admin_url() . 'admin-ajax.php',
+				'media_fields'                    => $media_fields,
+				'default_media_frame_title'       => __( 'Image Selection', 'immonex-wp-free-plugin-core' ),
+				'default_media_frame_button_text' => __( 'Apply selection', 'immonex-wp-free-plugin-core' ),
 			)
 		);
 
@@ -935,6 +944,10 @@ abstract class Base {
 				true
 			);
 			wp_enqueue_script( $this->backend_js_handle );
+		}
+
+		if ( ! empty( $media_fields ) ) {
+			wp_enqueue_media();
 		}
 	} // admin_scripts_and_styles
 

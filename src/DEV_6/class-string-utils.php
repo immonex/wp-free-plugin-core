@@ -597,4 +597,25 @@ class String_Utils {
 		}
 	} // mb_str_pad
 
+	/**
+	 * Simple HTML to plain text conversion.
+	 *
+	 * @since 1.3.5
+	 *
+	 * @param string $html HTML string.
+	 *
+	 * @return string Plain text version.
+	 */
+	public function html_to_plain_text( $html ) {
+		$plain = stripslashes( $html );
+		if ( false === strpos( $plain, '<' ) ) {
+			// Return stripslashed original content if it does'nt contain any HTML tags.
+			return $plain;
+		}
+
+		$plain = strip_tags( $plain, '<br><p><li>' );
+
+		return preg_replace( '/<[^>]*>/', PHP_EOL, $plain );
+	} // html_to_plain_text
+
 } // String_Utils

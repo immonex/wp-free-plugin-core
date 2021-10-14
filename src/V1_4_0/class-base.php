@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_3_1;
+namespace immonex\WordPressFreePluginCore\V1_4_0;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.3.1
+ * @version 1.4.0
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.3.1';
+	const BASE_VERSION = '1.4.0';
 
 	/**
 	 * Stable/Release version flag
@@ -388,7 +388,6 @@ abstract class Base {
 
 			foreach ( $site_ids as $site_id ) {
 				switch_to_blog( $site_id );
-				$this->plugin_options = $this->fetch_plugin_options();
 				$this->activate_plugin_single_site();
 				restore_current_blog();
 			}
@@ -404,6 +403,8 @@ abstract class Base {
 	 */
 	protected function activate_plugin_single_site() {
 		// Fetch plugin options and update version.
+		$this->plugin_options = $this->fetch_plugin_options();
+
 		if ( static::PLUGIN_VERSION !== $this->plugin_options['plugin_version'] ) {
 			$this->plugin_options['plugin_version'] = static::PLUGIN_VERSION;
 			update_option( $this->plugin_options_name, $this->plugin_options );
@@ -496,6 +497,10 @@ abstract class Base {
 		add_action( 'admin_init', array( $this, 'init_plugin_admin' ) );
 		add_action( 'admin_menu', array( $this, 'register_plugin_settings' ) );
 
+		// Exclude plugin JS/CSS from Autoptimize "optimizations".
+		add_filter( 'option_autoptimize_js_exclude', array( $this, 'autoptimize_exclude' ), 10, 2 );
+		add_filter( 'option_autoptimize_css_exclude', array( $this, 'autoptimize_exclude' ), 10, 2 );
+
 		// Add a filter for modifying the required user/role capability for
 		// accessing and updating plugin options.
 		add_filter( 'option_page_capability_' . $this->plugin_options_name, array( $this, 'get_plugin_options_access_capability' ) );
@@ -582,12 +587,14 @@ abstract class Base {
 				''
 		);
 		$this->color_utils     = new Color_Utils( $this );
+		$this->mail_utils      = new Mail_Utils( $this->plugin_slug, $this->string_utils, $this->template_utils );
 
 		$this->core_utils = array(
 			'general'  => $this->general_utils,
 			'settings' => $this->settings_helper,
 			'string'   => $this->string_utils,
 			'geo'      => $this->geo_utils,
+			'mail'     => $this->mail_utils,
 			'template' => $this->template_utils,
 			'color'    => $this->color_utils,
 		);
@@ -707,7 +714,7 @@ abstract class Base {
 		 * Plugin base JS
 		 */
 		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'js/frontend.js' ) ) {
-			$this->frontend_base_js_handle = static::PUBLIC_PREFIX . 'frontend-js';
+			$this->frontend_base_js_handle = static::PUBLIC_PREFIX . 'frontend';
 
 			wp_register_script(
 				$this->frontend_base_js_handle,
@@ -763,7 +770,7 @@ abstract class Base {
 							$skin_js_deps[] = $this->frontend_base_js_handle;
 						}
 
-						$handle = static::PUBLIC_PREFIX . 'skin-js';
+						$handle = static::PUBLIC_PREFIX . 'skin';
 						if ( 'index' !== $basename ) {
 							$handle .= "-{$basename}";
 						}
@@ -860,9 +867,27 @@ abstract class Base {
 	 * @param string $hook_suffix The current admin page.
 	 */
 	public function admin_scripts_and_styles( $hook_suffix ) {
-		if ( ! is_admin() ) {
-			return;
+		$ns_split            = explode( '\\', __NAMESPACE__ );
+		$core_version        = array_pop( $ns_split );
+		$core_version_handle = str_replace( '_', '-', $core_version );
+		if ( 'V' === $core_version_handle[0] ) {
+			$core_version_handle = substr( $core_version, 1 );
+			$core_version_semver = str_replace( '-', '.', $core_version_handle );
+		} else {
+			$dev_number          = str_replace( 'DEV-', '', $core_version_handle );
+			$core_version_semver = "{$dev_number}.0.0-alpha";
 		}
+		$core_handle = "{$this->plugin_slug}-backend-core-{$core_version_handle}";
+
+		/**
+		 * Load core backend CSS.
+		 */
+		wp_enqueue_style(
+			$core_handle,
+			plugins_url( $this->plugin_slug . "/vendor/immonex/wp-free-plugin-core/src/{$core_version}/css/backend.css" ),
+			array(),
+			$this->core_version_semver
+		);
 
 		/**
 		 * Load plugin-specific CSS if existent.
@@ -881,28 +906,27 @@ abstract class Base {
 		/**
 		 * Load core backend JS first.
 		 */
-		$ns_split            = explode( '\\', __NAMESPACE__ );
-		$core_version        = array_pop( $ns_split );
-		$core_version_handle = str_replace( '_', '-', substr( $core_version, 1 ) );
-		$core_version_semver = str_replace( '-', '.', $core_version_handle );
-		$core_js_handle      = static::PUBLIC_PREFIX . "backend-js-core-{$core_version_handle}";
-
 		wp_register_script(
-			$core_js_handle,
+			$core_handle,
 			plugins_url( $this->plugin_slug . "/vendor/immonex/wp-free-plugin-core/src/{$core_version}/js/backend.js" ),
 			array( 'jquery' ),
 			$core_version_semver,
 			true
 		);
-		wp_enqueue_script( $core_js_handle );
+		wp_enqueue_script( $core_handle );
+
+		$media_fields = $this->settings_helper->get_media_fields();
 
 		wp_localize_script(
-			$core_js_handle,
+			$core_handle,
 			'iwpfpc_params',
 			array(
-				'core_version' => $core_version_semver,
-				'plugin_slug'  => $this->plugin_slug,
-				'ajax_url'     => get_admin_url() . 'admin-ajax.php',
+				'core_version'                    => $core_version_semver,
+				'plugin_slug'                     => $this->plugin_slug,
+				'ajax_url'                        => get_admin_url() . 'admin-ajax.php',
+				'media_fields'                    => $media_fields,
+				'default_media_frame_title'       => __( 'Image Selection', 'immonex-wp-free-plugin-core' ),
+				'default_media_frame_button_text' => __( 'Apply selection', 'immonex-wp-free-plugin-core' ),
 			)
 		);
 
@@ -910,7 +934,7 @@ abstract class Base {
 		 * Load plugin-specific backend JS if existent.
 		 */
 		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'js/backend.js' ) ) {
-			$this->backend_js_handle = static::PUBLIC_PREFIX . 'backend-js';
+			$this->backend_js_handle = static::PUBLIC_PREFIX . 'backend';
 
 			wp_register_script(
 				$this->backend_js_handle,
@@ -920,6 +944,10 @@ abstract class Base {
 				true
 			);
 			wp_enqueue_script( $this->backend_js_handle );
+		}
+
+		if ( ! empty( $media_fields ) ) {
+			wp_enqueue_media();
 		}
 	} // admin_scripts_and_styles
 
@@ -1191,6 +1219,24 @@ abstract class Base {
 
 		update_option( $this->plugin_options_name, $this->plugin_options );
 	} // add_deferred_admin_notice
+
+	/**
+	 * Exclude plugin JS/CSS from Autoptimize "optimizations".
+	 *
+	 * @since 1.3.2
+	 *
+	 * @param string $value  Current exclusion patterns/terms.
+	 * @param string $option Option name.
+	 *
+	 * @return string Extended list of exclusion patterns/terms.
+	 */
+	public function autoptimize_exclude( $value, $option ) {
+		if ( false === strpos( $value, 'immonex' ) ) {
+			return implode( ', ', array( $value, 'immonex' ) );
+		}
+
+		return $value;
+	} // autoptimize_exclude
 
 	/**
 	 * Add an administrative message.

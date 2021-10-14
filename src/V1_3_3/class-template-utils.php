@@ -57,7 +57,7 @@ class Template_Utils {
 	} // __construct
 
 	/**
-	 * Fetch a Twig template file and return it's rendered content.
+	 * Fetch a Twig template file and return its rendered content.
 	 *
 	 * @since 1.3.0
 	 *
@@ -83,7 +83,7 @@ class Template_Utils {
 	} // render_twig_template
 
 	/**
-	 * Fetch a PHP template file and return it's rendered content via output buffering.
+	 * Fetch a PHP template file and return its rendered content via output buffering.
 	 *
 	 * @since 0.8.3
 	 *

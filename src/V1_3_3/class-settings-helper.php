@@ -290,19 +290,10 @@ class Settings_Helper {
 			$sections_html = ob_get_contents();
 			$section_count = 0;
 
-			/**
-			 * Unify line breaks (possibly mixed in Windows environments or
-			 * due to included textarea contents.
-			 */
 			$sections_html = str_replace(
+				array( '|X|', '|Y|' ),
+				// Take mixed line breaks into account (e.g. due to textarea contents or in Windows environments).
 				array( "\r\n", "\n" ),
-				array( PHP_EOL, PHP_EOL ),
-				$sections_html
-			);
-
-			$sections_html = str_replace(
-				'|X|',
-				PHP_EOL,
 				preg_replace_callback(
 					'/\<h2\>.*?\<\/table\>/',
 					function ( $matches ) use ( &$section_count, $current_section_tab ) {
@@ -315,7 +306,11 @@ class Settings_Helper {
 							$matches[0]
 						);
 					},
-					str_replace( PHP_EOL, '', $sections_html )
+					str_replace(
+						array( "\r\n", "\n" ),
+						array( '|X|', '|Y|' ),
+						$sections_html
+					)
 				)
 			);
 
