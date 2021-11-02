@@ -441,7 +441,7 @@ class Color_Utils {
 
 		$min     = min( $r, $g, $b );
 		$max     = max( $r, $g, $b );
-		$del_max = $max - $min;
+		$del_max = (int) $max - $min;
 
 		$l = ( $max + $min ) / 2;
 		if ( 0 === $del_max ) {
