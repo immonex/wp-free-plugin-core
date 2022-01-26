@@ -229,6 +229,58 @@
 	display: block;
 }
 
+.immonex-plugin-options__tooltip-box {
+	position: relative;
+	display: inline-block;
+}
+
+.immonex-plugin-options__tooltip-box .immonex-plugin-options__tooltip-text {
+	position: absolute;
+	top: 30px;
+	inline-size: max-content;
+	max-width: 640px;
+	padding: 8px;
+	border-radius: 8px;
+	box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.2);
+	color: #F0F0F0;
+	background: rgba(67, 67, 65, 0.9);
+	visibility: hidden;
+	z-index: 1;
+}
+
+.immonex-plugin-options__tooltip-box .immonex-plugin-options__tooltip-text:after,
+.immonex-plugin-options__tooltip-box .immonex-plugin-options__tooltip-text:before {
+	position: absolute;
+	bottom: 100%;
+	left: 28px;
+	border: solid transparent;
+	content: "";
+	height: 0;
+	width: 0;
+	pointer-events: none;
+}
+
+.immonex-plugin-options__tooltip-box .immonex-plugin-options__tooltip-text:after {
+	border-color: rgba(0, 0, 0, 0);
+	border-bottom-color: rgba(67, 67, 65, 0.85);
+	border-width: 8px;
+	margin-left: -8px;
+}
+
+.immonex-plugin-options__tooltip-box .immonex-plugin-options__tooltip-text:before {
+	border-color: transparent;
+	border-width: 11px;
+	margin-left: -11px;
+}
+
+.immonex-plugin-options__tooltip-box:hover {
+	cursor: help;
+}
+
+.immonex-plugin-options__tooltip-box:hover .immonex-plugin-options__tooltip-text {
+	visibility: visible;
+}
+
 @media screen and (min-width: 800px) {
 	.immonex-plugin-options .options-page-footer {
 		display: flex;

@@ -2,7 +2,7 @@
 /**
  * The library immonex WP Free Plugin Core provides shared basic functionality
  * for free immonex WordPress plugins.
- * Copyright (C) 2014, 2020  inveris OHG / immonex
+ * Copyright (C) 2014, 2022  inveris OHG / immonex
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_6;
+namespace immonex\WordPressFreePluginCore\DEV_7;
 
 /**
  * Base class for free immonex WordPress plugins.
@@ -326,6 +326,7 @@ abstract class Base {
 
 		add_action( static::PLUGIN_PREFIX . 'update_plugin_options', array( $this, 'update_plugin_options' ), 10, 2 );
 		add_action( static::PLUGIN_PREFIX . 'add_deferred_admin_notice', array( $this, 'add_deferred_admin_notice' ), 10, 3 );
+		add_action( static::PLUGIN_PREFIX . 'admin_mail', array( $this, 'send_admin_mail' ), 10, 3 );
 
 		add_action( 'wp_ajax_dismiss_admin_notice', array( $this, 'dismiss_admin_notice' ) );
 	} // __construct
@@ -1219,6 +1220,33 @@ abstract class Base {
 
 		update_option( $this->plugin_options_name, $this->plugin_options );
 	} // add_deferred_admin_notice
+
+	/**
+	 * Send an admin info mail (callback).
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string               $subject       Subject.
+	 * @param string|string[]      $body          Mail body (plain text only or HTML and text).
+	 * @param string[]             $headers       Headers.
+	 * @param string[]             $attachments   Attachment files (absolute paths).
+	 * @param mixed[]              $template_data Data/Parameters for rendering the default HTML frame template.
+	 * @param bool|string|string[] $to            Recipient(s) - optional, defaults to false (site/network admin).
+	 */
+	public function send_admin_mail( $subject, $body, $headers = array(), $attachments = array(), $template_data = array(), $to = false ) {
+		if ( empty( $to ) ) {
+			if ( function_exists( 'is_multisite' ) && is_multisite() ) {
+				$to = get_site_option( 'admin_email' );
+			} else {
+				$to = get_option( 'admin_email' );
+			}
+		}
+
+		$template_data['preset']    = 'admin_info';
+		$template_data['bootstrap'] = $this->bootstrap_data;
+
+		$this->mail_utils->send( $to, $subject, $body, $headers, $attachments, $template_data );
+	} // send_admin_mail
 
 	/**
 	 * Exclude plugin JS/CSS from Autoptimize "optimizations".
