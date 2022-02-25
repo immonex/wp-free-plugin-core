@@ -9,7 +9,6 @@
 	<exclude-pattern>/vendor/</exclude-pattern>
 	<exclude-pattern>/third_party/</exclude-pattern>
 	<exclude-pattern>/node_modules/</exclude-pattern>
-	<exclude-pattern>/V1_2_1/</exclude-pattern>
 
 	<!-- How to scan -->
 	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->

@@ -58,7 +58,7 @@ class General_Utils {
 			)
 		);
 
-		$default_language = substr( get_locale(), 0, 2 );
+		$default_language = substr( get_user_locale(), 0, 2 );
 
 		if ( isset( $special_args['keep_attachments'] ) && $special_args['keep_attachments'] ) {
 			$keep_attachments = true;

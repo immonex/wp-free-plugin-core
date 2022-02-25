@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_3_3;
+namespace immonex\WordPressFreePluginCore\V1_5_0;
 
 /**
  * String related utility methods.
@@ -437,7 +437,7 @@ class String_Utils {
 			$additional_search_terms = implode( '|', $additional_search_terms );
 		}
 
-		return 'http' === strtolower( substr( $url, 0, 4 ) ) && preg_match( '/(ogulo|immoviewer|matterport|archilogic|feelestate|virtualtours\.immobilienscout24' . ( $additional_search_terms ? '|' . $additional_search_terms : '' ) . ')/', strtolower( $url ) );
+		return 'http' === strtolower( substr( $url, 0, 4 ) ) && preg_match( '/(ogulo|immoviewer|matterport|archilogic|feelestate|virtualtours\.immobilienscout24|immo\.tours' . ( $additional_search_terms ? '|' . $additional_search_terms : '' ) . ')/', strtolower( $url ) );
 	} // is_virtual_tour_url
 
 	/**
@@ -447,11 +447,44 @@ class String_Utils {
 	 *
 	 * @param string $text Plain text source string.
 	 *
-	 * @return string String with (possibly) link tags.
+	 * @return string String with (possibly) included link tags.
 	 */
 	public function convert_urls( $text ) {
 		return preg_replace_callback( '#(?<=^|\s)(?i)(http|https)?(://)?(([-\w^@]{2,}\.)+([a-zA-Z]{2,3})(?:/[^,.\s\<\>\"\']*|))(?=\s|$)#', array( $this, 'convert_urls_cb' ), $text );
 	} // convert_urls
+
+	/**
+	 * Convert A tags to plain text (link text + URL).
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $html HTML source string.
+	 *
+	 * @return string String with (possibly) converted links.
+	 */
+	public function convert_link_tags_to_plain_text( $html ) {
+		$plain = preg_replace( '/<a\s(?:.(?!=href))*?href="([^"]*)"[^>]*?>(.*?)<\/a>/i', '$2 ($1)', $html );
+		$plain = preg_replace( '/\(mailto:(.*?)\)/', '($1)', $plain );
+
+		return $plain;
+	} // convert_link_tags_to_plain_text
+
+	/**
+	 * Extract alt and title attributes of IMG tags.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $html    HTML source string.
+	 * @param string $replace Replace parameter for preg_replace (optional, defaults to $1).
+	 *
+	 * @return string String with (possibly) converted links.
+	 */
+	public function convert_img_tag_alt_to_plain_text( $html, $replace = '$1' ) {
+		$plain = preg_replace( '/<img\s(?:.(?!=alt))*?alt="([^"]*)"[^>]*?>/i', $replace, $html );
+		$plain = preg_replace( '/<img\s(?:.(?!=title))*?title="([^"]*)"[^>]*?>/i', $replace, $plain );
+
+		return $plain;
+	} // convert_img_tag_alt_to_plain_text
 
 	/**
 	 * Callback method for converting URLs and mail addresses to links.
@@ -564,5 +597,106 @@ class String_Utils {
 
 		return $string;
 	} // xor_string
+
+	/**
+	 * Multibyte version of str_pad.
+	 *
+	 * @since 1.3.4
+	 *
+	 * @param string $input    The string to be padded.
+	 * @param int    $length   The length of the resultant padded string.
+	 * @param string $padding  The string to use as padding. Defaults to space.
+	 * @param int    $pad_type The type of padding. Defaults to STR_PAD_RIGHT.
+	 * @param string $encoding The encoding to use, defaults to UTF-8.
+	 *
+	 * @return string Current URL without page number.
+	 */
+	public function mb_str_pad( $input, $length, $padding = ' ', $pad_type = STR_PAD_RIGHT, $encoding = 'UTF-8' ) {
+		$pad_required = $length - mb_strlen( $input, $encoding );
+		if ( ! $pad_required ) {
+			return $input;
+		}
+
+		switch ( $pad_type ) {
+			case STR_PAD_LEFT:
+				return mb_substr( str_repeat( $padding, $pad_required ), 0, $pad_required, $encoding ) . $input;
+			case STR_PAD_BOTH:
+				$left_pad_len  = floor( $pad_required / 2 );
+				$right_pad_len = $pad_required - $left_pad_len;
+				return mb_substr( str_repeat( $padding, $left_pad_len ), 0, $left_pad_len, $encoding ) . $input .
+					mb_substr( str_repeat( $padding, $right_pad_len ), 0, $right_pad_len, $encoding );
+			default:
+				return $input . mb_substr( str_repeat( $padding, $pad_required ), 0, $pad_required, $encoding );
+		}
+	} // mb_str_pad
+
+	/**
+	 * Simple HTML to plain text conversion.
+	 *
+	 * @since 1.3.5
+	 *
+	 * @param string      $html        HTML string.
+	 * @param bool|string $list_bullet List item bullet character (optional; defaults
+	 *                                 to false for no bullet points; true for "-" or
+	 *                                 an arbitrary other character as alternative.
+	 *
+	 * @return string Plain text version.
+	 */
+	public function html_to_plain_text( $html, $list_bullet = false ) {
+		$plain = trim( stripslashes( $html ) );
+		if ( false === strpos( $plain, '<' ) ) {
+			// Return stripslashed original content if it doesn't contain any HTML tags.
+			return $plain;
+		}
+
+		// Convert links to plain text (link text + URL).
+		$plain = $this->convert_link_tags_to_plain_text( $plain );
+
+		// Extract alt and title attributes of IMG tags.
+		$plain = $this->convert_img_tag_alt_to_plain_text( $plain, '<div>$1</div>' );
+
+		// Convert BR, DIV and H Tags.
+		$plain = preg_replace(
+			array( '/<br([ \/]+)?>/i', '/<(div|h1|h2|h3|h4|h5|h6)[^>]*>(.*?)<\/[a-z0-9]+>/i' ),
+			array( '{BR}', '<p>$2</p>' ),
+			$plain
+		);
+
+		/**
+		 * Strip line breaks and unnecessary spaces.
+		 */
+		$plain = str_replace(
+			array( "\r", "\n" ),
+			array( ' ', ' ' ),
+			strip_tags( $plain, '<br><p><ul><li>' )
+		);
+		$plain = preg_replace( '/>[\s]+</', '><', $plain );
+		$plain = preg_replace( '/(^|<\/[a-zA-Z]+>)([^<>]{1,})(<|$)/', '$1<p>$2</p>$3', $plain );
+		$plain = preg_replace( '/(?<=>)\s+|\s+(?=<)/', '', $plain );
+		$plain = preg_replace( '/[\s]{2,}/', ' ', $plain );
+
+		// Convert "pseudo breaks" back to regular BR tags.
+		$plain = str_replace( '{BR}', '<br>', $plain );
+
+		if ( ! empty( $list_bullet ) ) {
+			// Add list bullet point characters.
+			if ( true === $list_bullet ) {
+				$list_bullet = '-';
+			} else {
+				$list_bullet = $list_bullet[0];
+			}
+
+			$plain = preg_replace( '/<li[^>]*>/', "<li>{$list_bullet} ", $plain );
+		}
+
+		// Add plain text line breaks.
+		$plain = preg_replace(
+			array( '/<\/p>/', '/<br>|<\/(?!p)[^>]*>/' ),
+			array( PHP_EOL . PHP_EOL, PHP_EOL ),
+			$plain
+		);
+
+		return trim( wp_strip_all_tags( $plain ) );
+	} // html_to_plain_text
 
 } // String_Utils

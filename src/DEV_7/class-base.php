@@ -30,11 +30,11 @@ namespace immonex\WordPressFreePluginCore\DEV_7;
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.4.0
+ * @version 1.5.0
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.4.0';
+	const BASE_VERSION = '1.5.0';
 
 	/**
 	 * Stable/Release version flag
@@ -326,7 +326,7 @@ abstract class Base {
 
 		add_action( static::PLUGIN_PREFIX . 'update_plugin_options', array( $this, 'update_plugin_options' ), 10, 2 );
 		add_action( static::PLUGIN_PREFIX . 'add_deferred_admin_notice', array( $this, 'add_deferred_admin_notice' ), 10, 3 );
-		add_action( static::PLUGIN_PREFIX . 'admin_mail', array( $this, 'send_admin_mail' ), 10, 3 );
+		add_action( static::PLUGIN_PREFIX . 'admin_mail', array( $this, 'send_admin_mail' ), 10, 6 );
 
 		add_action( 'wp_ajax_dismiss_admin_notice', array( $this, 'dismiss_admin_notice' ) );
 	} // __construct
@@ -1184,6 +1184,27 @@ abstract class Base {
 	} // get_plugin_footer_infos
 
 	/**
+	 * Add an administrative message.
+	 *
+	 * @since 0.1
+	 *
+	 * @param string $message Message to display.
+	 * @param string $type Message type: "success" (default), "info", "warning", "error".
+	 * @param string $id Message ID (required for deferred messages only).
+	 */
+	protected function add_admin_notice( $message, $type = 'success', $id = false ) {
+		if ( ! in_array( $type, array( 'success', 'info', 'warning', 'error' ), true ) ) {
+			$type = 'info';
+		}
+
+		$this->admin_notices[ $id ? $id : uniqid() ] = array(
+			'message'        => $message,
+			'type'           => $type,
+			'is_dismissable' => $id ? true : false,
+		);
+	} // add_admin_notice
+
+	/**
 	 * Add a "deferred" administrative message that will be saved as part of the
 	 * plugin options (also used as action callback).
 	 *
@@ -1267,27 +1288,6 @@ abstract class Base {
 	} // autoptimize_exclude
 
 	/**
-	 * Add an administrative message.
-	 *
-	 * @since 0.1
-	 *
-	 * @param string $message Message to display.
-	 * @param string $type Message type: "success" (default), "info", "warning", "error".
-	 * @param string $id Message ID (required for deferred messages only).
-	 */
-	protected function add_admin_notice( $message, $type = 'success', $id = false ) {
-		if ( ! in_array( $type, array( 'success', 'info', 'warning', 'error' ), true ) ) {
-			$type = 'info';
-		}
-
-		$this->admin_notices[ $id ? $id : uniqid() ] = array(
-			'message'        => $message,
-			'type'           => $type,
-			'is_dismissable' => $id ? true : false,
-		);
-	} // add_admin_notice
-
-	/**
 	 * Show error messages during plugin activation.
 	 *
 	 * @since 0.2
@@ -1312,7 +1312,7 @@ abstract class Base {
 	 */
 	protected function load_translations() {
 		$domain       = $this->textdomain ? $this->textdomain : $this->plugin_slug;
-		$locale       = get_locale();
+		$locale       = get_user_locale();
 		$base_version = basename( __DIR__ );
 
 		/**
@@ -1369,7 +1369,7 @@ abstract class Base {
 			return '';
 		}
 
-		$lang = substr( get_locale(), 0, 2 );
+		$lang = substr( get_user_locale(), 0, 2 );
 		$href = empty( $urls[ $lang ] ) ? array_values( $urls )[0] : $urls[ $lang ];
 
 		return wp_sprintf(

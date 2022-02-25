@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_3_3;
+namespace immonex\WordPressFreePluginCore\V1_5_0;
 
 /**
  * Utility methods for a very simple kind of templating.
@@ -61,13 +61,25 @@ class Template_Utils {
 	 *
 	 * @since 1.3.0
 	 *
-	 * @param string $filename Template filename (without path).
+	 * @param string $filename Template path OR filename (auto locate).
 	 * @param array  $template_data Array with any output related contents (optional).
 	 *
 	 * @return string|bool Parsed template content or false if not found.
 	 */
 	public function render_twig_template( $filename, $template_data = array() ) {
-		$template_file = $this->locate_template_file( $filename, $template_data );
+		$template_file = false;
+
+		if (
+			false !== strpos( $filename, '/' )
+			&& file_exists( $filename )
+		) {
+			$template_file = $filename;
+		}
+
+		if ( ! $template_file ) {
+			$template_file = $this->locate_template_file( $filename, $template_data );
+		}
+
 		if ( ! $template_file ) {
 			return false;
 		}
@@ -81,6 +93,31 @@ class Template_Utils {
 
 		return $twig->render( 'template', $template_data );
 	} // render_twig_template
+
+	/**
+	 * Render a Twig template string.
+	 *
+	 * @since 1.3.4
+	 *
+	 * @param string $template Template string.
+	 * @param array  $template_data Array with any output related contents (optional).
+	 *
+	 * @return string Parsed template content.
+	 */
+	public function render_twig_template_string( $template, $template_data = array() ) {
+		if ( ! trim( $template ) ) {
+			return '';
+		}
+
+		$twig = $this->get_twig();
+		if ( ! $twig ) {
+			return '';
+		}
+
+		$twig->getLoader()->setTemplate( 'template', $template );
+
+		return $twig->render( 'template', $template_data );
+	} // render_twig_template_string
 
 	/**
 	 * Fetch a PHP template file and return its rendered content via output buffering.
@@ -543,7 +580,10 @@ class Template_Utils {
 		}
 
 		$this->twig = new \Twig\Environment(
-			new \Twig\Loader\ArrayLoader()
+			new \Twig\Loader\ArrayLoader(),
+			array(
+				'autoescape' => false,
+			)
 		);
 
 		return $this->twig;
