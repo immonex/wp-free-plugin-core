@@ -647,10 +647,8 @@ abstract class Base {
 		}
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_and_styles' ) );
-		add_action(
-			$this->is_network_activated ? 'network_admin_notices' : 'admin_notices',
-			array( $this, 'display_admin_notices' )
-		);
+		add_action( 'network_admin_notices', array( $this, 'display_network_admin_notices' ) );
+		add_action( 'admin_notices', array( $this, 'display_admin_notices' ) );
 
 		// Add a "Settings" link on the plugins page.
 		if ( $this->enable_separate_option_page ) {
@@ -664,14 +662,9 @@ abstract class Base {
 			is_array( $this->plugin_options['deferred_admin_notices'] ) &&
 			count( $this->plugin_options['deferred_admin_notices'] ) > 0
 		) {
-			if (
-				is_array( $this->plugin_options['deferred_admin_notices'] ) &&
-				count( $this->plugin_options['deferred_admin_notices'] ) > 0
-			) {
-				// Show deferred admin notices until dismissed.
-				foreach ( $this->plugin_options['deferred_admin_notices'] as $id => $admin_notice ) {
-					$this->add_admin_notice( $admin_notice['message'], $admin_notice['type'], $id );
-				}
+			// Show deferred admin notices until dismissed.
+			foreach ( $this->plugin_options['deferred_admin_notices'] as $id => $admin_notice ) {
+				$this->add_admin_notice( $admin_notice['message'], $admin_notice['type'], $id );
 			}
 		}
 
@@ -953,15 +946,33 @@ abstract class Base {
 	} // admin_scripts_and_styles
 
 	/**
+	 * Display current messages for the network admin (callback).
+	 *
+	 * @since 1.5.2
+	 */
+	public function display_network_admin_notices() {
+		$this->display_admin_notices( 'network' );
+	} // display_network_admin_notices
+
+	/**
 	 * Display current administrative messages (callback).
+	 *
+	 * @param string $target "network" for network admin only notices, empty by default.
 	 *
 	 * @since 0.1
 	 */
-	public function display_admin_notices() {
-		if ( count( $this->admin_notices ) > 0 ) {
+	public function display_admin_notices( $target = '' ) {
+		$admin_notices = array_filter(
+			$this->admin_notices,
+			function ( $notice ) use ( $target ) {
+				return $notice['target'] === $target;
+			}
+		);
+
+		if ( count( $admin_notices ) > 0 ) {
 			// Display admin messages.
 			$dismissables_cnt = 0;
-			foreach ( $this->admin_notices as $id => $notice ) {
+			foreach ( $admin_notices as $id => $notice ) {
 				if ( $notice['is_dismissable'] ) {
 					$dismissables_cnt++;
 				}
@@ -970,7 +981,7 @@ abstract class Base {
 				}
 			}
 
-			foreach ( $this->admin_notices as $id => $notice ) {
+			foreach ( $admin_notices as $id => $notice ) {
 				$message = $notice['message'];
 				$classes = array(
 					'notice',
@@ -988,11 +999,11 @@ abstract class Base {
 					$id,
 					$message
 				);
+
+				// Remove displayed message.
+				unset( $this->admin_notices[ $id ] );
 			}
 		}
-
-		// Reset admin messages after display.
-		$this->admin_notices = array();
 	} // display_admin_notices
 
 	/**
@@ -1189,19 +1200,31 @@ abstract class Base {
 	 * @since 0.1
 	 *
 	 * @param string $message Message to display.
-	 * @param string $type Message type: "success" (default), "info", "warning", "error".
-	 * @param string $id Message ID (required for deferred messages only).
+	 * @param string $type    Message type: "success" (default), "info", "warning", "error" or
+	 *                        "network info/warning/error" for network admin notices.
+	 * @param string $id      Message ID (required for deferred messages only).
 	 */
 	protected function add_admin_notice( $message, $type = 'success', $id = false ) {
+		$target = '';
+
+		if ( false !== strpos( $type, ' ' ) ) {
+			$type_split = explode( ' ', $type );
+			$target     = 'network' === $type_split[0] ? 'network' : '';
+			$type       = $type_split[0];
+		}
+
 		if ( ! in_array( $type, array( 'success', 'info', 'warning', 'error' ), true ) ) {
 			$type = 'info';
 		}
 
-		$this->admin_notices[ $id ? $id : uniqid() ] = array(
+		$notice = array(
 			'message'        => $message,
 			'type'           => $type,
 			'is_dismissable' => $id ? true : false,
+			'target'         => $target,
 		);
+
+		$this->admin_notices[ $id ? $id : uniqid() ] = $notice;
 	} // add_admin_notice
 
 	/**
@@ -1211,13 +1234,15 @@ abstract class Base {
 	 * @since 0.3.6
 	 *
 	 * @param string $message Message to display.
-	 * @param string $type    Message type: "success" (default), "info", "warning", "error".
+	 * @param string $type    Message type: "success" (default), "info", "warning", "error" or
+	 *                        "network info/warning/error" for network admin notices.
 	 * @param string $context Message context (e.g. if called as action hook callback; optional).
 	 */
 	public function add_deferred_admin_notice( $message, $type = 'success', $context = '' ) {
+		$raw_type  = str_replace( 'network ', '', $type );
 		$notice_id = uniqid();
 
-		if ( ! in_array( $type, array( 'success', 'info', 'warning', 'error' ), true ) ) {
+		if ( ! in_array( $raw_type, array( 'success', 'info', 'warning', 'error' ), true ) ) {
 			$type = 'info';
 		}
 
@@ -1256,11 +1281,7 @@ abstract class Base {
 	 */
 	public function send_admin_mail( $subject, $body, $headers = array(), $attachments = array(), $template_data = array(), $to = false ) {
 		if ( empty( $to ) ) {
-			if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-				$to = get_site_option( 'admin_email' );
-			} else {
-				$to = get_option( 'admin_email' );
-			}
+			$to = get_option( 'admin_email' );
 		}
 
 		$template_data['preset']    = 'admin_info';
