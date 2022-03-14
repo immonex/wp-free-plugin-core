@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_7;
+namespace immonex\WordPressFreePluginCore\V1_5_2;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.5.0
+ * @version 1.5.2
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.5.0';
+	const BASE_VERSION = '1.5.2';
 
 	/**
 	 * Stable/Release version flag
@@ -325,7 +325,8 @@ abstract class Base {
 		);
 
 		add_action( static::PLUGIN_PREFIX . 'update_plugin_options', array( $this, 'update_plugin_options' ), 10, 2 );
-		add_action( static::PLUGIN_PREFIX . 'add_deferred_admin_notice', array( $this, 'add_deferred_admin_notice' ), 10, 3 );
+		add_action( static::PLUGIN_PREFIX . 'add_deferred_admin_notice', array( $this, 'add_deferred_admin_notice' ), 10, 4 );
+		add_action( static::PLUGIN_PREFIX . 'dismiss_deferred_admin_notice', array( $this, 'dismiss_admin_notice' ), 10 );
 		add_action( static::PLUGIN_PREFIX . 'admin_mail', array( $this, 'send_admin_mail' ), 10, 6 );
 
 		add_action( 'wp_ajax_dismiss_admin_notice', array( $this, 'dismiss_admin_notice' ) );
@@ -1124,15 +1125,26 @@ abstract class Base {
 	} // extend_plugin_infos
 
 	/**
-	 * Delete a dismissible admin notice (AJAX callback).
+	 * Delete a dismissible admin notice (callback).
+	 *
+	 * @param string $notice_id Notice ID (direct do_action calls only).
 	 *
 	 * @since 1.0.0
 	 */
-	public function dismiss_admin_notice() {
-		// @codingStandardsIgnoreStart
-		$notice_id   = isset( $_POST['notice_id'] ) ? sanitize_key( $_POST['notice_id'] ) : false;
-		$plugin_slug = isset( $_POST['plugin_slug'] ) ? sanitize_key( $_POST['plugin_slug'] ) : false;
-		// @codingStandardsIgnoreEnd
+	public function dismiss_admin_notice( $notice_id = '' ) {
+		if ( $notice_id ) {
+			// Call with plugin slug in action name.
+			$plugin_slug = $this->plugin_slug;
+			$is_ajax     = false;
+		} else {
+			// AJAX request: Get notice ID and plugin slug from POST variables.
+			// @codingStandardsIgnoreStart
+			$notice_id   = isset( $_POST['notice_id'] ) ? sanitize_key( $_POST['notice_id'] ) : false;
+			$plugin_slug = isset( $_POST['plugin_slug'] ) ? sanitize_key( $_POST['plugin_slug'] ) : false;
+			// @codingStandardsIgnoreEnd
+
+			$is_ajax = true;
+		}
 		if ( ! $notice_id || ! $plugin_slug ) {
 			return;
 		}
@@ -1143,7 +1155,10 @@ abstract class Base {
 		) {
 			unset( $this->plugin_options['deferred_admin_notices'][ $notice_id ] );
 			update_option( $this->plugin_options_name, $this->plugin_options );
-			wp_die();
+
+			if ( $is_ajax ) {
+				wp_die();
+			}
 		}
 	} // dismiss_admin_notice
 
@@ -1204,7 +1219,7 @@ abstract class Base {
 	 *                        "network info/warning/error" for network admin notices.
 	 * @param string $id      Message ID (required for deferred messages only).
 	 */
-	protected function add_admin_notice( $message, $type = 'success', $id = false ) {
+	protected function add_admin_notice( $message, $type = 'success', $id = '' ) {
 		$target = '';
 
 		if ( false !== strpos( $type, ' ' ) ) {
@@ -1237,10 +1252,10 @@ abstract class Base {
 	 * @param string $type    Message type: "success" (default), "info", "warning", "error" or
 	 *                        "network info/warning/error" for network admin notices.
 	 * @param string $context Message context (e.g. if called as action hook callback; optional).
+	 * @param string $id      Optional message ID for deferred messages.
 	 */
-	public function add_deferred_admin_notice( $message, $type = 'success', $context = '' ) {
-		$raw_type  = str_replace( 'network ', '', $type );
-		$notice_id = uniqid();
+	public function add_deferred_admin_notice( $message, $type = 'success', $context = '', $id = '' ) {
+		$raw_type = str_replace( 'network ', '', $type );
 
 		if ( ! in_array( $raw_type, array( 'success', 'info', 'warning', 'error' ), true ) ) {
 			$type = 'info';
@@ -1259,7 +1274,7 @@ abstract class Base {
 			}
 		}
 
-		$this->plugin_options['deferred_admin_notices'][ $notice_id ] = array(
+		$this->plugin_options['deferred_admin_notices'][ $id ? $id : uniqid() ] = array(
 			'message' => $message,
 			'type'    => $type,
 		);

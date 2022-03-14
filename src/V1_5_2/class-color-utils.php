@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_4_0;
+namespace immonex\WordPressFreePluginCore\V1_5_2;
 
 /**
  * Utility methods for color calculations.
@@ -15,7 +15,7 @@ class Color_Utils {
 	/**
 	 * Main plugin instance
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V0_9\Base
+	 * @var Base
 	 */
 	private $plugin;
 
@@ -24,7 +24,7 @@ class Color_Utils {
 	 *
 	 * @since 0.9
 	 *
-	 * @param \immonex\WordPressFreePluginCore\V0_9\Base $plugin Main plugin object.
+	 * @param Base $plugin Main plugin object.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;
@@ -439,19 +439,27 @@ class Color_Utils {
 		$g = $rgb[1] / 255;
 		$b = $rgb[2] / 255;
 
-		$min     = min( $r, $g, $b );
-		$max     = max( $r, $g, $b );
+		$min     = (int) min( $r, $g, $b );
+		$max     = (int) max( $r, $g, $b );
 		$del_max = $max - $min;
 
 		$l = ( $max + $min ) / 2;
-		if ( 0 === $del_max ) {
+		if ( 0 === (int) $del_max ) {
 			$h = 0;
 			$s = 0;
 		} else {
 			if ( $l < 0.5 ) {
-				$s = $del_max / ( $max + $min );
+				$div = $max + $min;
+				if ( ! $div ) {
+					$div = 1;
+				}
+				$s = $del_max / $div;
 			} else {
-				$s = $del_max / ( 2 - $max - $min );
+				$div = 2 - $max - $min;
+				if ( ! $div ) {
+					$div = 1;
+				}
+				$s = $del_max / $div;
 			}
 
 			$del_r = ( ( ( $max - $r ) / 6 ) + ( $del_max / 2 ) ) / $del_max;

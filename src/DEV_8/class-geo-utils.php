@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_4_0;
+namespace immonex\WordPressFreePluginCore\DEV_8;
 
 /**
  * Geocoding related utility methods.

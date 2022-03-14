@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_4_0;
+namespace immonex\WordPressFreePluginCore\DEV_8;
 
 /**
  * General (mostly WordPress related) utility methods.
@@ -36,29 +36,17 @@ class General_Utils {
 			return false;
 		}
 
-		do_action(
-			'inveris_base_before_post_reset',
-			$post_id,
-			array(
-				'taxonomies'         => $taxonomies,
-				'overwrite_defaults' => $overwrite_defaults,
-				'exclude_meta'       => $exclude_meta,
-				'special_args'       => $special_args,
-			)
+		$args = array(
+			'taxonomies'         => $taxonomies,
+			'overwrite_defaults' => $overwrite_defaults,
+			'exclude_meta'       => $exclude_meta,
+			'special_args'       => $special_args,
 		);
 
-		do_action(
-			'immonex_base_before_post_reset',
-			$post_id,
-			array(
-				'taxonomies'         => $taxonomies,
-				'overwrite_defaults' => $overwrite_defaults,
-				'exclude_meta'       => $exclude_meta,
-				'special_args'       => $special_args,
-			)
-		);
+		do_action( 'inveris_base_before_post_reset', $post_id, $args );
+		do_action( 'immonex_base_before_post_reset', $post_id, $args );
 
-		$default_language = substr( get_locale(), 0, 2 );
+		$default_language = substr( get_user_locale(), 0, 2 );
 
 		if ( isset( $special_args['keep_attachments'] ) && $special_args['keep_attachments'] ) {
 			$keep_attachments = true;

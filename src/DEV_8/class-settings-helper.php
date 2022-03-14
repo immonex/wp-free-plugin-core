@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_4_0;
+namespace immonex\WordPressFreePluginCore\DEV_8;
 
 /**
  * Helper class for dealing with the WordPress Settings API.
@@ -405,6 +405,12 @@ class Settings_Helper {
 	public function add_field( $name, $type, $label, $section, $args ) {
 		$field_id   = ( ! empty( $args['plugin_slug'] ) ? $args['plugin_slug'] : $this->plugin_slug ) . '_' . $name;
 		$section_id = $this->plugin_slug . '_' . $section;
+
+		if ( ! empty( $args['class'] ) && ! isset( $args['field_class'] ) ) {
+			// Reassign a single class argument to be used in the field tag instead of the parent TR tag.
+			$args['field_class'] = $args['class'];
+			$args['class']       = '';
+		}
 
 		$args_default = array(
 			'type'        => $type,
@@ -860,7 +866,7 @@ class Settings_Helper {
 	 * @return string Element class code.
 	 */
 	private function get_class_code( $args, $default ) {
-		$classes = isset( $args['class'] ) ? $args['class'] : '';
+		$classes = isset( $args['field_class'] ) ? $args['field_class'] : '';
 
 		if ( false === $classes ) {
 			$code = '';

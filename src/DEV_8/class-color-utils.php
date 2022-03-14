@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_7;
+namespace immonex\WordPressFreePluginCore\DEV_8;
 
 /**
  * Utility methods for color calculations.
@@ -15,7 +15,7 @@ class Color_Utils {
 	/**
 	 * Main plugin instance
 	 *
-	 * @var \immonex\WordPressFreePluginCore\V0_9\Base
+	 * @var Base
 	 */
 	private $plugin;
 
@@ -24,7 +24,7 @@ class Color_Utils {
 	 *
 	 * @since 0.9
 	 *
-	 * @param \immonex\WordPressFreePluginCore\V0_9\Base $plugin Main plugin object.
+	 * @param Base $plugin Main plugin object.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;

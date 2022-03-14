@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_7;
+namespace immonex\WordPressFreePluginCore\V1_5_2;
 
 /**
  * Utility methods for a very simple kind of templating.
@@ -48,8 +48,8 @@ class Template_Utils {
 	 *
 	 * @since 0.8.3
 	 *
-	 * @param \immonex\WordPressFreePluginCore\V0_9\Base $plugin Main plugin object.
-	 * @param string                                     $skin Skin subfolder name.
+	 * @param Base   $plugin Main plugin object.
+	 * @param string $skin Skin subfolder name.
 	 */
 	public function __construct( $plugin, $skin = '' ) {
 		$this->plugin = $plugin;
