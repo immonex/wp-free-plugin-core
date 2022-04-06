@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_5_0;
+namespace immonex\WordPressFreePluginCore\V1_5_3;
 
 /**
  * String related utility methods.
@@ -351,6 +351,36 @@ class String_Utils {
 	public static function get_nice_number( $value ) {
 		return str_replace( '.', ',', floatval( $value ) );
 	} // get_nice_number
+
+	/**
+	 * "Smooth" a value by rounding depending on its lenght and the number of
+	 * zeros to the left of the decimal point.
+	 *
+	 * @since 1.5.2
+	 *
+	 * @param int|float $value Source value.
+	 * @param bool      $round_down True if the value should be rounded down
+	 *                              (optional, false by default).
+	 * @param int[]     $smooth_zero_map Map of zero counts in relation to the
+	 *                                   (integer) value length (optional).
+	 *
+	 * @return float Formatted number.
+	 */
+	public static function smooth_round( $value, $round_down = false, $smooth_zero_map = array() ) {
+		$value = intval( $value );
+		if ( empty( $smooth_zero_map ) ) {
+			$smooth_zero_map = array( 0, 0, 1, 1, 2, 3, 3, 4 );
+		}
+
+		$smooth_zeros_count = strlen( (string) $value ) < count( $smooth_zero_map ) ?
+			$smooth_zero_map[ strlen( (string) $value ) ] :
+			$smooth_zero_map[ count( $smooth_zero_map ) - 1 ];
+		$base               = (int) 1 . str_repeat( '0', $smooth_zeros_count );
+
+		return $round_down ?
+			(int) floor( $value / $base ) * $base :
+			(int) ceil( $value / $base ) * $base;
+	} // smooth_round
 
 	/**
 	 * Split a MIME type string and return an array of its parts.

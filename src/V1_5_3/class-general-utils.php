@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_5_0;
+namespace immonex\WordPressFreePluginCore\V1_5_3;
 
 /**
  * General (mostly WordPress related) utility methods.
@@ -36,27 +36,15 @@ class General_Utils {
 			return false;
 		}
 
-		do_action(
-			'inveris_base_before_post_reset',
-			$post_id,
-			array(
-				'taxonomies'         => $taxonomies,
-				'overwrite_defaults' => $overwrite_defaults,
-				'exclude_meta'       => $exclude_meta,
-				'special_args'       => $special_args,
-			)
+		$args = array(
+			'taxonomies'         => $taxonomies,
+			'overwrite_defaults' => $overwrite_defaults,
+			'exclude_meta'       => $exclude_meta,
+			'special_args'       => $special_args,
 		);
 
-		do_action(
-			'immonex_base_before_post_reset',
-			$post_id,
-			array(
-				'taxonomies'         => $taxonomies,
-				'overwrite_defaults' => $overwrite_defaults,
-				'exclude_meta'       => $exclude_meta,
-				'special_args'       => $special_args,
-			)
-		);
+		do_action( 'inveris_base_before_post_reset', $post_id, $args );
+		do_action( 'immonex_base_before_post_reset', $post_id, $args );
 
 		$default_language = substr( get_user_locale(), 0, 2 );
 

@@ -10,6 +10,13 @@
 	vertical-align: top;
 }
 
+.immonex-plugin-options .debug-mode-info {
+	margin-bottom: 16px;
+	color:#FF7117;
+	font-size: 14px;
+	font-weight:bold;
+}
+
 .immonex-plugin-options .special-info {
 	display: flex;
 	align-items: center;

@@ -53,6 +53,10 @@ $iwpfpc_has_tabbed_sections = ! empty( $this->option_page_tabs[ $this->current_t
 
 	<?php echo isset( $this->plugin_infos['name'] ) ? '<h1 class="options-hl">' . $this->plugin_infos['name'] . '</h1>' : ''; ?>
 
+	<?php if ( isset( $this->plugin_infos['debug_level'] ) && $this->plugin_infos['debug_level'] ) : ?>
+	<div class="debug-mode-info">DEBUG MODE <?php echo '(' . $this->plugin_infos['debug_level'] . ')'; ?></div>
+	<?php endif; ?>
+
 	<?php if ( ! empty( $this->plugin_infos['special_info'] ) ) : ?>
 	<div class="special-info">
 		<div>
@@ -115,7 +119,7 @@ $iwpfpc_has_tabbed_sections = ! empty( $this->option_page_tabs[ $this->current_t
 	<div class="options-page-footer">
 		<div>
 			<?php
-			if ( count( $this->plugin_infos['footer'] ) > 0 ) {
+			if ( ! empty( $this->plugin_infos['footer'] ) ) {
 				foreach ( $this->plugin_infos['footer'] as $iwpfpc_i => $iwpfpc_info ) {
 					echo $iwpfpc_info;
 					if ( $iwpfpc_i < count( $this->plugin_infos['footer'] ) - 1 ) {
