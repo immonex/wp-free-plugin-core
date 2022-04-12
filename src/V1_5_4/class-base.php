@@ -25,30 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_5_2;
+namespace immonex\WordPressFreePluginCore\V1_5_4;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.5.2
+ * @version 1.5.4
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.5.2';
-
-	/**
-	 * Stable/Release version flag
-	 *
-	 * @var bool
-	 */
-	public $is_stable;
-
-	/**
-	 * Name of the custom field for storing plugin options
-	 *
-	 * @var string
-	 */
-	public $plugin_options_name;
+	const BASE_VERSION = '1.5.4';
 
 	/**
 	 * Plugin options array
@@ -128,11 +114,32 @@ abstract class Base {
 	public $plugin_slug;
 
 	/**
+	 * Stable/Release version flag
+	 *
+	 * @var bool
+	 */
+	public $is_stable;
+
+	/**
+	 * Name of the custom field for storing plugin options
+	 *
+	 * @var string
+	 */
+	public $plugin_options_name;
+
+	/**
 	 * Gettext textdomain of plugin translations
 	 *
 	 * @var string
 	 */
 	public $textdomain;
+
+	/**
+	 * Translations loaded flag
+	 *
+	 * @var bool
+	 */
+	public $translations_loaded = false;
 
 	/**
 	 * Plugin directory (full path)
@@ -238,6 +245,13 @@ abstract class Base {
 	 * @var object[]
 	 */
 	public $utils = array();
+
+	/**
+	 * Debug object
+	 *
+	 * @var Debug
+	 */
+	public $debug;
 
 	/**
 	 * WP_Filesystem object
@@ -369,6 +383,18 @@ abstract class Base {
 
 		return false;
 	} // __get
+
+	/**
+	 * Return the current plugin debug level status (compatibility with legacy
+	 * plugin core).
+	 *
+	 * @since 1.5.3
+	 *
+	 * @return int Debug level.
+	 */
+	public function is_debug() {
+		return is_object( $this->debug ) ? $this->debug->get_debug_level() : 0;
+	} // is_debug
 
 	/**
 	 * Perform activation tasks.
@@ -547,6 +573,10 @@ abstract class Base {
 			$enable_separate_option_page
 		);
 
+		if ( ! isset( $this->default_plugin_options['debug_level'] ) ) {
+			$this->default_plugin_options['debug_level'] = 0;
+		}
+
 		if ( ! isset( $this->default_plugin_options['deferred_admin_notices'] ) ) {
 			$this->default_plugin_options['deferred_admin_notices'] = array();
 		}
@@ -561,8 +591,6 @@ abstract class Base {
 		// Retrieve the plugin options (merge with default values).
 		$this->plugin_options = $this->fetch_plugin_options();
 
-		$this->extend_plugin_infos();
-
 		$this->plugin_options_access_capability = apply_filters(
 			// @codingStandardsIgnoreLine
 			$this->plugin_slug . '_plugin_options_access_capability',
@@ -570,7 +598,14 @@ abstract class Base {
 		);
 
 		/**
-		 * Include and instantiate helper and utility classes.
+		 * Check/Update the debug level.
+		 */
+		$this->debug          = new Debug( $this->plugin_options, $this->plugin_options_access_capability, $this->plugin_options_name, $this->plugin_slug );
+		$this->plugin_options = $this->debug->maybe_update_debug_level( $this->plugin_options );
+		$this->extend_plugin_infos();
+
+		/**
+		 * Instantiate helper and utility classes.
 		 */
 		$this->general_utils   = new General_Utils();
 		$this->settings_helper = new Settings_Helper(
@@ -637,14 +672,22 @@ abstract class Base {
 	 * @since 0.1
 	 */
 	public function init_plugin_admin() {
-		$script = isset( $_SERVER['SCRIPT_NAME'] ) ? basename( sanitize_file_name( wp_unslash( $_SERVER['SCRIPT_NAME'] ) ), '.php' ) : '';
+		// @codingStandardsIgnoreLine
+		$script = isset( $_SERVER['SCRIPT_NAME'] ) ? sanitize_file_name( basename( wp_unslash( $_SERVER['SCRIPT_NAME'] ), '.php' ) ) : '';
 
 		if (
 			( isset( $_GET['settings-updated'] ) && 'true' === $_GET['settings-updated'] ) &&
 			( isset( $_GET['page'] ) && $this->plugin_slug . '_settings' === $_GET['page'] ) &&
 			'options-general' !== $script
 		) {
-			$this->add_admin_notice( __( 'Settings updated.', 'immonex-wp-free-plugin-core' ) );
+			$this->add_admin_notice(
+				wp_sprintf(
+					'<strong>%s</strong>',
+					__( 'Settings saved.', 'immonex-wp-free-plugin-core' )
+				),
+				'success',
+				'settings_updated'
+			);
 		}
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_and_styles' ) );
@@ -1115,6 +1158,7 @@ abstract class Base {
 			array(
 				'name'             => defined( 'static::PLUGIN_NAME' ) ? static::PLUGIN_NAME : '',
 				'prefix'           => defined( 'static::PLUGIN_PREFIX' ) ? static::PLUGIN_PREFIX : '',
+				'debug_level'      => $this->is_debug(),
 				'logo_link_url'    => defined( 'static::PLUGIN_HOME_URL' ) ? static::PLUGIN_HOME_URL : '',
 				'footer'           => array(),
 				'has_free_license' => ! defined( 'static::FREE_LICENSE' ) || static::FREE_LICENSE,
@@ -1344,9 +1388,16 @@ abstract class Base {
 	/**
 	 * Load translations.
 	 *
+	 * @param bool $force_reload Maybe force a reload if translations have already
+	 *                           been loaded (optional).
+	 *
 	 * @since 0.1
 	 */
-	protected function load_translations() {
+	protected function load_translations( $force_reload = false ) {
+		if ( $this->translations_loaded && ! $force_reload ) {
+			return;
+		}
+
 		$domain       = $this->textdomain ? $this->textdomain : $this->plugin_slug;
 		$locale       = get_user_locale();
 		$base_version = basename( __DIR__ );
@@ -1388,6 +1439,8 @@ abstract class Base {
 				load_textdomain( $domain, $local_mo_file );
 			}
 		}
+
+		$this->translations_loaded = true;
 	} // load_translations
 
 	/**

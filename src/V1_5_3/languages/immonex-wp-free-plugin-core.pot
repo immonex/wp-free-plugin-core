@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2022-04-06 08:36:29+00:00\n"
+"POT-Creation-Date: 2022-04-12 07:57:26+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,8 +20,8 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: DEV_8/class-base.php:682 V1_5_2/class-base.php:647 V1_5_3/class-base.php:682
-msgid "Settings updated."
+#: DEV_8/class-base.php:682
+msgid "Settings saved."
 msgstr ""
 
 #: DEV_8/class-base.php:958 V1_5_2/class-base.php:923 V1_5_3/class-base.php:958
@@ -90,4 +90,8 @@ msgstr ""
 #: DEV_8/class-template-utils.php:508 V1_5_2/class-template-utils.php:508
 #: V1_5_3/class-template-utils.php:508
 msgid "default"
+msgstr ""
+
+#: V1_5_2/class-base.php:647 V1_5_3/class-base.php:682
+msgid "Settings updated."
 msgstr ""
