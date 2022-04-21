@@ -30,11 +30,11 @@ namespace immonex\WordPressFreePluginCore\DEV_8;
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.5.5
+ * @version 1.6.0
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.5.5';
+	const BASE_VERSION = '1.6.0';
 
 	/**
 	 * Plugin options array
@@ -362,12 +362,16 @@ abstract class Base {
 		switch ( $key ) {
 			case 'bootstrap_data':
 				$value = $this->bootstrap_data;
+				break;
 			case 'plugin_infos':
 				$value = $this->plugin_infos;
+				break;
 			case 'cpt_hooks':
 				$value = $this->cpt_hooks;
+				break;
 			case 'utils':
 				$value = $this->utils;
+				break;
 			default:
 				if ( isset( $this->plugin_options[ $key ] ) ) {
 					$value = $this->plugin_options[ $key ];

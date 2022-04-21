@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_5_3;
+namespace immonex\WordPressFreePluginCore\V1_6_0;
 
 /**
  * Debugging-related methods.
