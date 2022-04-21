@@ -30,11 +30,11 @@ namespace immonex\WordPressFreePluginCore\DEV_8;
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.5.4
+ * @version 1.5.5
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.5.4';
+	const BASE_VERSION = '1.5.5';
 
 	/**
 	 * Plugin options array
@@ -357,31 +357,39 @@ abstract class Base {
 	 * @return mixed Requested Value/Object or false if nonexistent.
 	 */
 	public function __get( $key ) {
+		$value = null;
+
 		switch ( $key ) {
 			case 'bootstrap_data':
-				return $this->bootstrap_data;
+				$value = $this->bootstrap_data;
 			case 'plugin_infos':
-				return $this->plugin_infos;
+				$value = $this->plugin_infos;
 			case 'cpt_hooks':
-				return $this->cpt_hooks;
+				$value = $this->cpt_hooks;
 			case 'utils':
-				return $this->utils;
+				$value = $this->utils;
 			default:
 				if ( isset( $this->plugin_options[ $key ] ) ) {
-					return $this->plugin_options[ $key ];
+					$value = $this->plugin_options[ $key ];
 				}
 				if ( isset( $this->bootstrap_data[ $key ] ) ) {
-					return $this->bootstrap_data[ $key ];
+					$value = $this->bootstrap_data[ $key ];
 				}
 				if ( isset( $this->plugin_infos[ $key ] ) ) {
-					return $this->plugin_infos[ $key ];
+					$value = $this->plugin_infos[ $key ];
 				}
 				if ( isset( $this->utils[ $key ] ) ) {
-					return $this->utils[ $key ];
+					$value = $this->utils[ $key ];
 				}
 		}
 
-		return false;
+		return apply_filters(
+			'immonex_core_magic_get_value',
+			is_null( $value ) ? false : $value,
+			$key,
+			! is_null( $value ),
+			$this->plugin_slug
+		);
 	} // __get
 
 	/**
@@ -586,8 +594,19 @@ abstract class Base {
 	 * Initialize the plugin (common).
 	 *
 	 * @since 0.1
+	 *
+	 * @param bool $fire_before_hook Flag to indicate if an action hook should fire
+	 *                               before the actual method execution (optional,
+	 *                               true by default).
+	 * @param bool $fire_after_hook  Flag to indicate if an action hook should fire
+	 *                               after the actual method execution (optional,
+	 *                               true by default).
 	 */
-	public function init_plugin() {
+	public function init_plugin( $fire_before_hook = true, $fire_after_hook = true ) {
+		if ( $fire_before_hook ) {
+			do_action( 'immonex_core_before_init', $this->plugin_slug );
+		}
+
 		// Retrieve the plugin options (merge with default values).
 		$this->plugin_options = $this->fetch_plugin_options();
 
@@ -655,23 +674,34 @@ abstract class Base {
 		}
 
 		// Add WP-Cron-based actions.
-		if ( method_exists( $this, 'do_daily' ) ) {
-			add_action( static::PLUGIN_PREFIX . 'do_daily', array( $this, 'do_daily' ) );
-		}
-		if ( method_exists( $this, 'do_weekly' ) ) {
-			add_action( static::PLUGIN_PREFIX . 'do_weekly', array( $this, 'do_weekly' ) );
-		}
+		add_action( static::PLUGIN_PREFIX . 'do_daily', array( $this, 'do_daily' ) );
+		add_action( static::PLUGIN_PREFIX . 'do_weekly', array( $this, 'do_weekly' ) );
 
 		// Enqueue frontend CSS and JS files.
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts_and_styles' ) );
+
+		if ( $fire_after_hook ) {
+			do_action( 'immonex_core_after_init', $this->plugin_slug );
+		}
 	} // init_plugin
 
 	/**
 	 * Initialize the plugin (admin/backend only).
 	 *
 	 * @since 0.1
+	 *
+	 * @param bool $fire_before_hook Flag to indicate if an action hook should fire
+	 *                               before the actual method execution (optional,
+	 *                               true by default).
+	 * @param bool $fire_after_hook  Flag to indicate if an action hook should fire
+	 *                               after the actual method execution (optional,
+	 *                               true by default).
 	 */
-	public function init_plugin_admin() {
+	public function init_plugin_admin( $fire_before_hook = true, $fire_after_hook = true ) {
+		if ( $fire_before_hook ) {
+			do_action( 'immonex_core_before_init_admin', $this->plugin_slug );
+		}
+
 		// @codingStandardsIgnoreLine
 		$script = isset( $_SERVER['SCRIPT_NAME'] ) ? sanitize_file_name( basename( wp_unslash( $_SERVER['SCRIPT_NAME'] ), '.php' ) ) : '';
 
@@ -718,6 +748,10 @@ abstract class Base {
 		) {
 			// Plugin has been updated: redo activation.
 			$this->activate_plugin();
+		}
+
+		if ( $fire_after_hook ) {
+			do_action( 'immonex_core_after_init_admin', $this->plugin_slug );
 		}
 	} // init_plugin_admin
 
@@ -1366,6 +1400,24 @@ abstract class Base {
 
 		return $value;
 	} // autoptimize_exclude
+
+	/**
+	 * Perform daily tasks.
+	 *
+	 * @since 1.6.0
+	 */
+	public function do_daily() {
+		do_action( 'immonex_core_do_daily', $this->plugin_slug );
+	} // do_daily
+
+	/**
+	 * Perform weekly tasks.
+	 *
+	 * @since 1.6.0
+	 */
+	public function do_weekly() {
+		do_action( 'immonex_core_do_weekly', $this->plugin_slug );
+	} // do_daily
 
 	/**
 	 * Show error messages during plugin activation.
