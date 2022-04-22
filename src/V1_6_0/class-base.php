@@ -776,7 +776,7 @@ abstract class Base {
 		 * Plugin base CSS
 		 */
 		$base_css_folder = '';
-		foreach ( array( 'assets', 'css' ) as $folder ) {
+		foreach ( array( 'assets/css', 'assets', 'css' ) as $folder ) {
 			if ( file_exists( trailingslashit( $this->plugin_dir ) . "{$folder}/frontend.css" ) ) {
 				$base_css_folder = $folder;
 				break;
@@ -798,7 +798,7 @@ abstract class Base {
 		 * Plugin base JS
 		 */
 		$base_js_folder = '';
-		foreach ( array( 'assets', 'js' ) as $folder ) {
+		foreach ( array( 'assets/js', 'assets', 'js' ) as $folder ) {
 			if ( file_exists( trailingslashit( $this->plugin_dir ) . "{$folder}/frontend.js" ) ) {
 				$base_js_folder = $folder;
 				break;
@@ -985,7 +985,7 @@ abstract class Base {
 		 * Load plugin-specific CSS if existent.
 		 */
 		$base_css_folder = '';
-		foreach ( array( 'assets', 'css' ) as $folder ) {
+		foreach ( array( 'assets/css', 'assets', 'css' ) as $folder ) {
 			if ( file_exists( trailingslashit( $this->plugin_dir ) . "{$folder}/backend.css" ) ) {
 				$base_css_folder = $folder;
 				break;
@@ -1034,7 +1034,7 @@ abstract class Base {
 		 * Load plugin-specific backend JS if existent.
 		 */
 		$base_js_folder = '';
-		foreach ( array( 'assets', 'js' ) as $folder ) {
+		foreach ( array( 'assets/js', 'assets', 'js' ) as $folder ) {
 			if ( file_exists( trailingslashit( $this->plugin_dir ) . "{$folder}/backend.js" ) ) {
 				$base_js_folder = $folder;
 				break;
