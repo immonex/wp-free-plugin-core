@@ -775,12 +775,20 @@ abstract class Base {
 		/**
 		 * Plugin base CSS
 		 */
-		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'css/frontend.css' ) ) {
+		$base_css_folder = '';
+		foreach ( array( 'assets', 'css' ) as $folder ) {
+			if ( file_exists( trailingslashit( $this->plugin_dir ) . "{$folder}/frontend.css" ) ) {
+				$base_css_folder = $folder;
+				break;
+			}
+		}
+
+		if ( $base_css_folder ) {
 			$this->frontend_base_css_handle = static::PUBLIC_PREFIX . 'frontend';
 
 			wp_enqueue_style(
 				$this->frontend_base_css_handle,
-				plugins_url( $this->plugin_slug . '/css/frontend.css' ),
+				plugins_url( $this->plugin_slug . "/{$base_css_folder}/frontend.css" ),
 				array(),
 				$this->plugin_version
 			);
@@ -789,12 +797,20 @@ abstract class Base {
 		/**
 		 * Plugin base JS
 		 */
-		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'js/frontend.js' ) ) {
+		$base_js_folder = '';
+		foreach ( array( 'assets', 'js' ) as $folder ) {
+			if ( file_exists( trailingslashit( $this->plugin_dir ) . "{$folder}/frontend.js" ) ) {
+				$base_js_folder = $folder;
+				break;
+			}
+		}
+
+		if ( $base_js_folder ) {
 			$this->frontend_base_js_handle = static::PUBLIC_PREFIX . 'frontend';
 
 			wp_register_script(
 				$this->frontend_base_js_handle,
-				plugins_url( $this->plugin_slug . '/js/frontend.js' ),
+				plugins_url( $this->plugin_slug . "/{$base_js_folder}/frontend.js" ),
 				array( 'jquery' ),
 				$this->plugin_version,
 				true
@@ -968,12 +984,20 @@ abstract class Base {
 		/**
 		 * Load plugin-specific CSS if existent.
 		 */
-		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'css/backend.css' ) ) {
+		$base_css_folder = '';
+		foreach ( array( 'assets', 'css' ) as $folder ) {
+			if ( file_exists( trailingslashit( $this->plugin_dir ) . "{$folder}/backend.css" ) ) {
+				$base_css_folder = $folder;
+				break;
+			}
+		}
+
+		if ( $base_css_folder ) {
 			$this->backend_css_handle = static::PUBLIC_PREFIX . 'backend';
 
 			wp_enqueue_style(
 				$this->backend_css_handle,
-				plugins_url( $this->plugin_slug . '/css/backend.css' ),
+				plugins_url( $this->plugin_slug . "/{$base_css_folder}/backend.css" ),
 				array(),
 				$this->plugin_version
 			);
@@ -1009,12 +1033,20 @@ abstract class Base {
 		/**
 		 * Load plugin-specific backend JS if existent.
 		 */
-		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'js/backend.js' ) ) {
+		$base_js_folder = '';
+		foreach ( array( 'assets', 'js' ) as $folder ) {
+			if ( file_exists( trailingslashit( $this->plugin_dir ) . "{$folder}/backend.js" ) ) {
+				$base_js_folder = $folder;
+				break;
+			}
+		}
+
+		if ( $base_js_folder ) {
 			$this->backend_js_handle = static::PUBLIC_PREFIX . 'backend';
 
 			wp_register_script(
 				$this->backend_js_handle,
-				plugins_url( $this->plugin_slug . '/js/backend.js' ),
+				plugins_url( $this->plugin_slug . "/{$base_js_folder}/backend.js" ),
 				array( 'jquery' ),
 				$this->plugin_version,
 				true
