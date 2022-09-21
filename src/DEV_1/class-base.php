@@ -725,21 +725,6 @@ abstract class Base {
 		// @codingStandardsIgnoreLine
 		$script = isset( $_SERVER['SCRIPT_NAME'] ) ? sanitize_file_name( basename( wp_unslash( $_SERVER['SCRIPT_NAME'] ), '.php' ) ) : '';
 
-		if (
-			( isset( $_GET['settings-updated'] ) && 'true' === $_GET['settings-updated'] ) &&
-			( isset( $_GET['page'] ) && $this->plugin_slug . '_settings' === $_GET['page'] ) &&
-			'options-general' !== $script
-		) {
-			$this->add_admin_notice(
-				wp_sprintf(
-					'<strong>%s</strong>',
-					__( 'Settings saved.', 'immonex-wp-free-plugin-core' )
-				),
-				'success',
-				'settings_updated'
-			);
-		}
-
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_and_styles' ) );
 		add_action( 'network_admin_notices', array( $this, 'display_network_admin_notices' ) );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ) );
