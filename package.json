@@ -1,6 +1,6 @@
 {
   "name": "@immonex/wp-free-plugin-core",
-  "description": "Shared basic functionality for free immonex WordPress plugins",
+  "description": "Shared basic functionality for immonex WordPress plugins",
   "scripts": {
     "pot": "bin/generate_pot.sh",
     "test:install": "bin/invoke_test_installer.sh",
