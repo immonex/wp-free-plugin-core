@@ -30,11 +30,11 @@ namespace immonex\WordPressFreePluginCore\DEV_1;
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.7.0
+ * @version 1.7.8
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.7.0';
+	const CORE_VERSION = '1.7.8';
 
 	/**
 	 * Plugin options array
@@ -247,6 +247,13 @@ abstract class Base {
 	public $utils = array();
 
 	/**
+	 * CPT hook objects
+	 *
+	 * @var object[]
+	 */
+	public $cpt_hooks = array();
+
+	/**
 	 * Debug object
 	 *
 	 * @var Debug
@@ -273,6 +280,41 @@ abstract class Base {
 	 * @var bool
 	 */
 	public $is_network_activated;
+
+	/**
+	 * Init Flag
+	 *
+	 * @var bool
+	 */
+	public $init_done = false;
+
+	/**
+	 * Admin Init Flag
+	 *
+	 * @var bool
+	 */
+	public $admin_init_done = false;
+
+	/**
+	 * Utils Init Flag
+	 *
+	 * @var bool
+	 */
+	public $utils_init_done = false;
+
+	/**
+	 * Add-on Plugin Flag
+	 *
+	 * @var bool
+	 */
+	public $is_addon_plugin = false;
+
+	/**
+	 * Parent Plugin Availability Flag
+	 *
+	 * @var bool
+	 */
+	public $is_parent_plugin_active = false;
 
 	/**
 	 * Constructor: Set plugin slug and dependent variables.
@@ -339,6 +381,12 @@ abstract class Base {
 			)
 		);
 
+		// Eventually add CPT data and setup related backend forms.
+		$this->maybe_add_cpt_bootstrap_data();
+		if ( ! empty( $this->bootstrap_data['custom_post_types'] ) ) {
+			$this->setup_cpt_backend_forms();
+		}
+
 		add_action( static::PLUGIN_PREFIX . 'update_plugin_options', array( $this, 'update_plugin_options' ), 10, 2 );
 		add_action( static::PLUGIN_PREFIX . 'add_deferred_admin_notice', array( $this, 'add_deferred_admin_notice' ), 10, 4 );
 		add_action( static::PLUGIN_PREFIX . 'dismiss_deferred_admin_notice', array( $this, 'dismiss_admin_notice' ), 10 );
@@ -346,6 +394,49 @@ abstract class Base {
 
 		add_action( 'wp_ajax_dismiss_admin_notice', array( $this, 'dismiss_admin_notice' ) );
 	} // __construct
+
+	/**
+	 * Add CPT names an related class names to the bootstrap data array
+	 * if a nonempty class constant CUSTOM_POST_TYPES exists.
+	 *
+	 * @since 1.8.0
+	 */
+	protected function maybe_add_cpt_bootstrap_data() {
+		if (
+			defined( get_called_class() . '::CUSTOM_POST_TYPES' )
+			&& ! empty( get_called_class()::CUSTOM_POST_TYPES )
+			&& ! isset( $this->bootstrap_data['custom_post_types'] )
+		) {
+			$this->bootstrap_data['custom_post_types'] = array();
+
+			foreach ( get_called_class()::CUSTOM_POST_TYPES as $cpt_base_name => $post_type_name ) {
+				$class_base_name = ucwords( $cpt_base_name );
+
+				$this->bootstrap_data['custom_post_types'][ $cpt_base_name ] = array(
+					'post_type_name'  => $post_type_name,
+					'class_base_name' => $class_base_name,
+				);
+			}
+		}
+	} // maybe_add_cpt_bootstrap_data
+
+	/**
+	 * Setup backend edit form(s) for plugin related CPT(s).
+	 *
+	 * @since 1.8.0
+	 */
+	protected function setup_cpt_backend_forms() {
+		$reflection_class = new \ReflectionClass( get_called_class() );
+		$namespace        = $reflection_class->getNamespaceName();
+
+		foreach ( $this->bootstrap_data['custom_post_types'] as $cpt_base_name => $cpt ) {
+			$class_name = "\\{$namespace}\\{$cpt['class_base_name']}_Backend_Form";
+
+			if ( class_exists( $class_name ) ) {
+				new $class_name( $this->bootstrap_data, $this );
+			}
+		}
+	} // setup_cpt_backend_forms
 
 	/**
 	 * Get values/objects from plugin options, bootstrap data, plugin infos
@@ -600,6 +691,11 @@ abstract class Base {
 		if ( ! isset( $this->default_plugin_options['deferred_admin_notices'] ) ) {
 			$this->default_plugin_options['deferred_admin_notices'] = array();
 		}
+
+		if ( defined( get_called_class() . '::PARENT_PLUGIN_CALLABLE' ) ) {
+			$this->is_addon_plugin         = true;
+			$this->is_parent_plugin_active = is_callable( get_called_class()::PARENT_PLUGIN_CALLABLE );
+		}
 	} // init_base
 
 	/**
@@ -643,9 +739,134 @@ abstract class Base {
 		$this->plugin_options = $this->debug->maybe_update_debug_level( $this->plugin_options );
 		$this->extend_plugin_infos();
 
-		/**
-		 * Instantiate helper and utility classes.
-		 */
+		// Set up helpers and utilities.
+		$this->init_utils();
+
+		if ( is_array( $this->utils ) && count( $this->utils ) > 0 ) {
+			$this->utils = array_merge(
+				$this->core_utils,
+				$this->utils
+			);
+		} else {
+			$this->utils = $this->core_utils;
+		}
+
+		if ( ! empty( $this->plugin_options['skin'] ) ) {
+			// Check if skin folder still exists.
+			$skins = $this->utils['template']->get_frontend_skins();
+			if ( ! isset( $skins[ $this->plugin_options['skin'] ] ) ) {
+				$this->plugin_options['skin'] = 'default';
+				update_option( $this->plugin_options_name, $this->plugin_options );
+			}
+		}
+
+		if ( ! empty( $this->bootstrap_data['custom_post_types'] ) ) {
+			// Register plugin-related CPT hooks.
+			$this->register_cpt_hooks( array_merge( $this->bootstrap_data, $this->plugin_options ) );
+		}
+
+		// Add WP-Cron-based actions.
+		add_action( static::PLUGIN_PREFIX . 'do_daily', array( $this, 'do_daily' ) );
+		add_action( static::PLUGIN_PREFIX . 'do_weekly', array( $this, 'do_weekly' ) );
+
+		// Enqueue frontend CSS and JS files.
+		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts_and_styles' ) );
+
+		if ( $fire_after_hook ) {
+			do_action( 'immonex_core_after_init', $this->plugin_slug );
+		}
+	} // init_plugin
+
+	/**
+	 * Initialize the plugin (admin/backend only).
+	 *
+	 * @since 0.1
+	 *
+	 * @param bool $fire_before_hook Flag to indicate if an action hook should fire
+	 *                               before the actual method execution (optional,
+	 *                               true by default).
+	 * @param bool $fire_after_hook  Flag to indicate if an action hook should fire
+	 *                               after the actual method execution (optional,
+	 *                               true by default).
+	 */
+	public function init_plugin_admin( $fire_before_hook = true, $fire_after_hook = true ) {
+		if ( $fire_before_hook ) {
+			do_action( 'immonex_core_before_init_admin', $this->plugin_slug );
+		}
+
+		// Set up helpers and utilities.
+		$this->init_utils();
+
+		// @codingStandardsIgnoreLine
+		$script = isset( $_SERVER['SCRIPT_NAME'] ) ? sanitize_file_name( basename( wp_unslash( $_SERVER['SCRIPT_NAME'] ), '.php' ) ) : '';
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_and_styles' ) );
+		add_action( 'network_admin_notices', array( $this, 'display_network_admin_notices' ) );
+		add_action( 'admin_notices', array( $this, 'display_admin_notices' ) );
+
+		// Add a "Settings" link on the plugins page.
+		if ( $this->enable_separate_option_page ) {
+			add_filter(
+				'plugin_action_links_' . $this->plugin_slug . '/' . $this->plugin_slug . '.php',
+				array( $this->settings_helper, 'plugin_settings_link' )
+			);
+		}
+
+		if (
+			! empty( $this->plugin_options['deferred_admin_notices'] )
+			&& is_array( $this->plugin_options['deferred_admin_notices'] )
+		) {
+			// Show deferred admin notices until dismissed.
+			foreach ( $this->plugin_options['deferred_admin_notices'] as $id => $admin_notice ) {
+				$this->add_admin_notice( $admin_notice['message'], $admin_notice['type'], $id );
+			}
+		}
+
+		if ( $fire_after_hook ) {
+			do_action( 'immonex_core_after_init_admin', $this->plugin_slug );
+		}
+	} // init_plugin_admin
+
+	/**
+	 * Instantiate plugin-related CPT "hook classes" (affiliated actions and
+	 * filters will be registered).
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param mixed[] $component_config Merged array of bootstrap data and plugin options.
+	 */
+	protected function register_cpt_hooks( $component_config ) {
+		$reflection_class = new \ReflectionClass( get_called_class() );
+		$namespace        = $reflection_class->getNamespaceName();
+
+		foreach ( $this->bootstrap_data['custom_post_types'] as $cpt_base_name => $cpt ) {
+			foreach ( array( '_Hooks', '_List_Hooks' ) as $class_name_suffix ) {
+				$class_name = "\\{$namespace}\\{$cpt['class_base_name']}{$class_name_suffix}";
+
+				if ( class_exists( $class_name ) ) {
+					$config = array_merge(
+						$component_config,
+						array(
+							'class_base_name' => $cpt['class_base_name'],
+						)
+					);
+
+					$this->cpt_hooks[ $cpt['class_base_name'] . $class_name_suffix ] = new $class_name( $config, $this->utils );
+				}
+			}
+		}
+	} // register_cpt_hooks
+
+	/**
+	 * Instantiate and set up helper and utility classes.
+	 *
+	 * @since 1.8.0
+	 */
+	private function init_utils() {
+		if ( $this->utils_init_done ) {
+			return;
+		}
+
 		$this->general_utils   = new General_Utils();
 		$this->settings_helper = new Settings_Helper(
 			$this->plugin_dir,
@@ -684,73 +905,8 @@ abstract class Base {
 			$this->utils = $this->core_utils;
 		}
 
-		if ( ! empty( $this->plugin_options['skin'] ) ) {
-			// Check if skin folder still exists.
-			$skins = $this->utils['template']->get_frontend_skins();
-			if ( ! isset( $skins[ $this->plugin_options['skin'] ] ) ) {
-				$this->plugin_options['skin'] = 'default';
-				update_option( $this->plugin_options_name, $this->plugin_options );
-			}
-		}
-
-		// Add WP-Cron-based actions.
-		add_action( static::PLUGIN_PREFIX . 'do_daily', array( $this, 'do_daily' ) );
-		add_action( static::PLUGIN_PREFIX . 'do_weekly', array( $this, 'do_weekly' ) );
-
-		// Enqueue frontend CSS and JS files.
-		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts_and_styles' ) );
-
-		if ( $fire_after_hook ) {
-			do_action( 'immonex_core_after_init', $this->plugin_slug );
-		}
-	} // init_plugin
-
-	/**
-	 * Initialize the plugin (admin/backend only).
-	 *
-	 * @since 0.1
-	 *
-	 * @param bool $fire_before_hook Flag to indicate if an action hook should fire
-	 *                               before the actual method execution (optional,
-	 *                               true by default).
-	 * @param bool $fire_after_hook  Flag to indicate if an action hook should fire
-	 *                               after the actual method execution (optional,
-	 *                               true by default).
-	 */
-	public function init_plugin_admin( $fire_before_hook = true, $fire_after_hook = true ) {
-		if ( $fire_before_hook ) {
-			do_action( 'immonex_core_before_init_admin', $this->plugin_slug );
-		}
-
-		// @codingStandardsIgnoreLine
-		$script = isset( $_SERVER['SCRIPT_NAME'] ) ? sanitize_file_name( basename( wp_unslash( $_SERVER['SCRIPT_NAME'] ), '.php' ) ) : '';
-
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_and_styles' ) );
-		add_action( 'network_admin_notices', array( $this, 'display_network_admin_notices' ) );
-		add_action( 'admin_notices', array( $this, 'display_admin_notices' ) );
-
-		// Add a "Settings" link on the plugins page.
-		if ( $this->enable_separate_option_page ) {
-			add_filter(
-				'plugin_action_links_' . $this->plugin_slug . '/' . $this->plugin_slug . '.php',
-				array( $this->settings_helper, 'plugin_settings_link' )
-			);
-		}
-
-		if (
-			is_array( $this->plugin_options['deferred_admin_notices'] ) &&
-			count( $this->plugin_options['deferred_admin_notices'] ) > 0
-		) {
-			// Show deferred admin notices until dismissed.
-			foreach ( $this->plugin_options['deferred_admin_notices'] as $id => $admin_notice ) {
-				$this->add_admin_notice( $admin_notice['message'], $admin_notice['type'], $id );
-			}
-		}
-
-		if ( $fire_after_hook ) {
-			do_action( 'immonex_core_after_init_admin', $this->plugin_slug );
-		}
-	} // init_plugin_admin
+		$this->utils_init_done = true;
+	} // init_utils
 
 	/**
 	 * Load and register widgets (to be overwritten in derived classes).
@@ -1139,9 +1295,9 @@ abstract class Base {
 				if (
 					! empty( $field['max_length'] ) &&
 					is_string( $value ) &&
-					strlen( $value ) > $field['max_length']
+					$this->string_utils->mb_str_len( $value ) > $field['max_length']
 				) {
-					$value = substr( trim( $value ), 0, $field['max_length'] );
+					$value = $this->string_utils->mb_sub_str( trim( $value ), 0, $field['max_length'] );
 				}
 
 				if (
@@ -1608,6 +1764,11 @@ abstract class Base {
 		$locale              = get_user_locale();
 		$ns_split            = explode( '\\', __NAMESPACE__ );
 		$core_version_folder = array_pop( $ns_split );
+
+		if ( 'de_' === substr( $locale, 0, 3 ) ) {
+			// Use default translations for all German locales.
+			$locale = 'de_DE';
+		}
 
 		/**
 		 * Load plugin base translations first.

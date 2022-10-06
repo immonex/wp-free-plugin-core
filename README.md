@@ -76,7 +76,7 @@ That's it!
 
 ## Folder Based Versioning
 
-The `src` folder usually contains two "version branch" folders for the latest development (`DEV[0-9_]+`) and production release (`VX_X_X`) versions. It **may** optionally contain multiple production release folders.
+The `src` folder usually contains two "version branch" folders for the latest development (`DEV_[0-9]+`) and production release (`VX_X_X`) versions. It **may** optionally contain multiple production release folders.
 
 ```
 src

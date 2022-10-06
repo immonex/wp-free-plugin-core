@@ -616,7 +616,7 @@ class String_Utils {
 	 * @param string $string String to encrypt/decrypt.
 	 * @param string $key    Encryption/Decryption key.
 	 *
-	 * @return string Current URL without page number.
+	 * @return string Encrypted string.
 	 */
 	public function xor_string( $string, $key ) {
 		$len = strlen( $string );
@@ -633,32 +633,95 @@ class String_Utils {
 	 *
 	 * @since 1.3.4
 	 *
-	 * @param string $input    The string to be padded.
-	 * @param int    $length   The length of the resultant padded string.
-	 * @param string $padding  The string to use as padding. Defaults to space.
-	 * @param int    $pad_type The type of padding. Defaults to STR_PAD_RIGHT.
-	 * @param string $encoding The encoding to use, defaults to UTF-8.
+	 * @param string $str        The string to be padded.
+	 * @param int    $length     The length of the resultant padded string.
+	 * @param string $pad_string The string to use as padding. Defaults to space.
+	 * @param int    $pad_type   The type of padding. Defaults to STR_PAD_RIGHT.
+	 * @param string $encoding   The encoding to use, defaults to UTF-8 (empty = auto detect).
 	 *
-	 * @return string Current URL without page number.
+	 * @return string Padded string.
 	 */
-	public function mb_str_pad( $input, $length, $padding = ' ', $pad_type = STR_PAD_RIGHT, $encoding = 'UTF-8' ) {
-		$pad_required = $length - mb_strlen( $input, $encoding );
+	public function mb_str_pad( $str, $length, $pad_string = ' ', $pad_type = STR_PAD_RIGHT, $encoding = 'UTF-8' ) {
+		if ( ! extension_loaded( 'mbstring' ) ) {
+			return str_pad( $str, $length, $pad_string, $pad_type );
+		}
+
+		if ( ! $encoding ) {
+			$encoding = mb_detect_encoding( $str );
+		}
+		if ( ! $encoding ) {
+			$encoding = 'UTF-8';
+		}
+
+		$pad_required = $length - mb_strlen( $str, $encoding );
 		if ( ! $pad_required ) {
-			return $input;
+			return $str;
 		}
 
 		switch ( $pad_type ) {
 			case STR_PAD_LEFT:
-				return mb_substr( str_repeat( $padding, $pad_required ), 0, $pad_required, $encoding ) . $input;
+				return mb_substr( str_repeat( $pad_string, $pad_required ), 0, $pad_required, $encoding ) . $str;
 			case STR_PAD_BOTH:
 				$left_pad_len  = floor( $pad_required / 2 );
 				$right_pad_len = $pad_required - $left_pad_len;
-				return mb_substr( str_repeat( $padding, $left_pad_len ), 0, $left_pad_len, $encoding ) . $input .
-					mb_substr( str_repeat( $padding, $right_pad_len ), 0, $right_pad_len, $encoding );
+				return mb_substr( str_repeat( $pad_string, $left_pad_len ), 0, $left_pad_len, $encoding ) . $str .
+					mb_substr( str_repeat( $pad_string, $right_pad_len ), 0, $right_pad_len, $encoding );
 			default:
-				return $input . mb_substr( str_repeat( $padding, $pad_required ), 0, $pad_required, $encoding );
+				return $str . mb_substr( str_repeat( $pad_string, $pad_required ), 0, $pad_required, $encoding );
 		}
 	} // mb_str_pad
+
+	/**
+	 * Multibyte version of (mb_)strlen with additional module check.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param string $str      The string being measured for length.
+	 * @param string $encoding The encoding to use, defaults to UTF-8 (empty = auto detect).
+	 *
+	 * @return string String length.
+	 */
+	public function mb_str_len( $str, $encoding = 'UTF-8' ) {
+		if ( ! extension_loaded( 'mbstring' ) ) {
+			return strlen( $str );
+		}
+
+		if ( ! $encoding ) {
+			$encoding = mb_detect_encoding( $str );
+		}
+		if ( ! $encoding ) {
+			$encoding = 'UTF-8';
+		}
+
+		return mb_strlen( $str, $encoding );
+	} // mb_str_len
+
+	/**
+	 * Multibyte version of (mb_)substr with additional module check.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param string $str      The original string.
+	 * @param int    $start    Start position.
+	 * @param int    $length   Maximum number of characters.
+	 * @param string $encoding The encoding to use, defaults to UTF-8 (empty = auto detect).
+	 *
+	 * @return string Specified string portion.
+	 */
+	public function mb_sub_str( $str, $start, $length, $encoding = 'UTF-8' ) {
+		if ( ! extension_loaded( 'mbstring' ) ) {
+			return substr( $str, $start, $length );
+		}
+
+		if ( ! $encoding ) {
+			$encoding = mb_detect_encoding( $str );
+		}
+		if ( ! $encoding ) {
+			$encoding = 'UTF-8';
+		}
+
+		return mb_substr( $str, $start, $length, $encoding );
+	} // mb_sub_str
 
 	/**
 	 * Simple HTML to plain text conversion.

@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_6_0;
+namespace immonex\WordPressFreePluginCore\V1_7_8;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.6.0
+ * @version 1.7.8
  */
 abstract class Base {
 
-	const BASE_VERSION = '1.6.0';
+	const CORE_VERSION = '1.7.8';
 
 	/**
 	 * Plugin options array
@@ -247,6 +247,13 @@ abstract class Base {
 	public $utils = array();
 
 	/**
+	 * CPT hook objects
+	 *
+	 * @var object[]
+	 */
+	public $cpt_hooks = array();
+
+	/**
 	 * Debug object
 	 *
 	 * @var Debug
@@ -296,6 +303,20 @@ abstract class Base {
 	public $utils_init_done = false;
 
 	/**
+	 * Add-on Plugin Flag
+	 *
+	 * @var bool
+	 */
+	public $is_addon_plugin = false;
+
+	/**
+	 * Parent Plugin Availability Flag
+	 *
+	 * @var bool
+	 */
+	public $is_parent_plugin_active = false;
+
+	/**
 	 * Constructor: Set plugin slug and dependent variables.
 	 *
 	 * @since 0.1
@@ -317,6 +338,7 @@ abstract class Base {
 			$this->default_plugin_options = $this->plugin_options;
 
 			$this->plugin_infos = array(
+				'core_version'     => static::CORE_VERSION,
 				'plugin_main_file' => $this->plugin_main_file,
 				'settings_page'    => '',
 			);
@@ -359,6 +381,12 @@ abstract class Base {
 			)
 		);
 
+		// Eventually add CPT data and setup related backend forms.
+		$this->maybe_add_cpt_bootstrap_data();
+		if ( ! empty( $this->bootstrap_data['custom_post_types'] ) ) {
+			$this->setup_cpt_backend_forms();
+		}
+
 		add_action( static::PLUGIN_PREFIX . 'update_plugin_options', array( $this, 'update_plugin_options' ), 10, 2 );
 		add_action( static::PLUGIN_PREFIX . 'add_deferred_admin_notice', array( $this, 'add_deferred_admin_notice' ), 10, 4 );
 		add_action( static::PLUGIN_PREFIX . 'dismiss_deferred_admin_notice', array( $this, 'dismiss_admin_notice' ), 10 );
@@ -366,6 +394,49 @@ abstract class Base {
 
 		add_action( 'wp_ajax_dismiss_admin_notice', array( $this, 'dismiss_admin_notice' ) );
 	} // __construct
+
+	/**
+	 * Add CPT names an related class names to the bootstrap data array
+	 * if a nonempty class constant CUSTOM_POST_TYPES exists.
+	 *
+	 * @since 1.8.0
+	 */
+	protected function maybe_add_cpt_bootstrap_data() {
+		if (
+			defined( get_called_class() . '::CUSTOM_POST_TYPES' )
+			&& ! empty( get_called_class()::CUSTOM_POST_TYPES )
+			&& ! isset( $this->bootstrap_data['custom_post_types'] )
+		) {
+			$this->bootstrap_data['custom_post_types'] = array();
+
+			foreach ( get_called_class()::CUSTOM_POST_TYPES as $cpt_base_name => $post_type_name ) {
+				$class_base_name = ucwords( $cpt_base_name );
+
+				$this->bootstrap_data['custom_post_types'][ $cpt_base_name ] = array(
+					'post_type_name'  => $post_type_name,
+					'class_base_name' => $class_base_name,
+				);
+			}
+		}
+	} // maybe_add_cpt_bootstrap_data
+
+	/**
+	 * Setup backend edit form(s) for plugin related CPT(s).
+	 *
+	 * @since 1.8.0
+	 */
+	protected function setup_cpt_backend_forms() {
+		$reflection_class = new \ReflectionClass( get_called_class() );
+		$namespace        = $reflection_class->getNamespaceName();
+
+		foreach ( $this->bootstrap_data['custom_post_types'] as $cpt_base_name => $cpt ) {
+			$class_name = "\\{$namespace}\\{$cpt['class_base_name']}_Backend_Form";
+
+			if ( class_exists( $class_name ) ) {
+				new $class_name( $this->bootstrap_data, $this );
+			}
+		}
+	} // setup_cpt_backend_forms
 
 	/**
 	 * Get values/objects from plugin options, bootstrap data, plugin infos
@@ -383,6 +454,9 @@ abstract class Base {
 		switch ( $key ) {
 			case 'bootstrap_data':
 				$value = $this->bootstrap_data;
+				break;
+			case 'plugin_options':
+				$value = $this->plugin_options;
 				break;
 			case 'plugin_infos':
 				$value = $this->plugin_infos;
@@ -467,6 +541,10 @@ abstract class Base {
 		$this->plugin_options = $this->fetch_plugin_options();
 
 		if ( static::PLUGIN_VERSION !== $this->plugin_options['plugin_version'] ) {
+			if ( isset( $this->plugin_options['previous_plugin_version'] ) ) {
+				$this->plugin_options['previous_plugin_version'] = $this->plugin_options['plugin_version'];
+			}
+
 			$this->plugin_options['plugin_version'] = static::PLUGIN_VERSION;
 			update_option( $this->plugin_options_name, $this->plugin_options );
 		}
@@ -613,6 +691,11 @@ abstract class Base {
 		if ( ! isset( $this->default_plugin_options['deferred_admin_notices'] ) ) {
 			$this->default_plugin_options['deferred_admin_notices'] = array();
 		}
+
+		if ( defined( get_called_class() . '::PARENT_PLUGIN_CALLABLE' ) ) {
+			$this->is_addon_plugin         = true;
+			$this->is_parent_plugin_active = is_callable( get_called_class()::PARENT_PLUGIN_CALLABLE );
+		}
 	} // init_base
 
 	/**
@@ -635,6 +718,14 @@ abstract class Base {
 		// Retrieve the plugin options (merge with default values).
 		$this->plugin_options = $this->fetch_plugin_options();
 
+		if (
+			! $this->plugin_options['plugin_version'] ||
+			version_compare( $this->plugin_options['plugin_version'], static::PLUGIN_VERSION, '<' )
+		) {
+			// Plugin has been updated: redo activation.
+			$this->activate_plugin();
+		}
+
 		$this->plugin_options_access_capability = apply_filters(
 			// @codingStandardsIgnoreLine
 			$this->plugin_slug . '_plugin_options_access_capability',
@@ -651,6 +742,15 @@ abstract class Base {
 		// Set up helpers and utilities.
 		$this->init_utils();
 
+		if ( is_array( $this->utils ) && count( $this->utils ) > 0 ) {
+			$this->utils = array_merge(
+				$this->core_utils,
+				$this->utils
+			);
+		} else {
+			$this->utils = $this->core_utils;
+		}
+
 		if ( ! empty( $this->plugin_options['skin'] ) ) {
 			// Check if skin folder still exists.
 			$skins = $this->utils['template']->get_frontend_skins();
@@ -658,6 +758,11 @@ abstract class Base {
 				$this->plugin_options['skin'] = 'default';
 				update_option( $this->plugin_options_name, $this->plugin_options );
 			}
+		}
+
+		if ( ! empty( $this->bootstrap_data['custom_post_types'] ) ) {
+			// Register plugin-related CPT hooks.
+			$this->register_cpt_hooks( array_merge( $this->bootstrap_data, $this->plugin_options ) );
 		}
 
 		// Add WP-Cron-based actions.
@@ -669,7 +774,6 @@ abstract class Base {
 
 		if ( $fire_after_hook ) {
 			do_action( 'immonex_core_after_init', $this->plugin_slug );
-			$this->init_done = true;
 		}
 	} // init_plugin
 
@@ -696,21 +800,6 @@ abstract class Base {
 		// @codingStandardsIgnoreLine
 		$script = isset( $_SERVER['SCRIPT_NAME'] ) ? sanitize_file_name( basename( wp_unslash( $_SERVER['SCRIPT_NAME'] ), '.php' ) ) : '';
 
-		if (
-			( isset( $_GET['settings-updated'] ) && 'true' === $_GET['settings-updated'] ) &&
-			( isset( $_GET['page'] ) && $this->plugin_slug . '_settings' === $_GET['page'] ) &&
-			'options-general' !== $script
-		) {
-			$this->add_admin_notice(
-				wp_sprintf(
-					'<strong>%s</strong>',
-					__( 'Settings saved.', 'immonex-wp-free-plugin-core' )
-				),
-				'success',
-				'settings_updated'
-			);
-		}
-
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_and_styles' ) );
 		add_action( 'network_admin_notices', array( $this, 'display_network_admin_notices' ) );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ) );
@@ -733,24 +822,45 @@ abstract class Base {
 			}
 		}
 
-		if (
-			! $this->plugin_options['plugin_version'] ||
-			version_compare( $this->plugin_options['plugin_version'], static::PLUGIN_VERSION, '<' )
-		) {
-			// Plugin has been updated: redo activation.
-			$this->activate_plugin();
-		}
-
 		if ( $fire_after_hook ) {
 			do_action( 'immonex_core_after_init_admin', $this->plugin_slug );
-			$this->admin_init_done = true;
 		}
 	} // init_plugin_admin
 
 	/**
+	 * Instantiate plugin-related CPT "hook classes" (affiliated actions and
+	 * filters will be registered).
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param mixed[] $component_config Merged array of bootstrap data and plugin options.
+	 */
+	protected function register_cpt_hooks( $component_config ) {
+		$reflection_class = new \ReflectionClass( get_called_class() );
+		$namespace        = $reflection_class->getNamespaceName();
+
+		foreach ( $this->bootstrap_data['custom_post_types'] as $cpt_base_name => $cpt ) {
+			foreach ( array( '_Hooks', '_List_Hooks' ) as $class_name_suffix ) {
+				$class_name = "\\{$namespace}\\{$cpt['class_base_name']}{$class_name_suffix}";
+
+				if ( class_exists( $class_name ) ) {
+					$config = array_merge(
+						$component_config,
+						array(
+							'class_base_name' => $cpt['class_base_name'],
+						)
+					);
+
+					$this->cpt_hooks[ $cpt['class_base_name'] . $class_name_suffix ] = new $class_name( $config, $this->utils );
+				}
+			}
+		}
+	} // register_cpt_hooks
+
+	/**
 	 * Instantiate and set up helper and utility classes.
 	 *
-	 * @since 1.7.1
+	 * @since 1.8.0
 	 */
 	private function init_utils() {
 		if ( $this->utils_init_done ) {
@@ -999,25 +1109,18 @@ abstract class Base {
 	 */
 	public function admin_scripts_and_styles( $hook_suffix ) {
 		$ns_split            = explode( '\\', __NAMESPACE__ );
-		$core_version        = array_pop( $ns_split );
-		$core_version_handle = str_replace( '_', '-', $core_version );
-		if ( 'V' === $core_version_handle[0] ) {
-			$core_version_handle = substr( $core_version, 1 );
-			$core_version_semver = str_replace( '-', '.', $core_version_handle );
-		} else {
-			$dev_number          = str_replace( 'DEV-', '', $core_version_handle );
-			$core_version_semver = "{$dev_number}.0.0-alpha";
-		}
-		$core_handle = "{$this->plugin_slug}-backend-core-{$core_version_handle}";
+		$core_version_folder = array_pop( $ns_split );
+		$core_version_handle = str_replace( '.', '-', static::CORE_VERSION );
+		$core_handle         = "{$this->plugin_slug}-backend-core-{$core_version_handle}";
 
 		/**
 		 * Load core backend CSS.
 		 */
 		wp_enqueue_style(
 			$core_handle,
-			plugins_url( $this->plugin_slug . "/vendor/immonex/wp-free-plugin-core/src/{$core_version}/css/backend.css" ),
+			plugins_url( $this->plugin_slug . "/vendor/immonex/wp-free-plugin-core/src/{$core_version_folder}/css/backend.css" ),
 			array(),
-			$this->core_version_semver
+			static::CORE_VERSION
 		);
 
 		/**
@@ -1047,9 +1150,9 @@ abstract class Base {
 		 */
 		wp_register_script(
 			$core_handle,
-			plugins_url( $this->plugin_slug . "/vendor/immonex/wp-free-plugin-core/src/{$core_version}/js/backend.js" ),
+			plugins_url( $this->plugin_slug . "/vendor/immonex/wp-free-plugin-core/src/{$core_version_folder}/js/backend.js" ),
 			array( 'jquery' ),
-			$core_version_semver,
+			static::CORE_VERSION,
 			true
 		);
 		wp_enqueue_script( $core_handle );
@@ -1060,7 +1163,7 @@ abstract class Base {
 			$core_handle,
 			'iwpfpc_params',
 			array(
-				'core_version'                    => $core_version_semver,
+				'core_version'                    => static::CORE_VERSION,
 				'plugin_slug'                     => $this->plugin_slug,
 				'ajax_url'                        => get_admin_url() . 'admin-ajax.php',
 				'media_fields'                    => $media_fields,
@@ -1122,45 +1225,40 @@ abstract class Base {
 			}
 		);
 
-		if ( count( $admin_notices ) > 0 ) {
-			// Display admin messages.
-			$dismissables_cnt = 0;
-			foreach ( $admin_notices as $id => $notice ) {
-				if ( $notice['is_dismissable'] ) {
-					$dismissables_cnt++;
-				}
-				if ( $dismissables_cnt > 1 ) {
-					break;
-				}
+		if ( empty( $admin_notices ) ) {
+			return;
+		}
+
+		foreach ( $admin_notices as $id => $notice ) {
+			$message = $notice['message'];
+			$classes = array(
+				'notice',
+				'notice-' . $notice['type'],
+				$this->plugin_slug . '-notice',
+			);
+
+			if ( $notice['is_dismissable'] ) {
+				$classes[] = 'is-dismissible';
 			}
 
-			foreach ( $admin_notices as $id => $notice ) {
-				$message = $notice['message'];
-				$classes = array(
-					'notice',
-					'notice-' . $notice['type'],
-					$this->plugin_slug . '-notice',
-				);
+			echo wp_sprintf(
+				'<div class="%s" data-notice-id="%s"><p>%s</p></div>' . PHP_EOL,
+				implode( ' ', $classes ),
+				$id,
+				$message
+			);
 
-				if ( $notice['is_dismissable'] ) {
-					$classes[] = 'is-dismissible';
-				}
+			// Remove displayed message.
+			unset( $this->admin_notices[ $id ] );
 
-				echo wp_sprintf(
-					'<div class="%s" data-notice-id="%s"><p>%s</p></div>' . PHP_EOL,
-					implode( ' ', $classes ),
-					$id,
-					$message
-				);
-
-				// Remove displayed message.
-				unset( $this->admin_notices[ $id ] );
+			if ( 'once' === substr( $id, 0, 4 ) ) {
+				$this->dismiss_admin_notice( $id );
 			}
 		}
 	} // display_admin_notices
 
 	/**
-	 * Sanitize plugin options before saving.
+	 * Sanitize and validate plugin options before saving.
 	 *
 	 * @since 0.9
 	 *
@@ -1179,10 +1277,14 @@ abstract class Base {
 
 				$value = '';
 				if ( $exists ) {
-					$value = $input[ $name ];
+					$value = trim( $input[ $name ] );
+
+					if ( empty( $value ) && isset( $field['default_if_empty'] ) ) {
+						$value = $field['default_if_empty'];
+					}
 				} elseif ( isset( $field['default'] ) ) {
 					$value = $field['default'];
-				} elseif ( 'checkbox' !== $field['type'] ) {
+				} elseif ( ! in_array( $field['type'], array( 'checkbox', 'checkbox_group' ), true ) ) {
 					continue;
 				}
 
@@ -1193,27 +1295,71 @@ abstract class Base {
 				if (
 					! empty( $field['max_length'] ) &&
 					is_string( $value ) &&
-					strlen( $value ) > $field['max_length']
+					$this->string_utils->mb_str_len( $value ) > $field['max_length']
 				) {
-					$value = substr( trim( $value ), 0, $field['max_length'] );
+					$value = $this->string_utils->mb_sub_str( trim( $value ), 0, $field['max_length'] );
 				}
 
 				if (
 					isset( $field['min'] ) &&
-					(float) $value < $field['min']
+					! is_array( $value ) &&
+					(float) $value < $field['min'] &&
+					! ( $field['allow_zero'] && 0 === (int) $value )
 				) {
-					$value = $field['min'];
+					$value = isset( $field['under_min_default'] ) ? $field['under_min_default'] : $field['min'];
+
+					add_settings_error(
+						$field['id'],
+						$field['id'] . '_value_error',
+						wp_sprintf(
+							// translators: %1$s = field label/name, %s2$s = min. value %3$s = max. value, %4$s = "or 0".
+							__( '%1$s: Please enter a value between %2$s and %3$s%4$s.', 'immonex-wp-free-plugin-core' ),
+							! empty( $field['label'] ) ? $field['label'] : $field['name'],
+							$field['min'],
+							! empty( $field['max'] ) ? $field['max'] : __( 'unlimited', 'immonex-wp-free-plugin-core' ),
+							$field['allow_zero'] ? ' ' . __( 'or 0', 'immonex-wp-free-plugin-core' ) : ''
+						)
+					);
 				}
 
 				if (
 					isset( $field['max'] ) &&
+					! is_array( $value ) &&
 					(float) $value > $field['max']
 				) {
-					$value = $field['max'];
+					$value = isset( $field['over_max_default'] ) ? $field['over_max_default'] : $field['max'];
+
+					add_settings_error(
+						$field['id'],
+						$field['id'] . '_value_error',
+						wp_sprintf(
+							// translators: %1$s = field label/name, %s2$s = min. value %3$s = max. value, %4$s = "or 0".
+							__( '%1$s: Please enter a value between %2$s and %3$s%4$s.', 'immonex-wp-free-plugin-core' ),
+							! empty( $field['label'] ) ? $field['label'] : $field['name'],
+							! isset( $field['min'] ) ? $field['min'] : __( 'unlimited', 'immonex-wp-free-plugin-core' ),
+							$field['max'],
+							$field['allow_zero'] ? ' ' . __( 'or 0', 'immonex-wp-free-plugin-core' ) : ''
+						)
+					);
 				}
+
+				$show_generic_required_error = false;
 
 				switch ( $field['type'] ) {
 					case 'select':
+						if ( $field['required'] && ! $value ) {
+							add_settings_error(
+								$field['id'],
+								$field['id'] . '_value_error',
+								wp_sprintf(
+									// translators: %s = field label/name.
+									__( '%s: Please select an option.', 'immonex-wp-free-plugin-core' ),
+									! empty( $field['label'] ) ? $field['label'] : $field['name']
+								)
+							);
+							break;
+						}
+
 						if (
 							$exists &&
 							isset( $field['options'][ $value ] )
@@ -1237,11 +1383,92 @@ abstract class Base {
 						$valid[ $name ] = wp_kses_post( trim( $value ) );
 						break;
 					case 'textarea':
-						$valid[ $name ] = sanitize_textarea_field( $value );
+						$value = sanitize_textarea_field( $value );
+						if ( $field['required'] && ! $value ) {
+							$show_generic_required_error = true;
+							break;
+						}
+
+						$valid[ $name ] = $value;
+						break;
+					case 'email':
+						if ( ! $value && ! $field['required'] ) {
+							$valid[ $name ] = '';
+							break;
+						}
+
+						$value = sanitize_email( $value );
+						if ( is_email( $value ) ) {
+							$valid[ $name ] = $value;
+						} else {
+							add_settings_error(
+								$field['id'],
+								$field['id'] . '_value_error',
+								wp_sprintf(
+									// translators: %s = field label/name.
+									__( '%s: Please enter a valid e-mail address.', 'immonex-wp-free-plugin-core' ),
+									! empty( $field['label'] ) ? $field['label'] : $field['name']
+								)
+							);
+						}
+						break;
+					case 'email_list':
+						if ( ! $value && ! $field['required'] ) {
+							$valid[ $name ] = '';
+							break;
+						}
+
+						$email_addresses = explode( ',', $value );
+						$valid_addresses = array();
+						$invalid_cnt     = 0;
+
+						if ( count( $email_addresses ) ) {
+							foreach ( $email_addresses as $email ) {
+								$email = sanitize_email( trim( $email ) );
+								if ( is_email( $email ) ) {
+									$valid_addresses[] = $email;
+								} else {
+									$invalid_cnt++;
+								}
+							}
+						}
+
+						$valid[ $name ] = implode( ', ', $valid_addresses );
+
+						if ( $invalid_cnt ) {
+							add_settings_error(
+								$field['id'],
+								$field['id'] . '_value_error',
+								wp_sprintf(
+									// translators: %s = field label/name.
+									__( '%s: Please enter only valid e-mail addresses.', 'immonex-wp-free-plugin-core' ),
+									! empty( $field['label'] ) ? $field['label'] : $field['name']
+								)
+							);
+						}
+
 						break;
 					default:
 						// Normal text fields.
-						$valid[ $name ] = sanitize_text_field( $value );
+						$value = sanitize_text_field( $value );
+						if ( $field['required'] && ! $value ) {
+							$show_generic_required_error = true;
+							break;
+						}
+
+						$valid[ $name ] = $value;
+				}
+
+				if ( $show_generic_required_error ) {
+					add_settings_error(
+						$field['id'],
+						$field['id'] . '_value_error',
+						wp_sprintf(
+							// translators: %s = field label/name.
+							__( '%s: Please provide a value.', 'immonex-wp-free-plugin-core' ),
+							! empty( $field['label'] ) ? $field['label'] : $field['name']
+						)
+					);
 				}
 			}
 		}
@@ -1388,7 +1615,7 @@ abstract class Base {
 		$notice = array(
 			'message'        => $message,
 			'type'           => $type,
-			'is_dismissable' => $id ? true : false,
+			'is_dismissable' => $id && 'once' !== substr( $id, 0, 4 ) ? true : false,
 			'target'         => $target,
 		);
 
@@ -1405,7 +1632,7 @@ abstract class Base {
 	 * @param string $type    Message type: "success" (default), "info", "warning", "error" or
 	 *                        "network info/warning/error" for network admin notices.
 	 * @param string $context Message context (e.g. if called as action hook callback; optional).
-	 * @param string $id      Optional message ID for deferred messages.
+	 * @param string $id      Optional message ID for the deferred messages or or "once" for one-time display.
 	 */
 	public function add_deferred_admin_notice( $message, $type = 'success', $context = '', $id = '' ) {
 		$raw_type = str_replace( 'network ', '', $type );
@@ -1425,6 +1652,14 @@ abstract class Base {
 					return;
 				}
 			}
+		}
+
+		if ( 'once' === $id && isset( $this->plugin_options['deferred_admin_notices'][ $id ] ) ) {
+			$cnt = 0;
+			do {
+				$cnt++;
+				$id = 'once_' . $cnt;
+			} while ( ! isset( $this->plugin_options['deferred_admin_notices'][ $id ] ) );
 		}
 
 		$this->plugin_options['deferred_admin_notices'][ $id ? $id : uniqid() ] = array(
@@ -1525,9 +1760,15 @@ abstract class Base {
 			return;
 		}
 
-		$domain       = $this->textdomain ? $this->textdomain : $this->plugin_slug;
-		$locale       = get_user_locale();
-		$base_version = basename( __DIR__ );
+		$domain              = $this->textdomain ? $this->textdomain : $this->plugin_slug;
+		$locale              = get_user_locale();
+		$ns_split            = explode( '\\', __NAMESPACE__ );
+		$core_version_folder = array_pop( $ns_split );
+
+		if ( 'de_' === substr( $locale, 0, 3 ) ) {
+			// Use default translations for all German locales.
+			$locale = 'de_DE';
+		}
 
 		/**
 		 * Load plugin base translations first.
@@ -1538,7 +1779,7 @@ abstract class Base {
 				'%s/%s/vendor/immonex/wp-free-plugin-core/src/%s/languages/immonex-wp-free-plugin-core-%s.mo',
 				WP_PLUGIN_DIR,
 				$this->plugin_slug,
-				$base_version,
+				$core_version_folder,
 				$locale
 			)
 		);

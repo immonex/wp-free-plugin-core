@@ -275,6 +275,27 @@ abstract class Base {
 	public $is_network_activated;
 
 	/**
+	 * Init Flag
+	 *
+	 * @var bool
+	 */
+	public $init_done = false;
+
+	/**
+	 * Admin Init Flag
+	 *
+	 * @var bool
+	 */
+	public $admin_init_done = false;
+
+	/**
+	 * Utils Init Flag
+	 *
+	 * @var bool
+	 */
+	public $utils_init_done = false;
+
+	/**
 	 * Constructor: Set plugin slug and dependent variables.
 	 *
 	 * @since 0.1
@@ -643,9 +664,92 @@ abstract class Base {
 		$this->plugin_options = $this->debug->maybe_update_debug_level( $this->plugin_options );
 		$this->extend_plugin_infos();
 
-		/**
-		 * Instantiate helper and utility classes.
-		 */
+		// Set up helpers and utilities.
+		$this->init_utils();
+
+		if ( ! empty( $this->plugin_options['skin'] ) ) {
+			// Check if skin folder still exists.
+			$skins = $this->utils['template']->get_frontend_skins();
+			if ( ! isset( $skins[ $this->plugin_options['skin'] ] ) ) {
+				$this->plugin_options['skin'] = 'default';
+				update_option( $this->plugin_options_name, $this->plugin_options );
+			}
+		}
+
+		// Add WP-Cron-based actions.
+		add_action( static::PLUGIN_PREFIX . 'do_daily', array( $this, 'do_daily' ) );
+		add_action( static::PLUGIN_PREFIX . 'do_weekly', array( $this, 'do_weekly' ) );
+
+		// Enqueue frontend CSS and JS files.
+		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts_and_styles' ) );
+
+		if ( $fire_after_hook ) {
+			do_action( 'immonex_core_after_init', $this->plugin_slug );
+			$this->init_done = true;
+		}
+	} // init_plugin
+
+	/**
+	 * Initialize the plugin (admin/backend only).
+	 *
+	 * @since 0.1
+	 *
+	 * @param bool $fire_before_hook Flag to indicate if an action hook should fire
+	 *                               before the actual method execution (optional,
+	 *                               true by default).
+	 * @param bool $fire_after_hook  Flag to indicate if an action hook should fire
+	 *                               after the actual method execution (optional,
+	 *                               true by default).
+	 */
+	public function init_plugin_admin( $fire_before_hook = true, $fire_after_hook = true ) {
+		if ( $fire_before_hook ) {
+			do_action( 'immonex_core_before_init_admin', $this->plugin_slug );
+		}
+
+		// Set up helpers and utilities.
+		$this->init_utils();
+
+		// @codingStandardsIgnoreLine
+		$script = isset( $_SERVER['SCRIPT_NAME'] ) ? sanitize_file_name( basename( wp_unslash( $_SERVER['SCRIPT_NAME'] ), '.php' ) ) : '';
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_and_styles' ) );
+		add_action( 'network_admin_notices', array( $this, 'display_network_admin_notices' ) );
+		add_action( 'admin_notices', array( $this, 'display_admin_notices' ) );
+
+		// Add a "Settings" link on the plugins page.
+		if ( $this->enable_separate_option_page ) {
+			add_filter(
+				'plugin_action_links_' . $this->plugin_slug . '/' . $this->plugin_slug . '.php',
+				array( $this->settings_helper, 'plugin_settings_link' )
+			);
+		}
+
+		if (
+			! empty( $this->plugin_options['deferred_admin_notices'] )
+			&& is_array( $this->plugin_options['deferred_admin_notices'] )
+		) {
+			// Show deferred admin notices until dismissed.
+			foreach ( $this->plugin_options['deferred_admin_notices'] as $id => $admin_notice ) {
+				$this->add_admin_notice( $admin_notice['message'], $admin_notice['type'], $id );
+			}
+		}
+
+		if ( $fire_after_hook ) {
+			do_action( 'immonex_core_after_init_admin', $this->plugin_slug );
+			$this->admin_init_done = true;
+		}
+	} // init_plugin_admin
+
+	/**
+	 * Instantiate and set up helper and utility classes.
+	 *
+	 * @since 1.7.1
+	 */
+	private function init_utils() {
+		if ( $this->utils_init_done ) {
+			return;
+		}
+
 		$this->general_utils   = new General_Utils();
 		$this->settings_helper = new Settings_Helper(
 			$this->plugin_dir,
@@ -684,73 +788,8 @@ abstract class Base {
 			$this->utils = $this->core_utils;
 		}
 
-		if ( ! empty( $this->plugin_options['skin'] ) ) {
-			// Check if skin folder still exists.
-			$skins = $this->utils['template']->get_frontend_skins();
-			if ( ! isset( $skins[ $this->plugin_options['skin'] ] ) ) {
-				$this->plugin_options['skin'] = 'default';
-				update_option( $this->plugin_options_name, $this->plugin_options );
-			}
-		}
-
-		// Add WP-Cron-based actions.
-		add_action( static::PLUGIN_PREFIX . 'do_daily', array( $this, 'do_daily' ) );
-		add_action( static::PLUGIN_PREFIX . 'do_weekly', array( $this, 'do_weekly' ) );
-
-		// Enqueue frontend CSS and JS files.
-		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts_and_styles' ) );
-
-		if ( $fire_after_hook ) {
-			do_action( 'immonex_core_after_init', $this->plugin_slug );
-		}
-	} // init_plugin
-
-	/**
-	 * Initialize the plugin (admin/backend only).
-	 *
-	 * @since 0.1
-	 *
-	 * @param bool $fire_before_hook Flag to indicate if an action hook should fire
-	 *                               before the actual method execution (optional,
-	 *                               true by default).
-	 * @param bool $fire_after_hook  Flag to indicate if an action hook should fire
-	 *                               after the actual method execution (optional,
-	 *                               true by default).
-	 */
-	public function init_plugin_admin( $fire_before_hook = true, $fire_after_hook = true ) {
-		if ( $fire_before_hook ) {
-			do_action( 'immonex_core_before_init_admin', $this->plugin_slug );
-		}
-
-		// @codingStandardsIgnoreLine
-		$script = isset( $_SERVER['SCRIPT_NAME'] ) ? sanitize_file_name( basename( wp_unslash( $_SERVER['SCRIPT_NAME'] ), '.php' ) ) : '';
-
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_and_styles' ) );
-		add_action( 'network_admin_notices', array( $this, 'display_network_admin_notices' ) );
-		add_action( 'admin_notices', array( $this, 'display_admin_notices' ) );
-
-		// Add a "Settings" link on the plugins page.
-		if ( $this->enable_separate_option_page ) {
-			add_filter(
-				'plugin_action_links_' . $this->plugin_slug . '/' . $this->plugin_slug . '.php',
-				array( $this->settings_helper, 'plugin_settings_link' )
-			);
-		}
-
-		if (
-			is_array( $this->plugin_options['deferred_admin_notices'] ) &&
-			count( $this->plugin_options['deferred_admin_notices'] ) > 0
-		) {
-			// Show deferred admin notices until dismissed.
-			foreach ( $this->plugin_options['deferred_admin_notices'] as $id => $admin_notice ) {
-				$this->add_admin_notice( $admin_notice['message'], $admin_notice['type'], $id );
-			}
-		}
-
-		if ( $fire_after_hook ) {
-			do_action( 'immonex_core_after_init_admin', $this->plugin_slug );
-		}
-	} // init_plugin_admin
+		$this->utils_init_done = true;
+	} // init_utils
 
 	/**
 	 * Load and register widgets (to be overwritten in derived classes).
