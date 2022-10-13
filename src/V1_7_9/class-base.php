@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_7_8;
+namespace immonex\WordPressFreePluginCore\V1_7_9;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.7.8
+ * @version 1.7.9
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.7.8';
+	const CORE_VERSION = '1.7.9';
 
 	/**
 	 * Plugin options array
@@ -126,6 +126,13 @@ abstract class Base {
 	 * @var string
 	 */
 	public $plugin_options_name;
+
+	/**
+	 * Settings page name/query
+	 *
+	 * @var string
+	 */
+	public $settings_page;
 
 	/**
 	 * Gettext textdomain of plugin translations
@@ -340,7 +347,7 @@ abstract class Base {
 			$this->plugin_infos = array(
 				'core_version'     => static::CORE_VERSION,
 				'plugin_main_file' => $this->plugin_main_file,
-				'settings_page'    => '',
+				'settings_page'    => $this->settings_page,
 			);
 		} else {
 			throw new \Exception( 'inveris WP Free Plugin Core: Plugin slug (= directory name) not provided.' );
@@ -644,14 +651,22 @@ abstract class Base {
 		// accessing and updating plugin options.
 		add_filter( 'option_page_capability_' . $this->plugin_options_name, array( $this, 'get_plugin_options_access_capability' ) );
 
+		$enable_option_page          = true;
 		$enable_separate_option_page = false;
 
+		if ( defined( get_called_class() . '::PARENT_PLUGIN_CALLABLE' ) ) {
+			$this->is_addon_plugin         = true;
+			$this->is_parent_plugin_active = is_callable( get_called_class()::PARENT_PLUGIN_CALLABLE );
+			$enable_option_page            = $this->is_parent_plugin_active;
+		}
+
 		if (
+			$enable_option_page &&
 			defined( 'static::OPTIONS_LINK_MENU_LOCATION' ) &&
 			static::OPTIONS_LINK_MENU_LOCATION
 		) {
 			if ( 'settings' === static::OPTIONS_LINK_MENU_LOCATION ) {
-				$this->plugin_infos['settings_page'] = wp_sprintf(
+				$this->settings_page = wp_sprintf(
 					'options-general.php?page=%s_settings',
 					$this->plugin_slug
 				);
@@ -660,7 +675,7 @@ abstract class Base {
 					$this->options_link_title = static::PLUGIN_NAME;
 				}
 			} else {
-				$this->plugin_infos['settings_page'] = wp_sprintf(
+				$this->settings_page = wp_sprintf(
 					'admin.php?page=%s_settings',
 					$this->plugin_slug
 				);
@@ -669,6 +684,8 @@ abstract class Base {
 					$this->options_link_title = __( 'Settings', 'immonex-wp-free-plugin-core' );
 				}
 			}
+
+			$this->plugin_infos['settings_page'] = $this->settings_page;
 
 			if ( empty( $this->options_page_title ) ) {
 				$this->options_page_title = static::PLUGIN_NAME . ' - ' .
@@ -690,11 +707,6 @@ abstract class Base {
 
 		if ( ! isset( $this->default_plugin_options['deferred_admin_notices'] ) ) {
 			$this->default_plugin_options['deferred_admin_notices'] = array();
-		}
-
-		if ( defined( get_called_class() . '::PARENT_PLUGIN_CALLABLE' ) ) {
-			$this->is_addon_plugin         = true;
-			$this->is_parent_plugin_active = is_callable( get_called_class()::PARENT_PLUGIN_CALLABLE );
 		}
 	} // init_base
 
@@ -805,7 +817,7 @@ abstract class Base {
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ) );
 
 		// Add a "Settings" link on the plugins page.
-		if ( $this->enable_separate_option_page ) {
+		if ( $this->settings_page ) {
 			add_filter(
 				'plugin_action_links_' . $this->plugin_slug . '/' . $this->plugin_slug . '.php',
 				array( $this->settings_helper, 'plugin_settings_link' )
@@ -1494,6 +1506,7 @@ abstract class Base {
 			array(
 				'name'             => defined( 'static::PLUGIN_NAME' ) ? static::PLUGIN_NAME : '',
 				'prefix'           => defined( 'static::PLUGIN_PREFIX' ) ? static::PLUGIN_PREFIX : '',
+				'settings_page'    => $this->settings_page,
 				'debug_level'      => $this->is_debug(),
 				'logo_link_url'    => defined( 'static::PLUGIN_HOME_URL' ) ? static::PLUGIN_HOME_URL : '',
 				'footer'           => array(),
