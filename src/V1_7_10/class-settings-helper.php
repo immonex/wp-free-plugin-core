@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_7_9;
+namespace immonex\WordPressFreePluginCore\V1_7_10;
 
 /**
  * Helper class for dealing with the WordPress Settings API.

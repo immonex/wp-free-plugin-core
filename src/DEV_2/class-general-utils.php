@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_1;
+namespace immonex\WordPressFreePluginCore\DEV_2;
 
 /**
  * General (mostly WordPress related) utility methods.
@@ -437,11 +437,22 @@ class General_Utils {
 	 *
 	 * @since 1.0.1
 	 *
-	 * @return int Current post/page ID.
+	 * @return int|bool Current post/page ID of false if undeterminable.
 	 */
 	// @codingStandardsIgnoreLine
 	public static function get_the_ID() {
-		return is_single() ? $GLOBALS['wp_the_query']->get_queried_object_id() : get_the_ID();
+		if ( is_single() ) {
+			return $GLOBALS['wp_the_query']->get_queried_object_id();
+		}
+
+		if (
+			! is_archive()
+			|| ( is_archive() && in_the_loop() )
+		) {
+			return get_the_ID();
+		}
+
+		return false;
 	} // get_the_ID
 
 } // General_Utils
