@@ -1,16 +1,39 @@
 #!/usr/bin/env bash
 
-if [ $# -lt 3 ]; then
+# inveris
+
+source .env
+
+DB_NAME=${TEST_DB_NAME-$1}
+DB_USER=${TEST_DB_USER-$2}
+DB_PASS=${TEST_DB_PASSWORD-$3}
+DB_HOST=${TEST_DB_HOST-$4}
+WP_VERSION=${TEST_WP_VERSION-$5}
+SKIP_DB_CREATE=${TEST_SKIP_DB_CREATION-$6}
+MYSQLADMIN_BINARY=${TEST_MYSQLADMIN_BINARY-mysqladmin}
+
+if [ ! $DB_HOST ]; then
+	DB_HOST="localhost"
+fi
+
+if [ ! $WP_VERSION ]; then
+	WP_VERSION="latest"
+fi
+
+if [[ -z $DB_NAME || -z $DB_USER || -z $DB_PASS ]]; then
+	echo ${DB_PASS}
 	echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]"
 	exit 1
 fi
 
-DB_NAME=$1
-DB_USER=$2
-DB_PASS=$3
-DB_HOST=${4-localhost}
-WP_VERSION=${5-latest}
-SKIP_DB_CREATE=${6-false}
+# DB_NAME=$1
+# DB_USER=$2
+# DB_PASS=$3
+# DB_HOST=${4-localhost}
+# WP_VERSION=${5-latest}
+# SKIP_DB_CREATE=${6-false}
+
+# /inveris
 
 TMPDIR=${TMPDIR-/tmp}
 TMPDIR=$(echo $TMPDIR | sed -e "s/\/$//")
@@ -163,7 +186,7 @@ install_db() {
 	fi
 
 	# create database
-	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+	${MYSQLADMIN_BINARY} create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
 }
 
 install_wp

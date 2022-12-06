@@ -1,6 +1,6 @@
 {
     "name": "immonex/wp-free-plugin-core",
-    "version": "1.7.10",
+    "version": "1.7.15",
     "type": "library",
     "description": "Shared basic functionality for free immonex WordPress plugins",
     "keywords": ["immonex", "wordpress", "wp", "real estate", "plugin", "openimmo", "immobilien"],
@@ -16,7 +16,8 @@
     "require-dev": {
         "inverisoss/wp-i18n-tools": "^1.0.2",
         "phpunit/phpunit": "^7",
-        "doctrine/rst-parser": "@dev"
+        "doctrine/rst-parser": "@dev",
+        "yoast/phpunit-polyfills": "1.x-dev"
     },
     "autoload-dev": {
         "psr-4": { "immonex\\WordPressFreePluginCore\\tests\\": "tests/" }

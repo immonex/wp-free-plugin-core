@@ -653,10 +653,16 @@ abstract class Base {
 
 		$enable_option_page          = true;
 		$enable_separate_option_page = false;
+		$parent_plugin_main_class    = defined( get_called_class() . '::PARENT_PLUGIN_MAIN_CLASS' ) ?
+			get_called_class()::PARENT_PLUGIN_MAIN_CLASS : '';
 
-		if ( defined( get_called_class() . '::PARENT_PLUGIN_CALLABLE' ) ) {
+		if ( ! $parent_plugin_main_class && defined( get_called_class() . '::PARENT_PLUGIN_CALLABLE' ) ) {
+			$parent_plugin_main_class = get_called_class()::PARENT_PLUGIN_CALLABLE[0];
+		}
+
+		if ( $parent_plugin_main_class ) {
 			$this->is_addon_plugin         = true;
-			$this->is_parent_plugin_active = is_callable( get_called_class()::PARENT_PLUGIN_CALLABLE );
+			$this->is_parent_plugin_active = class_exists( $parent_plugin_main_class );
 			$enable_option_page            = $this->is_parent_plugin_active;
 		}
 

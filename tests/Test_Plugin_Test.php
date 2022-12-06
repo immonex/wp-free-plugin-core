@@ -6,6 +6,7 @@
 use myimmonex\TestPlugin\Test_Plugin;
 
 class My_Plugin_Test extends WP_UnitTestCase {
+
 	private $test_plugin;
 
 	public function setUp() {
@@ -26,4 +27,5 @@ class My_Plugin_Test extends WP_UnitTestCase {
 			$this->assertEquals( $expected_value, $bootstrap_data[$key] );
 		}
 	} // test_bootstrap_data
+
 } // class My_Plugin_Test
