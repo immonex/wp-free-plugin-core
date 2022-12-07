@@ -32,9 +32,9 @@ class Template_Utils {
 	/**
 	 * Folders and display names of available skins
 	 *
-	 * @var string[]
+	 * @var bool|string[]
 	 */
-	private $frontend_skins = array();
+	private $frontend_skins = false;
 
 	/**
 	 * Environment for rendering Twig templates
@@ -48,12 +48,10 @@ class Template_Utils {
 	 *
 	 * @since 0.8.3
 	 *
-	 * @param Base   $plugin Main plugin object.
-	 * @param string $skin Skin subfolder name.
+	 * @param Base $plugin Main plugin object.
 	 */
-	public function __construct( $plugin, $skin = '' ) {
+	public function __construct( $plugin ) {
 		$this->plugin = $plugin;
-		$this->set_skin( $skin );
 	} // __construct
 
 	/**
@@ -241,11 +239,7 @@ class Template_Utils {
 			$add_folder_mode = 'before';
 		}
 
-		if ( $force_skin ) {
-			$skin_restore = $this->skin;
-			$this->skin   = $force_skin;
-		}
-
+		$skin_restore  = $force_skin ? $this->set_skin( $force_skin, false ) : false;
 		$template_file = false;
 
 		if (
@@ -285,8 +279,8 @@ class Template_Utils {
 			}
 		}
 
-		if ( isset( $skin_restore ) ) {
-			$this->skin = $skin_restore;
+		if ( $skin_restore ) {
+			$this->set_skin( $skin_restore, false );
 		}
 
 		return $template_file;
@@ -466,7 +460,7 @@ class Template_Utils {
 	 * @return string[] Array of skins (folder basename => display name).
 	 */
 	public function get_frontend_skins() {
-		if ( ! empty( $this->frontend_skins ) ) {
+		if ( false !== $this->frontend_skins ) {
 			return $this->frontend_skins;
 		}
 
@@ -512,26 +506,37 @@ class Template_Utils {
 			}
 		}
 
+		$this->frontend_skins = $named_folders;
+
 		return $named_folders;
 	} // get_frontend_skins
 
 	/**
-	 * Generate a list of available frontend "skin" folders.
+	 * Set the current "skin" folder and (possibly) return the previous one.
 	 *
 	 * @since 0.9
 	 *
-	 * @param string $skin New skin key (equals folder name).
+	 * @param string $skin              New skin key (equals folder name).
+	 * @param bool   $check_skin_folder If true (default), check if the skin folder exists (optional).
 	 *
 	 * @return string|bool Previous skin key or false if not set or changed.
 	 */
-	public function set_skin( $skin ) {
+	public function set_skin( $skin, $check_skin_folder = true ) {
+		if ( empty( $this->skin ) ) {
+			$this->skin = $this->plugin->skin;
+		}
+
 		if (
-			$skin &&
-			in_array( $skin, array_keys( $this->get_frontend_skins() ), true ) &&
-			$skin !== $this->skin
+			$skin
+			&& (
+				! $check_skin_folder
+				|| in_array( $skin, array_keys( $this->get_frontend_skins() ), true )
+			)
+			&& $skin !== $this->skin
 		) {
 			$previous_skin = $this->skin;
 			$this->skin    = $skin;
+
 			return $previous_skin;
 		}
 

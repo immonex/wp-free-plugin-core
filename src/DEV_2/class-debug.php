@@ -22,13 +22,6 @@ class Debug {
 	private $plugin_options;
 
 	/**
-	 * User ability required to access/modify plugin options
-	 *
-	 * @var string
-	 */
-	private $plugin_options_access_capability;
-
-	/**
 	 * Plugin options name
 	 *
 	 * @var string
@@ -47,17 +40,14 @@ class Debug {
 	 *
 	 * @since 1.5.3
 	 *
-	 * @param mixed[] $plugin_options                   Current plugin options.
-	 * @param string  $plugin_options_access_capability User ability required to access/modify
-	 *                                                  plugin options.
-	 * @param string  $plugin_options_name              Plugin options name.
-	 * @param string  $plugin_slug                      Plugin slug.
+	 * @param mixed[] $plugin_options      Current plugin options.
+	 * @param string  $plugin_options_name Plugin options name.
+	 * @param string  $plugin_slug         Plugin slug.
 	 */
-	public function __construct( $plugin_options, $plugin_options_access_capability, $plugin_options_name, $plugin_slug ) {
-		$this->plugin_options                   = $plugin_options;
-		$this->plugin_options_access_capability = $plugin_options_access_capability;
-		$this->plugin_options_name              = $plugin_options_name;
-		$this->plugin_slug                      = $plugin_slug;
+	public function __construct( $plugin_options, $plugin_options_name, $plugin_slug ) {
+		$this->plugin_options      = $plugin_options;
+		$this->plugin_options_name = $plugin_options_name;
+		$this->plugin_slug         = $plugin_slug;
 	} // __construct
 
 	/**
@@ -79,11 +69,17 @@ class Debug {
 			$plugin_options['debug_level'] = 0;
 		}
 
-		$plugin_settings_page_name = $this->plugin_slug . '_settings';
+		$plugin_settings_page_name        = $this->plugin_slug . '_settings';
+		$plugin_options_access_capability = apply_filters(
+			// @codingStandardsIgnoreLine
+			"{$this->plugin_slug}_plugin_options_access_capability",
+			Base::DEFAULT_PLUGIN_OPTIONS_ACCESS_CAPABILITY
+		);
 
 		if (
 			! isset( $_GET['page'] )
 			|| sanitize_key( $_GET['page'] ) !== $plugin_settings_page_name
+			|| empty( $plugin_options_access_capability )
 			|| ! current_user_can( $this->plugin_options_access_capability )
 		) {
 			return $plugin_options;

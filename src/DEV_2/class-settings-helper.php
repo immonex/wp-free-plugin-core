@@ -34,20 +34,6 @@ class Settings_Helper {
 	private $plugin_options_name;
 
 	/**
-	 * Minimun WP capability to access the plugin options page
-	 *
-	 * @var string
-	 */
-	private $plugin_options_access_capability = 'manage_options';
-
-	/**
-	 * Plugin information and URLs for displaying in the options footer
-	 *
-	 * @var string
-	 */
-	private $plugin_infos;
-
-	/**
 	 * Tabs to display on the plugin options page
 	 *
 	 * @var mixed[]
@@ -90,31 +76,22 @@ class Settings_Helper {
 	 * @param string $plugin_dir Absolute plugin directory path.
 	 * @param string $plugin_slug Slug of the initiating plugin.
 	 * @param string $plugin_options_name Name used for storing the serialized options array.
-	 * @param array  $plugin_infos Additional information for output on options page.
-	 * @param string $plugin_options_access_capability Min user/role capability required for
-	 *                                                 modifying plugin options (optional).
 	 */
-	public function __construct(
-		$plugin_dir,
-		$plugin_slug,
-		$plugin_options_name,
-		$plugin_infos,
-		$plugin_options_access_capability = false
-	) {
+	public function __construct( $plugin_dir, $plugin_slug, $plugin_options_name ) {
 		$this->plugin_dir          = $plugin_dir;
 		$this->plugin_slug         = $plugin_slug;
 		$this->plugin_options_name = $plugin_options_name;
-		$this->plugin_infos        = $plugin_infos;
 
 		add_action( 'immonex_plugin_options_add_extension_tabs', array( $this, 'register_extension_tabs' ), 10, 2 );
 		add_action( 'immonex_plugin_options_add_extension_sections', array( $this, 'register_extension_sections' ), 10, 2 );
 		add_action( 'immonex_plugin_options_add_extension_fields', array( $this, 'register_extension_fields' ), 10, 2 );
 
-		add_action( "{$this->plugin_infos['prefix']}render_option_page_header", array( $this, 'render_option_page_header' ) );
-		add_action( "{$this->plugin_infos['prefix']}render_option_page_footer", array( $this, 'render_option_page_footer' ) );
+		// @codingStandardsIgnoreLine
+		$plugin_infos = apply_filters( "{$this->plugin_slug}_plugin_infos", array() );
 
-		if ( $plugin_options_access_capability ) {
-			$this->plugin_options_access_capability = $plugin_options_access_capability;
+		if ( isset( $plugin_infos['prefix'] ) ) {
+			add_action( "{$plugin_infos['prefix']}render_option_page_header", array( $this, 'render_option_page_header' ) );
+			add_action( "{$plugin_infos['prefix']}render_option_page_footer", array( $this, 'render_option_page_footer' ) );
 		}
 	} // __construct
 
@@ -128,13 +105,16 @@ class Settings_Helper {
 	 * @return array Extended link array.
 	 */
 	public function plugin_settings_link( $links ) {
-		if ( empty( $this->plugin_infos['settings_page'] ) ) {
+		// @codingStandardsIgnoreLine
+		$plugin_infos = apply_filters( "{$this->plugin_slug}_plugin_infos", array() );
+
+		if ( empty( $plugin_infos['settings_page'] ) ) {
 			return $links;
 		}
 
 		$settings_link = wp_sprintf(
 			'<a href="%s">%s</a>',
-			$this->plugin_infos['settings_page'],
+			$plugin_infos['settings_page'],
 			__( 'Settings', 'immonex-wp-free-plugin-core' )
 		);
 		array_unshift( $links, $settings_link );
@@ -566,8 +546,15 @@ class Settings_Helper {
 			$option_page_template
 		);
 
+		$plugin_options_access_capability = apply_filters(
+			// @codingStandardsIgnoreLine
+			"{$this->plugin_slug}_plugin_options_access_capability",
+			Base::DEFAULT_PLUGIN_OPTIONS_ACCESS_CAPABILITY
+		);
+
 		if (
-			! current_user_can( $this->plugin_options_access_capability ) ||
+			empty( $plugin_options_access_capability ) ||
+			! current_user_can( $plugin_options_access_capability ) ||
 			! $option_page_template
 		) {
 			wp_die( 'You do not have sufficient permissions to access this page. / Sie verfügen nicht über die nötigen Zugriffsrechte, um diese Seite aufzurufen.' );

@@ -5,10 +5,12 @@
  * @package immonex\WordPressFreePluginCore
  */
 
+// @codingStandardsIgnoreLine
+$iwpfpc_plugin_infos        = apply_filters( "{$this->plugin_slug}_plugin_infos", array() );
 $iwpfpc_has_tabbed_sections = ! empty( $this->option_page_tabs[ $this->current_tab ]['attributes']['tabbed_sections'] );
 
 // @codingStandardsIgnoreLine
-do_action( "{$this->plugin_infos['prefix']}render_option_page_header" );
+do_action( "{$iwpfpc_plugin_infos['prefix']}render_option_page_header" );
 
 $this->display_tab_nav();
 
@@ -57,4 +59,4 @@ else :
 endif;
 
 // @codingStandardsIgnoreLine
-do_action( "{$this->plugin_infos['prefix']}render_option_page_footer" );
+do_action( "{$iwpfpc_plugin_infos['prefix']}render_option_page_footer" );

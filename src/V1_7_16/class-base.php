@@ -25,16 +25,21 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_7_15;
+namespace immonex\WordPressFreePluginCore\V1_7_16;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.7.15
+ * @version 1.7.16
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.7.15';
+	const CORE_VERSION = '1.7.16';
+
+	/**
+	 * Minimun WP capability to access the plugin options page
+	 */
+	const DEFAULT_PLUGIN_OPTIONS_ACCESS_CAPABILITY = 'manage_options';
 
 	/**
 	 * Plugin options array
@@ -49,13 +54,6 @@ abstract class Base {
 	 * @var mixed[]
 	 */
 	protected $default_plugin_options = array();
-
-	/**
-	 * Minimun WP capability to access the plugin options page
-	 *
-	 * @var string
-	 */
-	protected $plugin_options_access_capability = 'manage_options';
 
 	/**
 	 * Does the plugin has its own options page?
@@ -79,7 +77,7 @@ abstract class Base {
 	protected $options_page_title = '';
 
 	/**
-	 * Plugin information and URLs for displaying in the options footer
+	 * Plugin information and URLs (options footer)
 	 *
 	 * @var string
 	 */
@@ -416,6 +414,9 @@ abstract class Base {
 			)
 		);
 
+		// Set up helpers and utilities.
+		$this->init_utils();
+
 		// Eventually add CPT data and setup related backend forms.
 		$this->maybe_add_cpt_bootstrap_data();
 		if ( ! empty( $this->bootstrap_data['custom_post_types'] ) ) {
@@ -494,13 +495,11 @@ abstract class Base {
 				$value = $this->plugin_options;
 				break;
 			case 'plugin_infos':
-				$value = $this->plugin_infos;
+				// @codingStandardsIgnoreLine
+				$value = apply_filters( "{$this->plugin_slug}_plugin_infos", $this->plugin_infos );
 				break;
 			case 'cpt_hooks':
 				$value = $this->cpt_hooks;
-				break;
-			case 'utils':
-				$value = $this->utils;
 				break;
 			default:
 				if ( isset( $this->plugin_options[ $key ] ) ) {
@@ -609,6 +608,16 @@ abstract class Base {
 	 * @since 0.9
 	 */
 	public function register_plugin_settings() {
+		$plugin_options_access_capability = apply_filters(
+			// @codingStandardsIgnoreLine
+			"{$this->plugin_slug}_plugin_options_access_capability",
+			self::DEFAULT_PLUGIN_OPTIONS_ACCESS_CAPABILITY
+		);
+
+		if ( empty( $plugin_options_access_capability ) ) {
+			return;
+		}
+
 		// All plugin options are stored in one serialized array.
 		register_setting(
 			$this->plugin_options_name,
@@ -624,7 +633,7 @@ abstract class Base {
 				add_options_page(
 					$this->options_page_title,
 					$this->options_link_title,
-					$this->plugin_options_access_capability,
+					$plugin_options_access_capability,
 					$this->plugin_slug . '_settings',
 					array( $this->settings_helper, 'render_page' )
 				);
@@ -634,7 +643,7 @@ abstract class Base {
 					static::OPTIONS_LINK_MENU_LOCATION,
 					$this->options_page_title,
 					$this->options_link_title,
-					$this->plugin_options_access_capability,
+					$plugin_options_access_capability,
 					$this->plugin_slug . '_settings',
 					array( $this->settings_helper, 'render_page' ),
 					900,
@@ -675,9 +684,12 @@ abstract class Base {
 		add_filter( 'option_autoptimize_js_exclude', array( $this, 'autoptimize_exclude' ), 10, 2 );
 		add_filter( 'option_autoptimize_css_exclude', array( $this, 'autoptimize_exclude' ), 10, 2 );
 
-		// Add a filter for modifying the required user/role capability for
+		// Add filters for modifying the required user/role capability for
 		// accessing and updating plugin options.
-		add_filter( 'option_page_capability_' . $this->plugin_options_name, array( $this, 'get_plugin_options_access_capability' ) );
+		add_filter( "{$this->plugin_slug}_plugin_options_access_capability", array( $this, 'get_default_plugin_options_access_capability' ) );
+		add_filter( "option_page_capability_{$this->plugin_options_name}", array( $this, 'get_plugin_options_access_capability' ) );
+
+		add_filter( "{$this->plugin_slug}_plugin_infos", array( $this, 'get_plugin_infos' ) );
 
 		$enable_option_page          = true;
 		$enable_separate_option_page = false;
@@ -766,30 +778,12 @@ abstract class Base {
 			$this->activate_plugin();
 		}
 
-		$this->plugin_options_access_capability = apply_filters(
-			// @codingStandardsIgnoreLine
-			$this->plugin_slug . '_plugin_options_access_capability',
-			$this->plugin_options_access_capability
-		);
-
 		/**
 		 * Check/Update the debug level.
 		 */
-		$this->debug          = new Debug( $this->plugin_options, $this->plugin_options_access_capability, $this->plugin_options_name, $this->plugin_slug );
+		$this->debug          = new Debug( $this->plugin_options, $this->plugin_options_name, $this->plugin_slug );
 		$this->plugin_options = $this->debug->maybe_update_debug_level( $this->plugin_options );
 		$this->extend_plugin_infos();
-
-		// Set up helpers and utilities.
-		$this->init_utils();
-
-		if ( is_array( $this->utils ) && count( $this->utils ) > 0 ) {
-			$this->utils = array_merge(
-				$this->core_utils,
-				$this->utils
-			);
-		} else {
-			$this->utils = $this->core_utils;
-		}
 
 		if ( ! empty( $this->plugin_options['skin'] ) ) {
 			// Check if skin folder still exists.
@@ -833,9 +827,6 @@ abstract class Base {
 		if ( $fire_before_hook ) {
 			do_action( 'immonex_core_before_init_admin', $this->plugin_slug );
 		}
-
-		// Set up helpers and utilities.
-		$this->init_utils();
 
 		// @codingStandardsIgnoreLine
 		$script = isset( $_SERVER['SCRIPT_NAME'] ) ? sanitize_file_name( basename( wp_unslash( $_SERVER['SCRIPT_NAME'] ), '.php' ) ) : '';
@@ -900,7 +891,7 @@ abstract class Base {
 	/**
 	 * Instantiate and set up helper and utility classes.
 	 *
-	 * @since 1.8.0
+	 * @since 1.7.10
 	 */
 	private function init_utils() {
 		if ( $this->utils_init_done ) {
@@ -911,18 +902,11 @@ abstract class Base {
 		$this->settings_helper = new Settings_Helper(
 			$this->plugin_dir,
 			$this->plugin_slug,
-			$this->plugin_options_name,
-			$this->plugin_infos,
-			$this->plugin_options_access_capability
+			$this->plugin_options_name
 		);
 		$this->string_utils    = new String_Utils();
 		$this->geo_utils       = new Geo_Utils();
-		$this->template_utils  = new Template_Utils(
-			$this,
-			! empty( $this->plugin_options['skin'] ) ?
-				$this->plugin_options['skin'] :
-				''
-		);
+		$this->template_utils  = new Template_Utils( $this );
 		$this->color_utils     = new Color_Utils( $this );
 		$this->mail_utils      = new Mail_Utils( $this->plugin_slug, $this->string_utils, $this->template_utils );
 		$this->local_fs_utils  = new Local_FS_Utils( $this );
@@ -1132,16 +1116,43 @@ abstract class Base {
 	} // update_plugin_options
 
 	/**
-	 * Possibly set a new capability for accessing and updating plugin options.
+	 * Return the current plugin info array (filter callback).
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return string[] Plugin infos.
+	 */
+	public function get_plugin_infos() {
+		return $this->plugin_infos;
+	} // get_plugin_infos
+
+	/**
+	 * Get the default capability for accessing and updating plugin options (filter callback).
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return string Default or modified capability.
+	 */
+	public function get_default_plugin_options_access_capability() {
+		return self::DEFAULT_PLUGIN_OPTIONS_ACCESS_CAPABILITY;
+	} // get_default_plugin_options_access_capability
+
+	/**
+	 * Get the default capability for accessing and updating plugin options – possibly
+	 * modified by another filter function (filter callback).
 	 *
 	 * @since 0.9
 	 *
 	 * @param string $cap Current capability.
 	 *
-	 * @return string (Possibly) updated capability.
+	 * @return string Default or modified capability.
 	 */
 	public function get_plugin_options_access_capability( $cap ) {
-		return $this->plugin_options_access_capability;
+		return apply_filters(
+			// @codingStandardsIgnoreLine
+			"{$this->plugin_slug}_plugin_options_access_capability",
+			self::DEFAULT_PLUGIN_OPTIONS_ACCESS_CAPABILITY
+		);
 	} // get_plugin_options_access_capability
 
 	/**
