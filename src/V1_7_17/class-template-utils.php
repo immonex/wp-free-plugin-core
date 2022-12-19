@@ -5,15 +5,14 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_7_16;
+namespace immonex\WordPressFreePluginCore\V1_7_17;
 
 /**
  * Utility methods for a very simple kind of templating.
  */
 class Template_Utils {
 
-	const
-		INVALID_SKIN_FOLDER_NAMES = array( 'core' );
+	const INVALID_SKIN_FOLDER_NAMES = array( 'core' );
 
 	/**
 	 * Main plugin instance

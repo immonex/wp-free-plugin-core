@@ -12,8 +12,7 @@ namespace immonex\WordPressFreePluginCore\DEV_2;
  */
 class Template_Utils {
 
-	const
-		INVALID_SKIN_FOLDER_NAMES = array( 'core' );
+	const INVALID_SKIN_FOLDER_NAMES = array( 'core' );
 
 	/**
 	 * Main plugin instance

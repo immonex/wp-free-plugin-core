@@ -467,7 +467,7 @@ class String_Utils {
 			$additional_search_terms = implode( '|', $additional_search_terms );
 		}
 
-		return 'http' === strtolower( substr( $url, 0, 4 ) ) && preg_match( '/(ogulo|immoviewer|matterport|mpskin|archilogic|feelestate|virtualtours\.immobilienscout24|immo\.tours' . ( $additional_search_terms ? '|' . $additional_search_terms : '' ) . ')/', strtolower( $url ) );
+		return 'http' === strtolower( substr( $url, 0, 4 ) ) && preg_match( '/(ogulo|immoviewer|matterport|mpskin|archilogic|feelestate|virtualtours\.immobilienscout24|immo\.tours|ricohtours|ricoh360' . ( $additional_search_terms ? '|' . $additional_search_terms : '' ) . ')/', strtolower( $url ) );
 	} // is_virtual_tour_url
 
 	/**

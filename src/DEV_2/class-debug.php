@@ -80,7 +80,7 @@ class Debug {
 			! isset( $_GET['page'] )
 			|| sanitize_key( $_GET['page'] ) !== $plugin_settings_page_name
 			|| empty( $plugin_options_access_capability )
-			|| ! current_user_can( $this->plugin_options_access_capability )
+			|| ! current_user_can( $plugin_options_access_capability )
 		) {
 			return $plugin_options;
 		}

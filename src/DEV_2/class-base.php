@@ -30,11 +30,11 @@ namespace immonex\WordPressFreePluginCore\DEV_2;
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.7.16
+ * @version 1.7.17
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.7.16';
+	const CORE_VERSION = '1.7.17';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -373,11 +373,18 @@ abstract class Base {
 			$this->plugin_infos = array(
 				'core_version'     => static::CORE_VERSION,
 				'plugin_main_file' => $this->plugin_main_file,
-				'settings_page'    => $this->settings_page,
+				'name'             => defined( 'static::PLUGIN_NAME' ) ? static::PLUGIN_NAME : '',
+				'logo_link_url'    => defined( 'static::PLUGIN_HOME_URL' ) ? static::PLUGIN_HOME_URL : '',
+				'prefix'           => defined( 'static::PLUGIN_PREFIX' ) ? static::PLUGIN_PREFIX : '',
+				'has_free_license' => ! defined( 'static::FREE_LICENSE' ) || static::FREE_LICENSE,
+				'settings_page'    => '',
+				'footer'           => array(),
 			);
 		} else {
 			throw new \Exception( 'inveris WP Free Plugin Core: Plugin slug (= directory name) not provided.' );
 		}
+
+		add_filter( "{$this->plugin_slug}_plugin_infos", array( $this, 'get_plugin_infos' ) );
 
 		$this->is_stable  = preg_match( '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/', static::PLUGIN_VERSION ) ? true : false;
 		$this->textdomain = $textdomain;
@@ -689,8 +696,6 @@ abstract class Base {
 		add_filter( "{$this->plugin_slug}_plugin_options_access_capability", array( $this, 'get_default_plugin_options_access_capability' ) );
 		add_filter( "option_page_capability_{$this->plugin_options_name}", array( $this, 'get_plugin_options_access_capability' ) );
 
-		add_filter( "{$this->plugin_slug}_plugin_infos", array( $this, 'get_plugin_infos' ) );
-
 		$enable_option_page          = true;
 		$enable_separate_option_page = false;
 
@@ -922,6 +927,7 @@ abstract class Base {
 			'color'     => $this->color_utils,
 			'local_fs'  => $this->local_fs_utils,
 			'remote_fs' => $this->remote_fs_utils,
+			'wp_fs'     => $this->wp_filesystem,
 		);
 
 		if ( is_array( $this->utils ) && count( $this->utils ) > 0 ) {
@@ -1547,17 +1553,11 @@ abstract class Base {
 		$this->plugin_infos = array_merge(
 			$this->plugin_infos,
 			array(
-				'name'             => defined( 'static::PLUGIN_NAME' ) ? static::PLUGIN_NAME : '',
-				'prefix'           => defined( 'static::PLUGIN_PREFIX' ) ? static::PLUGIN_PREFIX : '',
-				'settings_page'    => $this->settings_page,
-				'debug_level'      => $this->is_debug(),
-				'logo_link_url'    => defined( 'static::PLUGIN_HOME_URL' ) ? static::PLUGIN_HOME_URL : '',
-				'footer'           => array(),
-				'has_free_license' => ! defined( 'static::FREE_LICENSE' ) || static::FREE_LICENSE,
+				'settings_page' => $this->settings_page,
+				'debug_level'   => $this->is_debug(),
+				'footer'        => $this->get_plugin_footer_infos(),
 			)
 		);
-
-		$this->plugin_infos['footer'] = $this->get_plugin_footer_infos();
 	} // extend_plugin_infos
 
 	/**

@@ -101,7 +101,7 @@ class Local_FS_Utils {
 					}
 
 					if ( 'files' !== $params['scope'] ) {
-						$files[ $path ] = $file_info;
+						$files[ $file_info->getRealPath() ] = $file_info;
 					}
 
 					if ( $current_level < $params['max_depth'] ) {
@@ -122,7 +122,7 @@ class Local_FS_Utils {
 					continue;
 				}
 
-				$files[ $path ] = $file_info;
+				$files[ $file_info->getRealPath() ] = $file_info;
 			}
 
 			uasort(
@@ -138,12 +138,7 @@ class Local_FS_Utils {
 			&& count( $files ) > 0
 			&& $params['return_paths']
 		) {
-			$paths = [];
-			foreach ( $files as $file ) {
-				$paths[] = $file->getRealPath();
-			}
-
-			return $paths;
+			return array_keys( $files );
 		}
 
 		return $files;
