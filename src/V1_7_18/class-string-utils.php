@@ -5,12 +5,28 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_7_17;
+namespace immonex\WordPressFreePluginCore\V1_7_18;
 
 /**
  * String related utility methods.
  */
 class String_Utils {
+
+	const SPECIAL_CHAR_MAP = array(
+		'['  => '-!SQBL!-',
+		']'  => '-!SQBR!-',
+		'<'  => '-!ANBL!-',
+		'>'  => '-!ANBR!-',
+		'('  => '-!ROBL!-',
+		')'  => '-!ROBR!-',
+		'{'  => '-!CUBL!-',
+		'}'  => '-!CUBR!-',
+		'/'  => '-!FSL-',
+		'\\' => '-!BSL!-',
+		"'"  => '-!SQT!-',
+		'"'  => '-!DQT!-',
+		'`'  => '-!GRAV!-',
+	);
 
 	/**
 	 * Create a slug.
@@ -797,7 +813,7 @@ class String_Utils {
 	 * return the resulting timestamp, if so. (Paths will be reduced to filenames
 	 * in advance.)
 	 *
-	 * @since 1.8.0
+	 * @since 1.7.17
 	 *
 	 * @param string $str Filename, full path or arbitrary string.
 	 *
@@ -845,5 +861,31 @@ class String_Utils {
 
 		return false;
 	} // get_leading_timestamp
+
+	/**
+	 * Replace certain characters by special codes (e.g. for use in shortcode attributes).
+	 *
+	 * @since 1.7.18
+	 *
+	 * @param string|string[] $source_text Source string(s).
+	 *
+	 * @return string|string[] Text(s) with (possibly) replaced special characters.
+	 */
+	public static function encode_special_chars( $source_text ) {
+		return str_replace( array_keys( self::SPECIAL_CHAR_MAP ), array_values( self::SPECIAL_CHAR_MAP ), $source_text );
+	} // encode_special_chars
+
+	/**
+	 * Decode special codes (e.g. in shortcode attributes).
+	 *
+	 * @since 1.7.18
+	 *
+	 * @param string|string[] $source_text Source string(s).
+	 *
+	 * @return string|string[] Text(s) with (possibly) replaced special characters.
+	 */
+	public static function decode_special_chars( $source_text ) {
+		return str_replace( array_values( self::SPECIAL_CHAR_MAP ), array_keys( self::SPECIAL_CHAR_MAP ), $source_text );
+	} // encode_special_chars
 
 } // String_Utils
