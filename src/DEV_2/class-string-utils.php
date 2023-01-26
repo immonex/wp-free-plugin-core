@@ -496,7 +496,7 @@ class String_Utils {
 	 * @return string String with (possibly) included link tags.
 	 */
 	public function convert_urls( $text ) {
-		return preg_replace_callback( '#(?<=^|\s)(?i)(http|https)?(://)?(([-\w^@]{2,}\.)+([a-zA-Z]{2,3})(?:/[^,.\s\<\>\"\']*|))(?=\s|$)#', array( $this, 'convert_urls_cb' ), $text );
+		return preg_replace_callback( '#(?<=^|\s)(?i)(http|https)?(://)?(([-\w^@]{2,}\.)+([a-zA-Z]{2,16})(?:/[^,.\s\<\>\"\']*|))(?=\s|$)#', array( $this, 'convert_urls_cb' ), $text );
 	} // convert_urls
 
 	/**
