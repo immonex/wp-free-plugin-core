@@ -228,4 +228,35 @@ class Local_FS_Utils_Test extends WP_UnitTestCase {
 		unlink( $temp_file_2 );
 	} // test_get_file_mtime
 
+	function test_validate_dir_list_filtered() {
+		$source_paths = [
+			'nonexistent/dir',
+			__DIR__ . '/data/',
+			__DIR__ . '/data/subfolder_2',
+			'',
+			__DIR__ . '/data/subfolder_3',
+			123,
+		];
+		$required     = [ __DIR__ . '/data/subfolder_1' ];
+		$expected     = [
+			__DIR__ . '/data/',
+			__DIR__ . '/data/subfolder_2',
+			__DIR__ . '/data/subfolder_3',
+			__DIR__ . '/data/subfolder_1',
+		];
+
+		$this->assertEquals( $expected, $this->util->validate_dir_list( $source_paths, false, $required ) );
+	} // test_validate_dir_list_filtered
+
+	function test_validate_dir_list_default() {
+		$source_paths = [
+			'nonexistent/dir',
+			'',
+			123,
+		];
+		$default      = [ __DIR__ . '/data/' ];
+
+		$this->assertEquals( $default, $this->util->validate_dir_list( $source_paths, $default ) );
+	} // test_validate_dir_list_default
+
 } // class Local_FS_Utils_Test

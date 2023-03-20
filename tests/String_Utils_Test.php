@@ -72,4 +72,37 @@ class String_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::decode_special_chars( $source ) );
 	} // test_encode_special_chars
 
+	public function test_shorten_paths() {
+		$source   = '/long/path/to/wp-content/uploads/filename.txt';
+		$expected = '…wp-content/uploads/filename.txt';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::shorten_paths( $source ) );
+
+		$source   = '/long/path/to/wp-content/uploads/filename.txt';
+		$expected = '…/uploads/filename.txt';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::shorten_paths( $source, '/uploads/' ) );
+
+		$source   = '/long/path/to/wp-content/uploads/filename.txt';
+		$expected = '.../uploads/filename.txt';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::shorten_paths( $source, '/uploads/', '...' ) );
+	} // test_shorten_paths
+
+	public function test_get_bytes() {
+		$this->assertEquals( 0, ( "{$this->ns}\String_Utils" )::get_bytes( '0' ) );
+		$this->assertEquals( 0, ( "{$this->ns}\String_Utils" )::get_bytes( '0B' ) );
+		$this->assertEquals( 0, ( "{$this->ns}\String_Utils" )::get_bytes( '0b' ) );
+		$this->assertEquals( 0, ( "{$this->ns}\String_Utils" )::get_bytes( '0K' ) );
+		$this->assertEquals( 0, ( "{$this->ns}\String_Utils" )::get_bytes( '0k' ) );
+
+		$this->assertEquals( 1, ( "{$this->ns}\String_Utils" )::get_bytes( '1' ) );
+		$this->assertEquals( 1, ( "{$this->ns}\String_Utils" )::get_bytes( '1B' ) );
+		$this->assertEquals( 1, ( "{$this->ns}\String_Utils" )::get_bytes( '1b' ) );
+		$this->assertEquals( 1024, ( "{$this->ns}\String_Utils" )::get_bytes( '1K' ) );
+		$this->assertEquals( 1024, ( "{$this->ns}\String_Utils" )::get_bytes( '1k' ) );
+		$this->assertEquals( 1048576, ( "{$this->ns}\String_Utils" )::get_bytes( '1M' ) );
+		$this->assertEquals( 1048576, ( "{$this->ns}\String_Utils" )::get_bytes( '1m' ) );
+		$this->assertEquals( '1.048.576', ( "{$this->ns}\String_Utils" )::get_bytes( '1m', true ) );
+		$this->assertEquals( 1073741824, ( "{$this->ns}\String_Utils" )::get_bytes( '1G' ) );
+		$this->assertEquals( '1.073.741.824', ( "{$this->ns}\String_Utils" )::get_bytes( '1G', true ) );
+	} // test_get_bytes
+
 } // class String_Utils_Test
