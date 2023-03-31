@@ -904,12 +904,13 @@ abstract class Base {
 		}
 
 		$this->general_utils   = new General_Utils();
+		$this->string_utils    = new String_Utils();
 		$this->settings_helper = new Settings_Helper(
 			$this->plugin_dir,
 			$this->plugin_slug,
-			$this->plugin_options_name
+			$this->plugin_options_name,
+			$this->string_utils
 		);
-		$this->string_utils    = new String_Utils();
 		$this->geo_utils       = new Geo_Utils();
 		$this->template_utils  = new Template_Utils( $this );
 		$this->color_utils     = new Color_Utils( $this );
