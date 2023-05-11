@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_0;
+namespace immonex\WordPressFreePluginCore\V1_8_1;
 
 /**
  * Helper class for dealing with the WordPress Settings API.
@@ -437,6 +437,7 @@ class Settings_Helper {
 			'label'       => $label,
 			'required'    => false,
 			'allow_zero'  => false,
+			'no_sanitize' => false,
 			'option_name' => $this->plugin_options_name,
 		);
 		$args         = array_merge( $args_default, $args );

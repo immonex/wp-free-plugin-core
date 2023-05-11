@@ -437,6 +437,7 @@ class Settings_Helper {
 			'label'       => $label,
 			'required'    => false,
 			'allow_zero'  => false,
+			'no_sanitize' => false,
 			'option_name' => $this->plugin_options_name,
 		);
 		$args         = array_merge( $args_default, $args );

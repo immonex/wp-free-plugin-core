@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_0;
+namespace immonex\WordPressFreePluginCore\V1_8_1;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.8.0
+ * @version 1.8.1
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.8.0';
+	const CORE_VERSION = '1.8.1';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -1445,7 +1445,9 @@ abstract class Base {
 						$valid[ $name ] = wp_kses_post( trim( $value ) );
 						break;
 					case 'textarea':
-						$value = sanitize_textarea_field( $value );
+						if ( empty( $field['no_sanitize'] ) ) {
+							$value = sanitize_textarea_field( $value );
+						}
 						if ( $field['required'] && ! $value ) {
 							$show_generic_required_error = true;
 							break;
@@ -1459,7 +1461,9 @@ abstract class Base {
 							break;
 						}
 
-						$value = sanitize_email( $value );
+						if ( empty( $field['no_sanitize'] ) ) {
+							$value = sanitize_email( $value );
+						}
 						if ( is_email( $value ) ) {
 							$valid[ $name ] = $value;
 						} else {
@@ -1486,7 +1490,9 @@ abstract class Base {
 
 						if ( count( $email_addresses ) ) {
 							foreach ( $email_addresses as $email ) {
-								$email = sanitize_email( trim( $email ) );
+								$email = empty( $field['no_sanitize'] ) ?
+									sanitize_email( trim( $email ) ) :
+									trim( $email );
 								if ( is_email( $email ) ) {
 									$valid_addresses[] = $email;
 								} else {
@@ -1512,7 +1518,9 @@ abstract class Base {
 						break;
 					default:
 						// Normal text fields.
-						$value = sanitize_text_field( $value );
+						if ( empty( $field['no_sanitize'] ) ) {
+							$value = sanitize_text_field( $value );
+						}
 						if ( $field['required'] && ! $value ) {
 							$show_generic_required_error = true;
 							break;
