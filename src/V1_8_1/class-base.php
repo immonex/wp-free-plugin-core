@@ -1618,7 +1618,11 @@ abstract class Base {
 		$infos = array();
 
 		if ( defined( 'static::PLUGIN_VERSION' ) ) {
-			$infos[] = 'Version <strong>' . static::PLUGIN_VERSION . '</strong>';
+			$display_version = static::PLUGIN_VERSION;
+			if ( defined( 'static::PLUGIN_VERSION_BYNAME' ) && static::PLUGIN_VERSION_BYNAME ) {
+				$display_version .= ' "' . static::PLUGIN_VERSION_BYNAME . '"';
+			}
+			$infos[] = wp_sprintf( 'Version <strong>%s</strong>', $display_version );
 		}
 
 		if (
