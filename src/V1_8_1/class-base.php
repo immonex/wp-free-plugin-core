@@ -322,13 +322,6 @@ abstract class Base {
 	public $init_done = false;
 
 	/**
-	 * Admin Init Flag
-	 *
-	 * @var bool
-	 */
-	public $admin_init_done = false;
-
-	/**
 	 * Utils Init Flag
 	 *
 	 * @var bool
@@ -829,6 +822,19 @@ abstract class Base {
 	 *                               true by default).
 	 */
 	public function init_plugin_admin( $fire_before_hook = true, $fire_after_hook = true ) {
+		$plugin_options_access_capability = apply_filters(
+			// @codingStandardsIgnoreLine
+			"{$this->plugin_slug}_plugin_options_access_capability",
+			static::DEFAULT_PLUGIN_OPTIONS_ACCESS_CAPABILITY
+		);
+
+		if (
+			empty( $plugin_options_access_capability )
+			|| ! current_user_can( $plugin_options_access_capability )
+		) {
+			return;
+		}
+
 		if ( $fire_before_hook ) {
 			do_action( 'immonex_core_before_init_admin', $this->plugin_slug );
 		}
