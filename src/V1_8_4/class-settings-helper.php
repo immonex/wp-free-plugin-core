@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_2;
+namespace immonex\WordPressFreePluginCore\V1_8_4;
 
 /**
  * Helper class for dealing with the WordPress Settings API.
@@ -256,7 +256,7 @@ class Settings_Helper {
 					$classes[]     = 'has-badge';
 					$badge_classes = array(
 						'nav-tab__badge',
-						'nav-tab__badge--' . $this->string_utils->slugify( $badge ),
+						'nav-tab__badge--' . $this->string_utils::slugify( $badge ),
 					);
 				}
 

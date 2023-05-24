@@ -105,4 +105,20 @@ class String_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( '1.073.741.824', ( "{$this->ns}\String_Utils" )::get_bytes( '1G', true ) );
 	} // test_get_bytes
 
+	public function test_get_plain_filename() {
+		$this->assertEquals( 'filename.png', ( "{$this->ns}\String_Utils" )::get_plain_filename( 'filename-1.png' ) );
+		$this->assertEquals( 'filename.png', ( "{$this->ns}\String_Utils" )::get_plain_filename( 'filename-123.png' ) );
+		$this->assertEquals( 'filename.png', ( "{$this->ns}\String_Utils" )::get_plain_filename( 'filename-12-scaled.png' ) );
+		$this->assertEquals( 'filename.png', ( "{$this->ns}\String_Utils" )::get_plain_filename( 'filename-123.png', 'counter_size' ) );
+		$this->assertEquals( 'filename.png', ( "{$this->ns}\String_Utils" )::get_plain_filename( 'filename-12-scaled.png', 'counter_size' ) );
+		$this->assertEquals( 'filename.png', ( "{$this->ns}\String_Utils" )::get_plain_filename( 'filename-640x480.png', 'counter_size' ) );
+		$this->assertEquals( 'filename.png', ( "{$this->ns}\String_Utils" )::get_plain_filename( 'filename-640x480-scaled.png', 'counter_size' ) );
+		$this->assertEquals( 'filename.png', ( "{$this->ns}\String_Utils" )::get_plain_filename( 'filename-123-640x480.png', 'counter_size' ) );
+		$this->assertEquals( 'filename.png', ( "{$this->ns}\String_Utils" )::get_plain_filename( 'filename-123-640x480-scaled.png', 'counter_size' ) );
+	} // test_get_plain_filename
+
+	function test_get_plain_unzip_folder_name() {
+		$this->assertEquals( 'filename-testarchive', ( "{$this->ns}\String_Utils" )::get_plain_unzip_folder_name( 'filename Test!archive.zip' ) );
+	} // get_plain_unzip_folder_name
+
 } // class String_Utils_Test

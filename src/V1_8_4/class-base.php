@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_2;
+namespace immonex\WordPressFreePluginCore\V1_8_4;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.8.2
+ * @version 1.8.4
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.8.2';
+	const CORE_VERSION = '1.8.4';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -1363,9 +1363,9 @@ abstract class Base {
 				if (
 					! empty( $field['max_length'] ) &&
 					is_string( $value ) &&
-					$this->string_utils->mb_str_len( $value ) > $field['max_length']
+					$this->string_utils::mb_str_len( $value ) > $field['max_length']
 				) {
-					$value = $this->string_utils->mb_sub_str( trim( $value ), 0, $field['max_length'] );
+					$value = $this->string_utils::mb_sub_str( trim( $value ), 0, $field['max_length'] );
 				}
 
 				if (

@@ -118,7 +118,7 @@ class Local_FS_Utils {
 
 				if (
 					! empty( $params['file_extensions'] )
-					&& ! in_array( $file_info->getExtension(), $params['file_extensions'], true )
+					&& ! in_array( strtolower( $file_info->getExtension() ), $params['file_extensions'], true )
 				) {
 					continue;
 				}

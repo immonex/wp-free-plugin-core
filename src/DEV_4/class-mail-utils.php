@@ -102,7 +102,7 @@ class Mail_Utils {
 		}
 
 		if ( ! $body_txt && $body_html ) {
-			$body_txt = $this->string_utils->html_to_plain_text( $body_html, true );
+			$body_txt = $this->string_utils::html_to_plain_text( $body_html, true );
 		}
 
 		if ( ! $body_txt && ! $body_html ) {
@@ -246,9 +246,9 @@ class Mail_Utils {
 		$header = '';
 
 		if ( ! empty( $template_data['header'] ) ) {
-			$header = $this->string_utils->html_to_plain_text( $template_data['header'], true );
+			$header = $this->string_utils::html_to_plain_text( $template_data['header'], true );
 		} elseif ( ! empty( $template_data['header_text'] ) ) {
-			$header = $this->string_utils->html_to_plain_text( $template_data['header_text'], true );
+			$header = $this->string_utils::html_to_plain_text( $template_data['header_text'], true );
 		}
 
 		if (
@@ -291,9 +291,9 @@ class Mail_Utils {
 		$footer = '';
 
 		if ( ! empty( $template_data['footer'] ) ) {
-			$footer = $this->string_utils->html_to_plain_text( $template_data['footer'], true );
+			$footer = $this->string_utils::html_to_plain_text( $template_data['footer'], true );
 		} elseif ( ! empty( $template_data['footer_text'] ) ) {
-			$footer = $this->string_utils->html_to_plain_text( $template_data['footer_text'], true );
+			$footer = $this->string_utils::html_to_plain_text( $template_data['footer_text'], true );
 		}
 
 		if (

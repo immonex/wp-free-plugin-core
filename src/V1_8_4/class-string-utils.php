@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_2;
+namespace immonex\WordPressFreePluginCore\V1_8_4;
 
 /**
  * String related utility methods.
@@ -37,7 +37,7 @@ class String_Utils {
 	 *
 	 * @return string Slugified string.
 	 */
-	public function slugify( $text ) {
+	public static function slugify( $text ) {
 		$text = self::transliterate_non_ascii( $text );
 		$text = self::lowercase_ascii( $text );
 		$text = self::remove_doubles( $text );
@@ -291,7 +291,7 @@ class String_Utils {
 	 *
 	 * @return string Encoded string.
 	 */
-	public function urlencode_special( $string ) {
+	public static function urlencode_special( $string ) {
 		$entities     = array( '%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D' );
 		$replacements = array( '!', '*', "'", '(', ')', ';', ':', '@', '&', '=', '+', '$', ',', '/', '?', '%', '#', '[', ']' );
 
@@ -495,8 +495,8 @@ class String_Utils {
 	 *
 	 * @return string String with (possibly) included link tags.
 	 */
-	public function convert_urls( $text ) {
-		return preg_replace_callback( '#(?<=^|\s)(?i)(http|https)?(://)?(([-\w^@]{2,}\.)+([a-zA-Z]{2,16})(?:/[^,.\s\<\>\"\']*|))(?=\s|$)#', array( $this, 'convert_urls_cb' ), $text );
+	public static function convert_urls( $text ) {
+		return preg_replace_callback( '#(?<=^|\s)(?i)(http|https)?(://)?(([-\w^@]{2,}\.)+([a-zA-Z]{2,16})(?:/[^,.\s\<\>\"\']*|))(?=\s|$)#', self::convert_urls_cb, $text );
 	} // convert_urls
 
 	/**
@@ -508,7 +508,7 @@ class String_Utils {
 	 *
 	 * @return string String with (possibly) converted links.
 	 */
-	public function convert_link_tags_to_plain_text( $html ) {
+	public static function convert_link_tags_to_plain_text( $html ) {
 		$plain = preg_replace( '/<a\s(?:.(?!=href))*?href="([^"]*)"[^>]*?>(.*?)<\/a>/i', '$2 ($1)', $html );
 		$plain = preg_replace( '/\(mailto:(.*?)\)/', '($1)', $plain );
 
@@ -525,7 +525,7 @@ class String_Utils {
 	 *
 	 * @return string String with (possibly) converted links.
 	 */
-	public function convert_img_tag_alt_to_plain_text( $html, $replace = '$1' ) {
+	public static function convert_img_tag_alt_to_plain_text( $html, $replace = '$1' ) {
 		$plain = preg_replace( '/<img\s(?:.(?!=alt))*?alt="([^"]*)"[^>]*?>/i', $replace, $html );
 		$plain = preg_replace( '/<img\s(?:.(?!=title))*?title="([^"]*)"[^>]*?>/i', $replace, $plain );
 
@@ -541,7 +541,7 @@ class String_Utils {
 	 *
 	 * @return string HTML link.
 	 */
-	public function convert_urls_cb( $m ) {
+	public static function convert_urls_cb( $m ) {
 		$m_str = $m[1] . $m[2] . $m[3];
 
 		if ( preg_match( '#([a-z0-9&\-_.]+?)@([\w\-]+\.([\w\-\.]+\.)*[\w]+)#', $m_str ) ) {
@@ -564,7 +564,7 @@ class String_Utils {
 	 * @return string|mixed[] Current URL without page number or
 	 *                        array (URL + vars).
 	 */
-	public function get_nopaging_url( $separate_query_vars = false ) {
+	public static function get_nopaging_url( $separate_query_vars = false ) {
 		global $wp;
 
 		$current_url = home_url( add_query_arg( array(), $wp->request ) );
@@ -606,7 +606,7 @@ class String_Utils {
 	 *
 	 * @return string[] Extracted mail addresses.
 	 */
-	public function split_mail_address_string( $string, $divider = ',' ) {
+	public static function split_mail_address_string( $string, $divider = ',' ) {
 		$mail_addresses = array();
 		$string_parts   = explode( $divider, $string );
 
@@ -634,7 +634,7 @@ class String_Utils {
 	 *
 	 * @return string Encrypted string.
 	 */
-	public function xor_string( $string, $key ) {
+	public static function xor_string( $string, $key ) {
 		$len = strlen( $string );
 
 		for ( $i = 0; $i < $len; $i++ ) {
@@ -657,7 +657,7 @@ class String_Utils {
 	 *
 	 * @return string Padded string.
 	 */
-	public function mb_str_pad( $str, $length, $pad_string = ' ', $pad_type = STR_PAD_RIGHT, $encoding = 'UTF-8' ) {
+	public static function mb_str_pad( $str, $length, $pad_string = ' ', $pad_type = STR_PAD_RIGHT, $encoding = 'UTF-8' ) {
 		if ( ! extension_loaded( 'mbstring' ) ) {
 			return str_pad( $str, $length, $pad_string, $pad_type );
 		}
@@ -697,7 +697,7 @@ class String_Utils {
 	 *
 	 * @return string String length.
 	 */
-	public function mb_str_len( $str, $encoding = 'UTF-8' ) {
+	public static function mb_str_len( $str, $encoding = 'UTF-8' ) {
 		if ( ! extension_loaded( 'mbstring' ) ) {
 			return strlen( $str );
 		}
@@ -724,7 +724,7 @@ class String_Utils {
 	 *
 	 * @return string Specified string portion.
 	 */
-	public function mb_sub_str( $str, $start, $length, $encoding = 'UTF-8' ) {
+	public static function mb_sub_str( $str, $start, $length, $encoding = 'UTF-8' ) {
 		if ( ! extension_loaded( 'mbstring' ) ) {
 			return substr( $str, $start, $length );
 		}
@@ -751,7 +751,7 @@ class String_Utils {
 	 *
 	 * @return string Plain text version.
 	 */
-	public function html_to_plain_text( $html, $list_bullet = false ) {
+	public static function html_to_plain_text( $html, $list_bullet = false ) {
 		$plain = trim( stripslashes( $html ) );
 		if ( false === strpos( $plain, '<' ) ) {
 			// Return stripslashed original content if it doesn't contain any HTML tags.
@@ -759,10 +759,10 @@ class String_Utils {
 		}
 
 		// Convert links to plain text (link text + URL).
-		$plain = $this->convert_link_tags_to_plain_text( $plain );
+		$plain = self::convert_link_tags_to_plain_text( $plain );
 
 		// Extract alt and title attributes of IMG tags.
-		$plain = $this->convert_img_tag_alt_to_plain_text( $plain, '<div>$1</div>' );
+		$plain = self::convert_img_tag_alt_to_plain_text( $plain, '<div>$1</div>' );
 
 		// Convert BR, DIV and H Tags.
 		$plain = preg_replace(
@@ -977,5 +977,44 @@ class String_Utils {
 			$link_text
 		);
 	} // doc_link
+
+	/**
+	 * Remove counters, sizes and other extensions from filenames (e.g. for
+	 * comparison purposes etc.).
+	 *
+	 * @since 1.8.4
+	 *
+	 * @param string $filename Source filename.
+	 * @param string $type     Removal type: counter (default) or counter_size.
+	 *
+	 * @return string Plain filename.
+	 */
+	public static function get_plain_filename( $filename, $type = 'counter' ) {
+		switch ( $type ) {
+			case 'counter_size':
+				$filename = preg_replace( '/(-[0-9]{1,3})?(-[0-9]{1,4}x[0-9]{1,4})?(-scaled)?(\.[a-zA-Z]{3})?$/', '$4', $filename );
+				break;
+			default:
+				$filename = preg_replace( '/(-[0-9]{1,3})?(-scaled)?(\.[a-zA-Z]{3,4})?$/', '$3', $filename );
+		}
+
+		return preg_replace( '/(-)?scaled(-)?$/', '', $filename );
+	} // get_plain_filename
+
+	/**
+	 * Get a sanitized unzip folder name based on ZIP filename.
+	 *
+	 * @since 1.8.4
+	 *
+	 * @param string $filename Source ZIP filename.
+	 *
+	 * @return string Plain folder name.
+	 */
+	public static function get_plain_unzip_folder_name( $filename ) {
+		$path_info = pathinfo( $filename );
+		$filename  = ! empty( $path_info['filename'] ) ? $path_info['filename'] : basename( $filename );
+
+		return self::slugify( strtolower( $filename ) );
+	} // get_plain_unzip_folder_name
 
 } // String_Utils

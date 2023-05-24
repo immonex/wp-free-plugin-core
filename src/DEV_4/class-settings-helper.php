@@ -256,7 +256,7 @@ class Settings_Helper {
 					$classes[]     = 'has-badge';
 					$badge_classes = array(
 						'nav-tab__badge',
-						'nav-tab__badge--' . $this->string_utils->slugify( $badge ),
+						'nav-tab__badge--' . $this->string_utils::slugify( $badge ),
 					);
 				}
 

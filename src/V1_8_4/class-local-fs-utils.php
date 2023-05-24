@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_2;
+namespace immonex\WordPressFreePluginCore\V1_8_4;
 
 /**
  * Local filesystem related utilities.
@@ -118,7 +118,7 @@ class Local_FS_Utils {
 
 				if (
 					! empty( $params['file_extensions'] )
-					&& ! in_array( $file_info->getExtension(), $params['file_extensions'], true )
+					&& ! in_array( strtolower( $file_info->getExtension() ), $params['file_extensions'], true )
 				) {
 					continue;
 				}
