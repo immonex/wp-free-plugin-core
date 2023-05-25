@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_4;
+namespace immonex\WordPressFreePluginCore\V1_8_5;
 
 /**
  * String related utility methods.
@@ -991,14 +991,11 @@ class String_Utils {
 	 */
 	public static function get_plain_filename( $filename, $type = 'counter' ) {
 		switch ( $type ) {
-			case 'counter_size':
-				$filename = preg_replace( '/(-[0-9]{1,3})?(-[0-9]{1,4}x[0-9]{1,4})?(-scaled)?(\.[a-zA-Z]{3})?$/', '$4', $filename );
-				break;
+			case 'counter+size':
+				return preg_replace( '/((-[0-9]{1,2})?(-[0-9]{1,4}x[0-9]{1,4})(-scaled)?)(\.[a-zA-Z]{3})/', '$5', $filename );
 			default:
-				$filename = preg_replace( '/(-[0-9]{1,3})?(-scaled)?(\.[a-zA-Z]{3,4})?$/', '$3', $filename );
+				return preg_replace( '/(-[0-9]{1,2})?(-scaled)?(\.[a-zA-Z]{3,4})?$/', '$3', $filename );
 		}
-
-		return preg_replace( '/(-)?scaled(-)?$/', '', $filename );
 	} // get_plain_filename
 
 	/**
