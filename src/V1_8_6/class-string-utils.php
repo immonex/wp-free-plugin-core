@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_5;
+namespace immonex\WordPressFreePluginCore\V1_8_6;
 
 /**
  * String related utility methods.
@@ -985,7 +985,7 @@ class String_Utils {
 	 * @since 1.8.4
 	 *
 	 * @param string $filename Source filename.
-	 * @param string $type     Removal type: counter (default) or counter_size.
+	 * @param string $type     Removal type: counter (default) or counter+size.
 	 *
 	 * @return string Plain filename.
 	 */

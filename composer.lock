@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c1f8f4ae8818c3ba95eb118866ee9230",
+    "content-hash": "b74a2b558290c4af06ab25790ae6b7be",
     "packages": [
         {
             "name": "symfony/polyfill-ctype",
@@ -175,12 +175,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "78c18ad58e48d3fff2f7812bb60b6176ee52689a"
+                "reference": "833e51ea358e152d41ad46f30a7a4cbb38c44aed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/78c18ad58e48d3fff2f7812bb60b6176ee52689a",
-                "reference": "78c18ad58e48d3fff2f7812bb60b6176ee52689a",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/833e51ea358e152d41ad46f30a7a4cbb38c44aed",
+                "reference": "833e51ea358e152d41ad46f30a7a4cbb38c44aed",
                 "shasum": ""
             },
             "require": {
@@ -239,7 +239,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-15T09:14:05+00:00"
+            "time": "2023-05-06T17:15:54+00:00"
         }
     ],
     "packages-dev": [
@@ -405,7 +405,6 @@
                 "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
                 "vimeo/psalm": "^4.30 || ^5.4"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -841,12 +840,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "1534aea9bde19a5c85c5d1e1f834ab63f4c5dcf5"
+                "reference": "dfc078e8af9c99210337325ff5aa152872c98714"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/1534aea9bde19a5c85c5d1e1f834ab63f4c5dcf5",
-                "reference": "1534aea9bde19a5c85c5d1e1f834ab63f4c5dcf5",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/dfc078e8af9c99210337325ff5aa152872c98714",
+                "reference": "dfc078e8af9c99210337325ff5aa152872c98714",
                 "shasum": ""
             },
             "require": {
@@ -890,9 +889,9 @@
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
             "support": {
                 "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
-                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.7.0"
+                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.7.1"
             },
-            "time": "2023-03-12T10:13:29+00:00"
+            "time": "2023-03-27T19:02:04+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -900,25 +899,25 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "6458bc2e4aeb242506b2100dc94ab546347055f1"
+                "reference": "84c981450d81f03ec8eb64380ab32cac98093bde"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/6458bc2e4aeb242506b2100dc94ab546347055f1",
-                "reference": "6458bc2e4aeb242506b2100dc94ab546347055f1",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/84c981450d81f03ec8eb64380ab32cac98093bde",
+                "reference": "84c981450d81f03ec8eb64380ab32cac98093bde",
                 "shasum": ""
             },
             "require": {
                 "doctrine/instantiator": "^1.2 || ^2.0",
                 "php": "^7.2 || 8.0.* || 8.1.* || 8.2.*",
                 "phpdocumentor/reflection-docblock": "^5.2",
-                "sebastian/comparator": "^3.0 || ^4.0",
-                "sebastian/recursion-context": "^3.0 || ^4.0"
+                "sebastian/comparator": "^3.0 || ^4.0 || ^5.0",
+                "sebastian/recursion-context": "^3.0 || ^4.0 || ^5.0"
             },
             "require-dev": {
                 "phpspec/phpspec": "^6.0 || ^7.0",
                 "phpstan/phpstan": "^1.9",
-                "phpunit/phpunit": "^8.0 || ^9.0"
+                "phpunit/phpunit": "^8.0 || ^9.0 || ^10.0"
             },
             "default-branch": true,
             "type": "library",
@@ -961,26 +960,27 @@
                 "issues": "https://github.com/phpspec/prophecy/issues",
                 "source": "https://github.com/phpspec/prophecy/tree/master"
             },
-            "time": "2023-02-20T08:21:35+00:00"
+            "time": "2023-04-12T15:43:51+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "1.16.1",
+            "version": "1.21.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "e27e92d939e2e3636f0a1f0afaba59692c0bf571"
+                "reference": "ff27205d5269be8fdbef9f29c158c092060545e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/e27e92d939e2e3636f0a1f0afaba59692c0bf571",
-                "reference": "e27e92d939e2e3636f0a1f0afaba59692c0bf571",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/ff27205d5269be8fdbef9f29c158c092060545e8",
+                "reference": "ff27205d5269be8fdbef9f29c158c092060545e8",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2 || ^8.0"
             },
             "require-dev": {
+                "nikic/php-parser": "^4.15",
                 "php-parallel-lint/php-parallel-lint": "^1.2",
                 "phpstan/extension-installer": "^1.0",
                 "phpstan/phpstan": "^1.5",
@@ -989,6 +989,7 @@
                 "phpunit/phpunit": "^9.5",
                 "symfony/process": "^5.2"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1004,9 +1005,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.16.1"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.21.x"
             },
-            "time": "2023-02-07T18:11:17+00:00"
+            "time": "2023-05-26T10:58:32+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -1522,12 +1523,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "14f72dd46eaf2f2293cbe79c93cc0bc43161a211"
+                "reference": "6296a0c086dd0117c1b78b059374d7fcbe7545ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/14f72dd46eaf2f2293cbe79c93cc0bc43161a211",
-                "reference": "14f72dd46eaf2f2293cbe79c93cc0bc43161a211",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/6296a0c086dd0117c1b78b059374d7fcbe7545ae",
+                "reference": "6296a0c086dd0117c1b78b059374d7fcbe7545ae",
                 "shasum": ""
             },
             "require": {
@@ -1580,7 +1581,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-30T07:59:04+00:00"
+            "time": "2023-05-07T05:30:20+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -2124,12 +2125,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "e75960b1bbfd2b8c9e483e0d74811d555ca3de9f"
+                "reference": "b2f79d86cd9e7de0fff6d03baa80eaed7a5f38b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/e75960b1bbfd2b8c9e483e0d74811d555ca3de9f",
-                "reference": "e75960b1bbfd2b8c9e483e0d74811d555ca3de9f",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/b2f79d86cd9e7de0fff6d03baa80eaed7a5f38b5",
+                "reference": "b2f79d86cd9e7de0fff6d03baa80eaed7a5f38b5",
                 "shasum": ""
             },
             "require": {
@@ -2180,7 +2181,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-14T08:03:56+00:00"
+            "time": "2023-03-02T11:38:35+00:00"
         },
         {
             "name": "symfony/finder",
@@ -2770,16 +2771,16 @@
         },
         {
             "name": "yoast/phpunit-polyfills",
-            "version": "dev-develop",
+            "version": "1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Yoast/PHPUnit-Polyfills.git",
-                "reference": "bb27ca08609ece113f88225648b3cd02f7aecd04"
+                "reference": "d5a196cc2cb39a9efeeff72ce712efef3c107a45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/bb27ca08609ece113f88225648b3cd02f7aecd04",
-                "reference": "bb27ca08609ece113f88225648b3cd02f7aecd04",
+                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/d5a196cc2cb39a9efeeff72ce712efef3c107a45",
+                "reference": "d5a196cc2cb39a9efeeff72ce712efef3c107a45",
                 "shasum": ""
             },
             "require": {
@@ -2789,12 +2790,10 @@
             "require-dev": {
                 "yoast/yoastcs": "^2.3.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.x-dev",
-                    "dev-develop": "1.x-dev"
+                    "dev-main": "2.x-dev"
                 }
             },
             "autoload": {
@@ -2828,7 +2827,7 @@
                 "issues": "https://github.com/Yoast/PHPUnit-Polyfills/issues",
                 "source": "https://github.com/Yoast/PHPUnit-Polyfills"
             },
-            "time": "2023-03-13T18:24:33+00:00"
+            "time": "2023-05-19T05:47:22+00:00"
         }
     ],
     "aliases": [],
