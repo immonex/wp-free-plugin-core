@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_6;
+namespace immonex\WordPressFreePluginCore\V1_8_7;
 
 /**
  * General (mostly WordPress related) utility methods.
@@ -36,35 +36,34 @@ class General_Utils {
 			return false;
 		}
 
+		$active_languages = apply_filters( 'wpml_active_languages', null );
+		$languages        = is_array( $active_languages ) && ! empty( $active_languages ) ? array_keys( $active_languages ) : array();
+		$default_language = apply_filters( 'wpml_default_language', substr( get_locale(), 0, 2 ) );
+		$current_language = apply_filters( 'wpml_current_language', null );
+
 		$args = array(
 			'taxonomies'         => $taxonomies,
 			'overwrite_defaults' => $overwrite_defaults,
 			'exclude_meta'       => $exclude_meta,
 			'special_args'       => $special_args,
+			'languages'          => $languages,
+			'default_language'   => $default_language,
+			'current_language'   => $current_language,
 		);
 
 		do_action( 'inveris_base_before_post_reset', $post_id, $args );
 		do_action( 'immonex_base_before_post_reset', $post_id, $args );
 
-		$default_language = substr( get_user_locale(), 0, 2 );
+		$keep_attachments = ! empty( $special_args['keep_attachments'] );
 
-		if ( isset( $special_args['keep_attachments'] ) && $special_args['keep_attachments'] ) {
-			$keep_attachments = true;
-		} else {
-			$keep_attachments = false;
-		}
-
-		if ( isset( $special_args['keep_featured_image'] ) && $special_args['keep_featured_image'] ) {
+		if ( ! empty( $special_args['keep_featured_image'] ) ) {
 			$exclude_meta[]      = '_thumbnail_id';
 			$keep_featured_image = true;
 		} else {
 			$keep_featured_image = false;
 		}
 
-		if (
-			is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' ) &&
-			function_exists( 'wpml_delete_translatable_content' )
-		) {
+		if ( function_exists( 'wpml_delete_translatable_content' ) ) {
 			// Delete the translation data if WPML is in use.
 			$post_type = "post_{$post->post_type}";
 			// @codingStandardsIgnoreStart
@@ -82,9 +81,8 @@ class General_Utils {
 		}
 
 		if (
-			is_plugin_active( 'polylang/polylang.php' ) &&
-			function_exists( 'pll_set_post_language' ) &&
-			function_exists( 'pll_save_post_translations' )
+			function_exists( 'pll_set_post_language' )
+			&& function_exists( 'pll_save_post_translations' )
 		) {
 			/**
 			 * Set post language to default and reset translation associations
@@ -101,7 +99,15 @@ class General_Utils {
 			$taxonomies = get_taxonomies();
 		}
 		if ( count( $taxonomies ) > 0 ) {
-			wp_delete_object_term_relationships( $post_id, $taxonomies );
+			if ( is_array( $languages ) && count( $languages ) > 0 ) {
+				foreach ( $languages as $language ) {
+					do_action( 'wpml_switch_language', $language );
+					wp_delete_object_term_relationships( $post_id, $taxonomies );
+				}
+				do_action( 'wpml_switch_language', $current_language );
+			} else {
+				wp_delete_object_term_relationships( $post_id, $taxonomies );
+			}
 		}
 
 		/**

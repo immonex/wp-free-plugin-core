@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_6;
+namespace immonex\WordPressFreePluginCore\V1_8_7;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.8.6
+ * @version 1.8.7
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.8.6';
+	const CORE_VERSION = '1.8.7';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -264,6 +264,13 @@ abstract class Base {
 	 * @var Remote_FS_Utils
 	 */
 	public $remote_fs_utils;
+
+	/**
+	 * Utility object
+	 *
+	 * @var Multilingual_Utils
+	 */
+	public $multilingual_utils;
 
 	/**
 	 * Set of all utility class instances mentioned above
@@ -923,6 +930,7 @@ abstract class Base {
 		$this->mail_utils      = new Mail_Utils( $this->plugin_slug, $this->string_utils, $this->template_utils );
 		$this->local_fs_utils  = new Local_FS_Utils( $this );
 		$this->remote_fs_utils = new Remote_FS_Utils( $this );
+		$this->ml_utils        = new Multilingual_Utils( $this );
 
 		$this->core_utils = array(
 			'general'   => $this->general_utils,
@@ -934,6 +942,7 @@ abstract class Base {
 			'color'     => $this->color_utils,
 			'local_fs'  => $this->local_fs_utils,
 			'remote_fs' => $this->remote_fs_utils,
+			'ml'        => $this->ml_utils,
 			'wp_fs'     => $this->wp_filesystem,
 		);
 

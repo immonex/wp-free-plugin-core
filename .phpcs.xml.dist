@@ -46,6 +46,7 @@
 				<element value="iwpfpc"/>
 				<element value="myimmonex"/>
 				<element value="my_immonex"/>
+				<element value="wpml"/>
 			</property>
 		</properties>
 	</rule>
