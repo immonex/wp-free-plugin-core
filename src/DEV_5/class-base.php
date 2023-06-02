@@ -355,7 +355,7 @@ abstract class Base {
 	 * @since 0.1
 	 *
 	 * @param string      $plugin_slug Plugin slug.
-	 * @param string|bool $textdomain Plugin text domain (optional).
+	 * @param string|bool $textdomain Plugin text domain (optional, plugin slug by default).
 	 * @param string|bool $plugin_fs_dir Plugin filesystem directory (optional).
 	 *
 	 * @throws \Exception Exception thrown if plugin slug is missing.
@@ -387,7 +387,7 @@ abstract class Base {
 		add_filter( "{$this->plugin_slug}_plugin_infos", array( $this, 'get_plugin_infos' ) );
 
 		$this->is_stable  = preg_match( '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/', static::PLUGIN_VERSION ) ? true : false;
-		$this->textdomain = $textdomain;
+		$this->textdomain = $textdomain ? $textdomain : $plugin_slug;
 
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -1844,7 +1844,7 @@ abstract class Base {
 			return;
 		}
 
-		$domain              = $this->textdomain ? $this->textdomain : $this->plugin_slug;
+		$domain              = $this->textdomain;
 		$locale              = get_user_locale();
 		$ns_split            = explode( '\\', __NAMESPACE__ );
 		$core_version_folder = array_pop( $ns_split );

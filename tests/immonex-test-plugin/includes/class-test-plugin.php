@@ -12,15 +12,14 @@ namespace myimmonex\TestPlugin;
  */
 class Test_Plugin extends \immonex\WordPressFreePluginCore\DEV_5\Base {
 
-	const
-		PLUGIN_NAME = 'My immonex Test Plugin',
-		PLUGIN_PREFIX = 'testplugin_',
-		PUBLIC_PREFIX = 'testplugin-',
-		PLUGIN_VERSION = '1.0.0';
+	const PLUGIN_NAME    = 'My immonex Test Plugin';
+	const PLUGIN_PREFIX  = 'testplugin_';
+	const PUBLIC_PREFIX  = 'testplugin-';
+	const PLUGIN_VERSION = '1.0.0';
 
 	protected
 		$plugin_options = array(
-			'plugin_version' => self::PLUGIN_VERSION
+			'plugin_version' => self::PLUGIN_VERSION,
 		);
 
 } // class Test_Plugin
