@@ -1844,7 +1844,6 @@ abstract class Base {
 			return;
 		}
 
-		$domain              = $this->textdomain;
 		$locale              = get_user_locale();
 		$ns_split            = explode( '\\', __NAMESPACE__ );
 		$core_version_folder = array_pop( $ns_split );
@@ -1878,7 +1877,7 @@ abstract class Base {
 		);
 
 		if ( $this->is_stable || $always_load_global_translations ) {
-			load_plugin_textdomain( $domain, false, $this->plugin_slug . '/languages' );
+			load_plugin_textdomain( $this->textdomain, false, $this->plugin_slug . '/languages' );
 		} else {
 			$local_mo_file = wp_sprintf(
 				'%s/%s/languages/%s-%s.mo',
@@ -1888,7 +1887,7 @@ abstract class Base {
 				$locale
 			);
 			if ( file_exists( $local_mo_file ) ) {
-				load_textdomain( $domain, $local_mo_file );
+				load_textdomain( $this->textdomain, $local_mo_file );
 			}
 		}
 
