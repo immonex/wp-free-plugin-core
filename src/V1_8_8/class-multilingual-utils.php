@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_7;
+namespace immonex\WordPressFreePluginCore\V1_8_8;
 
 /**
  * Multilingual environment related utilities.

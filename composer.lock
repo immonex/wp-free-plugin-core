@@ -175,12 +175,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "833e51ea358e152d41ad46f30a7a4cbb38c44aed"
+                "reference": "7e7d5839d4bec168dfeef0ac66d5c5a2edbabffd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/833e51ea358e152d41ad46f30a7a4cbb38c44aed",
-                "reference": "833e51ea358e152d41ad46f30a7a4cbb38c44aed",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/7e7d5839d4bec168dfeef0ac66d5c5a2edbabffd",
+                "reference": "7e7d5839d4bec168dfeef0ac66d5c5a2edbabffd",
                 "shasum": ""
             },
             "require": {
@@ -227,7 +227,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/3.x"
+                "source": "https://github.com/twigphp/Twig/tree/v3.6.1"
             },
             "funding": [
                 {
@@ -239,35 +239,40 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-06T17:15:54+00:00"
+            "time": "2023-06-08T12:52:13+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "doctrine/deprecations",
-            "version": "v1.1.0",
+            "version": "1.1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/deprecations.git",
-                "reference": "8cffffb2218e01f3b370bf763e00e81697725259"
+                "reference": "eac01fbdf4e4a3635169b056608730ec0930e188"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/8cffffb2218e01f3b370bf763e00e81697725259",
-                "reference": "8cffffb2218e01f3b370bf763e00e81697725259",
+                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/eac01fbdf4e4a3635169b056608730ec0930e188",
+                "reference": "eac01fbdf4e4a3635169b056608730ec0930e188",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1|^8.0"
+                "php": "^7.1 || ^8.0"
             },
             "require-dev": {
                 "doctrine/coding-standard": "^9",
-                "phpunit/phpunit": "^7.5|^8.5|^9.5",
-                "psr/log": "^1|^2|^3"
+                "phpstan/phpstan": "1.4.10 || 1.10.15",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
+                "psalm/plugin-phpunit": "0.18.4",
+                "psr/log": "^1 || ^2 || ^3",
+                "vimeo/psalm": "4.30.0 || 5.12.0"
             },
             "suggest": {
                 "psr/log": "Allows logging deprecations via PSR-3 logger implementation"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -282,9 +287,9 @@
             "homepage": "https://www.doctrine-project.org/",
             "support": {
                 "issues": "https://github.com/doctrine/deprecations/issues",
-                "source": "https://github.com/doctrine/deprecations/tree/v1.1.0"
+                "source": "https://github.com/doctrine/deprecations/tree/1.1.x"
             },
-            "time": "2023-05-29T18:55:17+00:00"
+            "time": "2023-06-07T19:57:14+00:00"
         },
         {
             "name": "doctrine/event-manager",
@@ -968,12 +973,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "4aa86ccacb965686f556e734922f46259202a226"
+                "reference": "d7b38ea9cc92628c2b97e1b4034c19c100ba9aae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/4aa86ccacb965686f556e734922f46259202a226",
-                "reference": "4aa86ccacb965686f556e734922f46259202a226",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/d7b38ea9cc92628c2b97e1b4034c19c100ba9aae",
+                "reference": "d7b38ea9cc92628c2b97e1b4034c19c100ba9aae",
                 "shasum": ""
             },
             "require": {
@@ -1008,7 +1013,7 @@
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
                 "source": "https://github.com/phpstan/phpdoc-parser/tree/1.22.x"
             },
-            "time": "2023-05-31T15:33:56+00:00"
+            "time": "2023-06-05T07:52:02+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2776,12 +2781,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Yoast/PHPUnit-Polyfills.git",
-                "reference": "d5a196cc2cb39a9efeeff72ce712efef3c107a45"
+                "reference": "f4c425a8aae6c1f2d448289b42311d58af5ff7a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/d5a196cc2cb39a9efeeff72ce712efef3c107a45",
-                "reference": "d5a196cc2cb39a9efeeff72ce712efef3c107a45",
+                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/f4c425a8aae6c1f2d448289b42311d58af5ff7a4",
+                "reference": "f4c425a8aae6c1f2d448289b42311d58af5ff7a4",
                 "shasum": ""
             },
             "require": {
@@ -2828,7 +2833,7 @@
                 "issues": "https://github.com/Yoast/PHPUnit-Polyfills/issues",
                 "source": "https://github.com/Yoast/PHPUnit-Polyfills"
             },
-            "time": "2023-05-19T05:47:22+00:00"
+            "time": "2023-06-06T15:51:44+00:00"
         }
     ],
     "aliases": [],
