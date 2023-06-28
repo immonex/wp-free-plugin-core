@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_5;
+namespace immonex\WordPressFreePluginCore\V1_8_9;
 
 /**
  * Local filesystem related utilities.
@@ -20,7 +20,7 @@ class Local_FS_Utils {
 	 * @param string|string[] $directories   Single directory or array of multiple directories to scan (absolute path(s)).
 	 * @param mixed[]         $params        Query parameters/flags (optional)
 	 *     $params = [
-	 *         'scope'                       => 'files_only',   // "files" (default), "folders" or "files_and_folders"
+	 *         'scope'                       => 'files',        // "files" (default), "folders" or "files_and_folders"
 	 *         'file_extensions'             => [],             // Array of file extensions to consider (case insensitive)
 	 *         'exclude'                     => [],             // Names of files and folders that should be omitted
 	 *         'apply_exclude_in_subfolders' => false,          // Consider folder exclude list in subfolders, too?

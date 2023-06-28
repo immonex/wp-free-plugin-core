@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_8;
+namespace immonex\WordPressFreePluginCore\DEV_6;
 
 /**
  * General (mostly WordPress related) utility methods.
@@ -116,7 +116,7 @@ class General_Utils {
 		$meta = get_post_meta( $post_id );
 		if ( count( $meta ) > 0 ) {
 			foreach ( $meta as $meta_key => $meta_value ) {
-				if ( 0 === count( $exclude_meta ) || ! in_array( $meta_key, $exclude_meta, true ) ) {
+				if ( empty( $exclude_meta ) || ! in_array( $meta_key, $exclude_meta, true ) ) {
 					delete_post_meta( $post_id, $meta_key );
 				}
 			}

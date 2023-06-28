@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_8;
+namespace immonex\WordPressFreePluginCore\V1_8_9;
 
 /**
  * String related utility methods.
@@ -311,7 +311,10 @@ class String_Utils {
 	 */
 	public static function get_excerpt( $source_text, $length = 120, $suffix = '' ) {
 		$raw   = wp_strip_all_tags( $source_text );
-		$words = str_word_count( $raw, 1, '01234567989&.,:;/-äöüÄÖÜß„“–¹²½()"\'' );
+		$words = preg_split( '/[\r\n\s]+/u', $raw, -1, PREG_SPLIT_NO_EMPTY );
+		if ( empty( $words ) ) {
+			return '';
+		}
 
 		$text = '';
 		foreach ( $words as $word ) {
