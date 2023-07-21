@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bace8354a8f992653e483f3da40bf3c9",
+    "content-hash": "b373c0d904b5967fbd38b4ce920ab66d",
     "packages": [
         {
             "name": "symfony/polyfill-ctype",
@@ -175,12 +175,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "7e7d5839d4bec168dfeef0ac66d5c5a2edbabffd"
+                "reference": "4ef92bf09274356497847e83169a20b2b393e64c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/7e7d5839d4bec168dfeef0ac66d5c5a2edbabffd",
-                "reference": "7e7d5839d4bec168dfeef0ac66d5c5a2edbabffd",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/4ef92bf09274356497847e83169a20b2b393e64c",
+                "reference": "4ef92bf09274356497847e83169a20b2b393e64c",
                 "shasum": ""
             },
             "require": {
@@ -227,7 +227,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.6.1"
+                "source": "https://github.com/twigphp/Twig/tree/3.x"
             },
             "funding": [
                 {
@@ -239,7 +239,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-06-08T12:52:13+00:00"
+            "time": "2023-07-20T16:36:01+00:00"
         }
     ],
     "packages-dev": [
@@ -845,12 +845,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "b2fe4d22a5426f38e014855322200b97b5362c0d"
+                "reference": "07100e65d09fd50608d649fc656cae1c921a2495"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/b2fe4d22a5426f38e014855322200b97b5362c0d",
-                "reference": "b2fe4d22a5426f38e014855322200b97b5362c0d",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/07100e65d09fd50608d649fc656cae1c921a2495",
+                "reference": "07100e65d09fd50608d649fc656cae1c921a2495",
                 "shasum": ""
             },
             "require": {
@@ -894,9 +894,9 @@
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
             "support": {
                 "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
-                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.7.2"
+                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.x"
             },
-            "time": "2023-05-30T18:13:47+00:00"
+            "time": "2023-07-20T19:57:33+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -904,12 +904,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "84c981450d81f03ec8eb64380ab32cac98093bde"
+                "reference": "e0ae0992aafbc5dee4337a700a44a8d04fbd2ccf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/84c981450d81f03ec8eb64380ab32cac98093bde",
-                "reference": "84c981450d81f03ec8eb64380ab32cac98093bde",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/e0ae0992aafbc5dee4337a700a44a8d04fbd2ccf",
+                "reference": "e0ae0992aafbc5dee4337a700a44a8d04fbd2ccf",
                 "shasum": ""
             },
             "require": {
@@ -965,20 +965,20 @@
                 "issues": "https://github.com/phpspec/prophecy/issues",
                 "source": "https://github.com/phpspec/prophecy/tree/master"
             },
-            "time": "2023-04-12T15:43:51+00:00"
+            "time": "2023-06-21T12:00:53+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "1.22.x-dev",
+            "version": "1.23.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "d7b38ea9cc92628c2b97e1b4034c19c100ba9aae"
+                "reference": "a113f0c31267a68dcae2a82f60a5b86ab4c96204"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/d7b38ea9cc92628c2b97e1b4034c19c100ba9aae",
-                "reference": "d7b38ea9cc92628c2b97e1b4034c19c100ba9aae",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/a113f0c31267a68dcae2a82f60a5b86ab4c96204",
+                "reference": "a113f0c31267a68dcae2a82f60a5b86ab4c96204",
                 "shasum": ""
             },
             "require": {
@@ -1011,9 +1011,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.22.x"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.23.x"
             },
-            "time": "2023-06-05T07:52:02+00:00"
+            "time": "2023-07-20T15:18:24+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2195,12 +2195,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "078e9a5e1871fcfe6a5ce421b539344c21afef19"
+                "reference": "01ef6b2391a59bb4c5d3c59e2ef9b99c7d335d17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/078e9a5e1871fcfe6a5ce421b539344c21afef19",
-                "reference": "078e9a5e1871fcfe6a5ce421b539344c21afef19",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/01ef6b2391a59bb4c5d3c59e2ef9b99c7d335d17",
+                "reference": "01ef6b2391a59bb4c5d3c59e2ef9b99c7d335d17",
                 "shasum": ""
             },
             "require": {
@@ -2250,7 +2250,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-16T09:33:00+00:00"
+            "time": "2023-07-09T13:55:15+00:00"
         },
         {
             "name": "symfony/polyfill-intl-grapheme",
@@ -2509,12 +2509,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "8036a4c76c0dd29e60b6a7cafcacc50cf088ea62"
+                "reference": "1181fe9270e373537475e826873b5867b863883c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/8036a4c76c0dd29e60b6a7cafcacc50cf088ea62",
-                "reference": "8036a4c76c0dd29e60b6a7cafcacc50cf088ea62",
+                "url": "https://api.github.com/repos/symfony/string/zipball/1181fe9270e373537475e826873b5867b863883c",
+                "reference": "1181fe9270e373537475e826873b5867b863883c",
                 "shasum": ""
             },
             "require": {
@@ -2587,7 +2587,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-03-14T06:11:53+00:00"
+            "time": "2023-06-28T12:46:07+00:00"
         },
         {
             "name": "symfony/translation-contracts",

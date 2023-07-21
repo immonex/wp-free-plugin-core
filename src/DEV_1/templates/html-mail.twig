@@ -1,0 +1,104 @@
+{% if not logo_tag %}
+	{% set logo_tag %}<img src="{{ logo|e('html_attr') }}" alt="{{ logo_alt|e('html_attr') }}" style="display:inline-block; max-width:{{ layout.max_logo_width|e('html_attr') }}; max-height:{{ layout.max_logo_height|e('html_attr') }}">{% endset %}
+{% endif %}
+
+{% if logo_link_url %}
+	{% set logo_tag %}<a href="{{ logo_link_url|e('html_attr') }}">{{ logo_tag }}</a>{% endset %}
+{% endif %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{{ title }}</title>
+
+		<!--[if gte mso 9]><xml>
+		  <o:OfficeDocumentSettings>
+			<o:AllowPNG/>
+			<o:PixelsPerInch>96</o:PixelsPerInch>
+		  </o:OfficeDocumentSettings>
+		</xml><![endif]-->
+	</head>
+
+	<body style="margin:0; padding:0; min-width:100% !important; background-color:{{ colors.bg|e('html_attr') }}; font-family:sans-serif">
+		<table
+			border="0"
+			cellpadding="{{ layout.padding_px|e('html_attr') }}"
+			cellspacing="0"
+			align="{{ layout.align|e('html_attr') }}"
+			style="width:100%; max-width:{{ layout.max_width|e('html_attr') }}; margin-top:{{ layout.margin_top }}; margin-bottom:{{ layout.margin_bottom }}; border-radius:{{ layout.border_radius }}; border-collapse:collapse; overflow:hidden"
+		>
+			{% if (header or header_text or (logo and layout.logo_position in ['header_left', 'header_center', 'header_right', 'top_left', 'top_center', 'top_right'])) %}
+				<tr>
+					<td style="color:{{ colors.text_header|e('html_attr') }}; background-color:{{ colors.bg_header|e('html_attr') }}">
+						{% if header %}
+							{{ header }}
+						{% else %}
+							<table border="0" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse">
+								<tr>
+									{% if (logo and layout.logo_position in ['header_center', 'top_center']) %}
+										<td style="padding-bottom:16px; text-align:center">{{ logo_tag }}</td></tr><tr>
+									{% elseif (logo and layout.logo_position in ['header_left', 'top_left']) %}
+										<td style="padding-right:16px; vertical-align:middle">{{ logo_tag }}</td>
+									{% endif %}
+
+									{% if header_text %}
+										<td style="width:100%; font-size:{{ layout.header_text_size|e('html_attr') }};
+											text-align:{{ layout.logo_position in ['header_center', 'top_center'] ? 'center' : 'left' }};
+											color:{{ colors.text_header|e('html_attr') }};
+											vertical-align:middle">{{ header_text }}</td>
+									{% endif %}
+
+									{% if (logo and layout.logo_position in ['header_right', 'top_right']) %}
+										<td style="padding-left:16px; text-align:right; vertical-align:middle">{{ logo_tag }}</td>
+									{% endif %}
+								</tr>
+							</table>
+						{% endif %}
+					</td>
+				</tr>
+			{% endif %}
+
+			<tr>
+				<td style="font-size:{{ layout.body_text_size|e('html_attr') }};
+					color:{{ colors.text|e('html_attr') }};
+					background-color:{{ colors.bg_body|e('html_attr') }}"
+				>
+					{{ body }}
+				</td>
+			</tr>
+
+			{% if footer or footer_text or (logo and layout.logo_position in ['footer_left', 'footer_center', 'footer_right']) %}
+				<tr>
+					<td style="padding-top:0; color:{{ colors.text_footer|e('html_attr') }}; background-color:{{ colors.bg_footer|e('html_attr') }}">
+						{% if footer %}
+							{{ footer }}
+						{% else %}
+							<table border="0" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse">
+								<tr>
+									{% if (logo and layout.logo_position == 'footer_left') %}
+										<td style="padding-right:16px; vertical-align:middle">{{ logo_tag }}</td>
+									{% endif %}
+
+									{% if footer_text %}
+										<td style="width:100%; font-size:{{ layout.footer_text_size|e('html_attr') }};
+											text-align:{{ layout.logo_position == 'footer_center' ? 'center' : 'left' }};
+											color:{{ colors.text_footer|e('html_attr') }};
+											vertical-align:middle">{{ footer_text }}</td>
+									{% endif %}
+
+									{% if (logo and layout.logo_position == 'footer_right') %}
+										<td style="padding-left:16px; text-align:right; vertical-align:middle">{{ logo_tag }}</td>
+									{% elseif (logo and layout.logo_position == 'footer_center') %}
+										</tr><tr><td style="padding-top:16px; text-align:center">{{ logo_tag }}</td>
+									{% endif %}
+								</tr>
+							</table>
+						{% endif %}
+					</td>
+				</tr>
+			{% endif %}
+		</table>
+	</body>
+</html>

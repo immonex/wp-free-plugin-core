@@ -129,7 +129,7 @@ $ composer install
 
 ### PHP compatibility
 
-5.6+ (switch to 7.2+ envisaged for future releases)
+5.6+ (switch to 7.6+ envisaged for future releases)
 
 ### Coding Standard
 
@@ -192,6 +192,14 @@ The core classes of this library do **and should** only include a few strings th
 ```bash
 $ npm run pot
 ```
+
+Copies of the the **german default translation files** (MO/*de_DE*) for the WP locales *de_DE_formal*, *de_AT*, *de_CH* and *ch_CH_informal* in all dev and production folders can be created with:
+
+```bash
+$ npm run copy-mo
+```
+
+(Existing translation files will **not** be overwritten.)
 
 ## License
 
