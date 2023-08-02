@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_1;
+namespace immonex\WordPressFreePluginCore\DEV_7;
 
 /**
  * Utility methods for a very simple kind of templating.
@@ -132,6 +132,9 @@ class Template_Utils {
 		if ( ! $template_file ) {
 			return false;
 		}
+
+		// Alternative variable name for compatibility with legacy templates.
+		$template_vars = $template_data;
 
 		/**
 		 * Render template content by output buffering.
