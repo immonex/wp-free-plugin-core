@@ -270,7 +270,7 @@ abstract class Base {
 	 *
 	 * @var Multilingual_Utils
 	 */
-	public $multilingual_utils;
+	public $ml_utils;
 
 	/**
 	 * Set of all utility class instances mentioned above
