@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_13;
+namespace immonex\WordPressFreePluginCore\V1_8_14;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.8.13
+ * @version 1.8.14
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.8.13';
+	const CORE_VERSION = '1.8.14';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -270,7 +270,7 @@ abstract class Base {
 	 *
 	 * @var Multilingual_Utils
 	 */
-	public $multilingual_utils;
+	public $ml_utils;
 
 	/**
 	 * Set of all utility class instances mentioned above

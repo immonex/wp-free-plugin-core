@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_7_18;
+namespace immonex\WordPressFreePluginCore\V1_8_14;
 
 /**
  * Local filesystem related utilities.
@@ -20,7 +20,7 @@ class Local_FS_Utils {
 	 * @param string|string[] $directories   Single directory or array of multiple directories to scan (absolute path(s)).
 	 * @param mixed[]         $params        Query parameters/flags (optional)
 	 *     $params = [
-	 *         'scope'                       => 'files_only',   // "files" (default), "folders" or "files_and_folders"
+	 *         'scope'                       => 'files',        // "files" (default), "folders" or "files_and_folders"
 	 *         'file_extensions'             => [],             // Array of file extensions to consider (case insensitive)
 	 *         'exclude'                     => [],             // Names of files and folders that should be omitted
 	 *         'apply_exclude_in_subfolders' => false,          // Consider folder exclude list in subfolders, too?
@@ -28,7 +28,7 @@ class Local_FS_Utils {
 	 *         'max_depth'                   => 0,              // Maximum recursion level (0 = no recursion/subfolder processing)
 	 *         'skip_dotfiles'               => true,           // Exclude dotfiles from returned lists?
 	 *         'return_paths'                => false,          // Return results as path strings instead of objects?
-	 *         'order_by'                    => 'filename asc', // Sort order (filename/mtime + asc/desc)
+	 *         'order_by'                    => 'filename asc', // Sort order (filename/basename/mtime + asc/desc)
 	 *     ]
 	 * @param int             $current_level Current subfolder recursion level (optional, default 0).
 	 *
@@ -69,8 +69,9 @@ class Local_FS_Utils {
 				$params['exclude'] = array_filter( array_map( 'trim', explode( ',', $params['exclude'] ) ) );
 			}
 
-			if ( 0 === $current_level && ! empty( $params['exclude'] ) ) {
-				$params['exclude_regex'] = $this->get_exclude_regex( $params['exclude'] );
+			$exclude = array_filter( $params['exclude'] );
+			if ( 0 === $current_level && ! empty( $exclude ) ) {
+				$params['exclude_regex'] = $this->get_exclude_regex( $exclude );
 			}
 
 			foreach ( $it as $path => $file_info ) {
@@ -117,7 +118,7 @@ class Local_FS_Utils {
 
 				if (
 					! empty( $params['file_extensions'] )
-					&& ! in_array( $file_info->getExtension(), $params['file_extensions'], true )
+					&& ! in_array( strtolower( $file_info->getExtension() ), $params['file_extensions'], true )
 				) {
 					continue;
 				}
@@ -151,7 +152,7 @@ class Local_FS_Utils {
 	 *
 	 * @param \SplFileInfo    $a        File A.
 	 * @param \SplFileInfo    $b        File B.
-	 * @param string|string[] $order_by Sort order as string or array (filename/mtime + asc/desc, optional).
+	 * @param string|string[] $order_by Sort order as string or array (filename/basename/mtime + asc/desc, optional).
 	 *
 	 * @return int Comparison result (-1/0/1).
 	 */
@@ -172,6 +173,9 @@ class Local_FS_Utils {
 				$ac = $a->getRealPath();
 				$bc = $b->getRealPath();
 			}
+		} elseif ( 'basename' === $order_by[0] ) {
+			$ac = $a->getBasename();
+			$bc = $b->getBasename();
 		} else {
 			$ac = $a->getRealPath();
 			$bc = $b->getRealPath();
@@ -202,6 +206,10 @@ class Local_FS_Utils {
 		$full_regex_found = false;
 
 		foreach ( $list as $i => $expr ) {
+			if ( empty( $expr ) ) {
+				continue;
+			}
+
 			$first_char = $expr[0];
 			$last_char  = substr( $expr, -1 );
 
@@ -278,5 +286,44 @@ class Local_FS_Utils {
 
 		return false;
 	} // get_mtime
+
+	/**
+	 * Check all directory paths in the given list, filter out nonexistent and maybe
+	 * add required ones.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param string[]      $folders  List of directory paths.
+	 * @param bool|string[] $default  Optional default array if $folders list is empty or false
+	 *                                if empty lists are allowed.
+	 * @param string[]      $required Optional list of required directory paths.
+	 *
+	 * @return string[] Filtered list of directory paths.
+	 */
+	public function validate_dir_list( $folders, $default = false, $required = array() ) {
+		if ( ! is_array( $folders ) ) {
+			$folders = array( $folders );
+		}
+
+		foreach ( $folders as $i => $path ) {
+			if ( ! is_string( $path ) || ! $path || ! is_dir( $path ) ) {
+				unset( $folders[ $i ] );
+			}
+		}
+
+		if ( false !== $default && empty( $folders ) ) {
+			$folders = $default;
+		}
+
+		if ( ! empty( $required ) ) {
+			foreach ( $required as $path ) {
+				if ( ! in_array( $path, $folders, true ) ) {
+					$folders[] = $path;
+				}
+			}
+		}
+
+		return array_values( array_unique( $folders ) );
+	} // validate_dir_list
 
 } // class Local_FS_Utils

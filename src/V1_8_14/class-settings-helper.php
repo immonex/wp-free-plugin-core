@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_7_18;
+namespace immonex\WordPressFreePluginCore\V1_8_14;
 
 /**
  * Helper class for dealing with the WordPress Settings API.
@@ -32,6 +32,13 @@ class Settings_Helper {
 	 * @var string
 	 */
 	private $plugin_options_name;
+
+	/**
+	 * String utilities object
+	 *
+	 * @var String_Utils
+	 */
+	private $string_utils;
 
 	/**
 	 * Tabs to display on the plugin options page
@@ -73,14 +80,16 @@ class Settings_Helper {
 	 *
 	 * @since 0.1
 	 *
-	 * @param string $plugin_dir Absolute plugin directory path.
-	 * @param string $plugin_slug Slug of the initiating plugin.
-	 * @param string $plugin_options_name Name used for storing the serialized options array.
+	 * @param string       $plugin_dir Absolute plugin directory path.
+	 * @param string       $plugin_slug Slug of the initiating plugin.
+	 * @param string       $plugin_options_name Name used for storing the serialized options array.
+	 * @param String_Utils $string_utils String utilities object.
 	 */
-	public function __construct( $plugin_dir, $plugin_slug, $plugin_options_name ) {
+	public function __construct( $plugin_dir, $plugin_slug, $plugin_options_name, $string_utils ) {
 		$this->plugin_dir          = $plugin_dir;
 		$this->plugin_slug         = $plugin_slug;
 		$this->plugin_options_name = $plugin_options_name;
+		$this->string_utils        = $string_utils;
 
 		add_action( 'immonex_plugin_options_add_extension_tabs', array( $this, 'register_extension_tabs' ), 10, 2 );
 		add_action( 'immonex_plugin_options_add_extension_sections', array( $this, 'register_extension_sections' ), 10, 2 );
@@ -150,9 +159,13 @@ class Settings_Helper {
 	public function get_current_tab() {
 		if ( ! empty( $_REQUEST['tab'] ) ) {
 			return sanitize_key( $_REQUEST['tab'] );
-		} else {
-			return false;
 		}
+
+		if ( ! empty( $this->option_page_tabs ) ) {
+			return key( $this->option_page_tabs );
+		}
+
+		return false;
 	} // get_current_tab
 
 	/**
@@ -233,22 +246,36 @@ class Settings_Helper {
 			echo '<h2 class="nav-tab-wrapper">';
 
 			foreach ( $this->option_page_tabs as $tab_id => $tab ) {
-				$class     = ( $tab_id === $this->current_tab ) ? ' nav-tab-active' : '';
+				$classes   = $tab_id === $this->current_tab ? array( 'nav-tab-active' ) : array();
 				$post_type = isset( $_GET['post_type'] ) ? 'post_type=' . sanitize_title( wp_unslash( $_GET['post_type'] ) ) . '&' : '';
 
-				$addon_class = ! empty( $tab['attributes']['is_addon_tab'] ) || false !== strpos( $tab['title'], '[Add-on]' ) ? ' is-addon-tab' : '';
+				$badge         = '';
+				$badge_classes = array();
+				if ( ! empty( $tab['attributes']['badge'] ) ) {
+					$badge = $tab['attributes']['badge'];
+				} elseif ( ! empty( $tab['attributes']['is_addon_tab'] ) || false !== strpos( $tab['title'], '[Add-on]' ) ) {
+					$badge = 'Add-on';
+				}
+				if ( $badge ) {
+					$classes[]     = 'has-badge';
+					$badge_classes = array(
+						'nav-tab__badge',
+						'nav-tab__badge--' . $this->string_utils::slugify( $badge ),
+					);
+				}
+
 				if ( false !== strpos( $tab['title'], '[Add-on]' ) ) {
 					$tab['title'] = trim( str_replace( '[Add-on]', '', $tab['title'] ) );
 				}
 
 				echo wp_sprintf(
-					'<a class="nav-tab%1$s%6$s" href="?%2$spage=%3$s_settings&tab=%4$s">%5$s</a>',
-					$class,
+					'<a class="nav-tab%1$s" href="?%2$spage=%3$s_settings&tab=%4$s">%5$s%6$s</a>',
+					! empty( $classes ) ? ' ' . implode( ' ', $classes ) : '',
 					$post_type,
 					$this->plugin_slug,
 					$tab_id,
 					$tab['title'],
-					$addon_class
+					$badge ? wp_sprintf( '<div class="%1$s">%2$s</div>', implode( ' ', $badge_classes ), $badge ) : ''
 				);
 			}
 			echo '</h2>' . PHP_EOL;
@@ -402,6 +429,11 @@ class Settings_Helper {
 			$args['class']       = '';
 		}
 
+		if ( ! empty( $args['doc_url'] ) ) {
+			$label .= String_Utils::doc_link( $args['doc_url'] );
+			unset( $args['doc_url'] );
+		}
+
 		$args_default = array(
 			'type'        => $type,
 			'name'        => $name,
@@ -409,6 +441,7 @@ class Settings_Helper {
 			'label'       => $label,
 			'required'    => false,
 			'allow_zero'  => false,
+			'no_sanitize' => false,
 			'option_name' => $this->plugin_options_name,
 		);
 		$args         = array_merge( $args_default, $args );
@@ -917,6 +950,28 @@ class Settings_Helper {
 
 		echo $image_select;
 	} // render_media_image_select
+
+	/**
+	 * [LEGACY PLUGINS ONLY] Render a license status incl. switch button.
+	 *
+	 * @since 1.8.2
+	 *
+	 * @param array $args License status related data.
+	 */
+	private function render_license_status( $args ) {
+		$plugin_slug = ! empty( $args['plugin_slug'] ) ? $args['plugin_slug'] : $this->plugin_slug;
+		$valid       = in_array( $args['current_status'], [ 'valid', 'active' ], true );
+
+		printf(
+			'<div style="margin-top:5px; margin-bottom:16px; color:%1$s; font-weight:bold">%2$s</div>' . PHP_EOL . '%3$s' . PHP_EOL .
+			'<input type="hidden" name="edd_license_plugin_slug" value="' . $plugin_slug . '">' . PHP_EOL .
+			'<input type="submit" class="button button-primary" name="edd_license_' . ( $valid ? 'de' : '' ) . 'activate" value="%4$s">',
+			$valid ? 'green' : '#FF7117',
+			$valid ? __( 'active', 'immonex-wp-free-plugin-core' ) : __( 'inactive', 'immonex-wp-free-plugin-core' ),
+			wp_nonce_field( 'edd_license_status_change', 'edd_license_nonce', true, false ),
+			$valid ? __( 'Deactivate License', 'immonex-wp-free-plugin-core' ) : __( 'Activate License', 'immonex-wp-free-plugin-core' )
+		);
+	} // render_license_status
 
 	/**
 	 * Generate the class code for input elements.
