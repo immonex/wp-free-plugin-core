@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_14;
+namespace immonex\WordPressFreePluginCore\V1_8_16;
 
 /**
  * String related utility methods.
@@ -499,7 +499,7 @@ class String_Utils {
 	 * @return string String with (possibly) included link tags.
 	 */
 	public static function convert_urls( $text ) {
-		return preg_replace_callback( '#(?<=^|\s)(?i)(http|https)?(://)?(([-\w^@]{2,}\.)+([a-zA-Z]{2,16})(?:/[^,.\s\<\>\"\']*|))(?=\s|$)#', 'self::convert_urls_cb', $text );
+		return preg_replace_callback( '#(?<=^|\s)(?i)(http|https)?(://)?(([-\w^@]{2,}\.)+([a-zA-Z]{2,16})(?:/[^,.\s\<\>\"\']*|))(?=\s|$)#', self::class . '::convert_urls_cb', $text );
 	} // convert_urls
 
 	/**
