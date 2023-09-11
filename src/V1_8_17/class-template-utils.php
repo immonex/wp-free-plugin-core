@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_16;
+namespace immonex\WordPressFreePluginCore\V1_8_17;
 
 /**
  * Utility methods for a very simple kind of templating.

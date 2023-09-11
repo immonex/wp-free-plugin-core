@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_16;
+namespace immonex\WordPressFreePluginCore\DEV_1;
 
 /**
  * Helper class for dealing with the WordPress Settings API.
@@ -729,6 +729,30 @@ class Settings_Helper {
 			isset( $args['field_suffix'] ) && $args['field_suffix'] ? ' ' . $args['field_suffix'] : ''
 		);
 	} // render_text
+
+	/**
+	 * Render a number field.
+	 *
+	 * @since 1.8.17
+	 *
+	 * @param array $args Field properties.
+	 */
+	private function render_number( $args ) {
+		printf(
+			'<input type="number" name="%1$s[%2$s]" id="%3$s"%4$s value="%5$s"%6$s%7$s%8$s%9$s%10$s>%11$s' . PHP_EOL,
+			$args['option_name'],
+			$args['name'],
+			$args['id'],
+			$this->get_class_code( $args, 'small-text' ),
+			$args['value'],
+			isset( $args['min'] ) ? ' min="' . (int) $args['min'] . '"' : '',
+			isset( $args['max'] ) ? ' max="' . (int) $args['max'] . '"' : '',
+			! empty( $args['step'] ) ? ' step="' . (int) $args['step'] . '"' : '',
+			disabled( isset( $args['disabled'] ) && $args['disabled'], true, false ),
+			! empty( $args['required'] ) ? ' required' : '',
+			isset( $args['field_suffix'] ) && $args['field_suffix'] ? ' ' . $args['field_suffix'] : ''
+		);
+	} // render_number
 
 	/**
 	 * Render a textarea.
