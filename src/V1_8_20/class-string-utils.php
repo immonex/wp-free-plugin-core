@@ -757,8 +757,8 @@ class String_Utils {
 	public static function html_to_plain_text( $html, $list_bullet = false ) {
 		$plain = trim( stripslashes( $html ) );
 		if ( false === strpos( $plain, '<' ) ) {
-			// Return stripslashed original content if it doesn't contain any HTML tags.
-			return $plain;
+			// Return stripslashed/decoded original content if it doesn't contain any HTML tags.
+			return html_entity_decode( $plain, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' );
 		}
 
 		// Convert links to plain text (link text + URL).
