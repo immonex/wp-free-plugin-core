@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_17;
+namespace immonex\WordPressFreePluginCore\DEV_2;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.8.17
+ * @version 1.8.20
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.8.17';
+	const CORE_VERSION = '1.8.20';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -971,11 +971,14 @@ abstract class Base {
 	 * @since 0.9
 	 */
 	public function frontend_scripts_and_styles() {
+		$css_search_folders = array( 'assets/css', 'assets', 'css' );
+		$js_search_folders  = array( 'assets/js', 'assets', 'js' );
+
 		/**
 		 * Plugin base CSS
 		 */
 		$base_css_folder = '';
-		foreach ( array( 'assets/css', 'assets', 'css' ) as $folder ) {
+		foreach ( $css_search_folders as $folder ) {
 			if ( file_exists( trailingslashit( $this->plugin_dir ) . "{$folder}/frontend.css" ) ) {
 				$base_css_folder = $folder;
 				break;
@@ -997,7 +1000,7 @@ abstract class Base {
 		 * Plugin base JS
 		 */
 		$base_js_folder = '';
-		foreach ( array( 'assets/js', 'assets', 'js' ) as $folder ) {
+		foreach ( $js_search_folders as $folder ) {
 			if ( file_exists( trailingslashit( $this->plugin_dir ) . "{$folder}/frontend.js" ) ) {
 				$base_js_folder = $folder;
 				break;
@@ -1018,13 +1021,19 @@ abstract class Base {
 		}
 
 		if ( ! empty( $this->plugin_options['skin'] ) ) {
-			$lookup_basenames = array( 'index', 'extend' );
+			$lookup_basenames = array( 'index', 'extend', 'custom' );
 
 			foreach ( $lookup_basenames as $basename ) {
 				/**
 				 * Skin CSS
 				 */
-				$skin_css = $this->utils['template']->locate_template_file( "css/{$basename}.css" );
+				foreach ( $css_search_folders as $folder ) {
+					$skin_css = $this->utils['template']->locate_template_file( "{$folder}/{$basename}.css" );
+					if ( $skin_css ) {
+						break;
+					}
+				}
+
 				if ( $skin_css ) {
 					$skin_css_url = $this->utils['template']->get_template_file_url( $skin_css );
 
@@ -1051,7 +1060,13 @@ abstract class Base {
 				/**
 				 * Skin JS
 				 */
-				$skin_js = $this->utils['template']->locate_template_file( "js/{$basename}.js" );
+				foreach ( $js_search_folders as $folder ) {
+					$skin_js = $this->utils['template']->locate_template_file( "{$folder}/{$basename}.js" );
+					if ( $skin_js ) {
+						break;
+					}
+				}
+
 				if ( $skin_js ) {
 					$skin_js_url = $this->utils['template']->get_template_file_url( $skin_js );
 

@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_17;
+namespace immonex\WordPressFreePluginCore\DEV_2;
 
 /**
  * General (mostly WordPress related) utility methods.

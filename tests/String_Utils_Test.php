@@ -121,4 +121,14 @@ class String_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( 'filename-testarchive', ( "{$this->ns}\String_Utils" )::get_plain_unzip_folder_name( 'filename Test!archive.zip' ) );
 	} // get_plain_unzip_folder_name
 
+	function test_get_path_with_unified_directory_separators() {
+		$this->assertEquals( '/path/to/dir', ( "{$this->ns}\String_Utils" )::unify_dirsep( '/path\to\dir', 0, '/' ) );
+		$this->assertEquals( '\\path\\to\\dir', ( "{$this->ns}\String_Utils" )::unify_dirsep( '\\path/to/dir', 0, '\\' ) );
+		$this->assertEquals( '/path/to/dir', ( "{$this->ns}\String_Utils" )::unify_dirsep( '/path\to\dir\\', -1, '/' ) );
+		$this->assertEquals( '/path/to/dir/', ( "{$this->ns}\String_Utils" )::unify_dirsep( '/path\to\dir\\', 1, '/' ) );
+		$this->assertEquals( '/path/to/dir/', ( "{$this->ns}\String_Utils" )::unify_dirsep( '/path\to\dir', 1, '/' ) );
+		$this->assertEquals( '\\path\\to\\dir\\', ( "{$this->ns}\String_Utils" )::unify_dirsep( '/path/to/dir', 1, '\\' ) );
+		$this->assertEquals( '\\path\\to\\dir\\', ( "{$this->ns}\String_Utils" )::unify_dirsep( '/path/to/dir/', 1, '\\' ) );
+	} // test_get_path_with_unified_directory_separators
+
 } // class String_Utils_Test

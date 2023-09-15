@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_17;
+namespace immonex\WordPressFreePluginCore\V1_8_20;
 
 /**
  * Mail utility methods.
@@ -120,7 +120,11 @@ class Mail_Utils {
 		if (
 			isset( $mail_data['template_data']['preset'] )
 			&& 'admin_info' === $mail_data['template_data']['preset']
-			&& ( ! empty( $mail_data['subject'] ) && '[' !== $mail_data['subject'][0] )
+			&& empty( $mail_data['template_data']['preset_flags']['org_subject'] )
+			&& (
+				! empty( $mail_data['subject'] )
+				&& '[' !== $mail_data['subject'][0]
+			)
 		) {
 			$mail_data['subject'] = wp_sprintf(
 				'[%s] %s',

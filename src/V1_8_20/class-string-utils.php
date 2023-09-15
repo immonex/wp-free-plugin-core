@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_1;
+namespace immonex\WordPressFreePluginCore\V1_8_20;
 
 /**
  * String related utility methods.
@@ -809,7 +809,7 @@ class String_Utils {
 			$plain
 		);
 
-		return trim( wp_strip_all_tags( $plain ) );
+		return trim( html_entity_decode( wp_strip_all_tags( $plain ), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' ) );
 	} // html_to_plain_text
 
 	/**
@@ -1017,5 +1017,28 @@ class String_Utils {
 
 		return self::slugify( strtolower( $filename ) );
 	} // get_plain_unzip_folder_name
+
+	/**
+	 * Unify the directory separators in a path and optionally add or remove
+	 * a trailing (back)slash.
+	 *
+	 * @since 1.8.20
+	 *
+	 * @param string $path            Source path.
+	 * @param int    $trailingslashit Add (1) or remove (-1) a trailing (back)slash (optional,
+	 *                                defaults to 0 = no change).
+	 * @param string $dirsep          Directory separator (optional, defaults to the system one).
+	 *
+	 * @return string Possibly modified path.
+	 */
+	public static function unify_dirsep( $path, $trailingslashit = 0, $dirsep = DIRECTORY_SEPARATOR ) {
+		if ( 1 === $trailingslashit ) {
+			$path = trailingslashit( $path );
+		} elseif ( -1 === $trailingslashit ) {
+			$path = untrailingslashit( $path );
+		}
+
+		return str_replace( array( '/', '\\' ), $dirsep, $path );
+	} // unify_dirsep
 
 } // String_Utils
