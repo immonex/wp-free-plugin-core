@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_20;
+namespace immonex\WordPressFreePluginCore\V1_8_21;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.8.20
+ * @version 1.8.21
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.8.20';
+	const CORE_VERSION = '1.8.21';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -1021,7 +1021,7 @@ abstract class Base {
 		}
 
 		if ( ! empty( $this->plugin_options['skin'] ) ) {
-			$lookup_basenames = array( 'index', 'extend', 'custom' );
+			$lookup_basenames = array( 'index', 'extend', 'custom', 'frontend', 'skin' );
 
 			foreach ( $lookup_basenames as $basename ) {
 				/**
