@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_21;
+namespace immonex\WordPressFreePluginCore\V1_8_24;
 
 /**
  * Local filesystem related utilities.
@@ -25,6 +25,8 @@ class Local_FS_Utils {
 	 *         'exclude'                     => [],             // Names of files and folders that should be omitted
 	 *         'apply_exclude_in_subfolders' => false,          // Consider folder exclude list in subfolders, too?
 	 *         'exclude_regex'               => '',             // ...will be generated automatically
+	 *         'mtime'                       => '',             // Filter by file modification time (e.g. ">2023-18-10" or "<1698924857")
+	 *         'filenname_ts_mode'           => 'primary',      // Mode for evaluating filename-based timestamps: "primary" (default) or "only" (see get_mtime())
 	 *         'max_depth'                   => 0,              // Maximum recursion level (0 = no recursion/subfolder processing)
 	 *         'skip_dotfiles'               => true,           // Exclude dotfiles from returned lists?
 	 *         'return_paths'                => false,          // Return results as path strings instead of objects?
@@ -41,6 +43,8 @@ class Local_FS_Utils {
 			'exclude'                     => [],
 			'apply_exclude_in_subfolders' => false,
 			'exclude_regex'               => '',
+			'mtime'                       => '',
+			'filename_ts_mode'            => 'primary',
 			'max_depth'                   => 0,
 			'skip_dotfiles'               => true,
 			'return_paths'                => false,
@@ -74,6 +78,20 @@ class Local_FS_Utils {
 				$params['exclude_regex'] = $this->get_exclude_regex( $exclude );
 			}
 
+			$compare_operator = false;
+			$compare_mtime    = false;
+			if (
+				is_string( $params['mtime'] )
+				&& strlen( $params['mtime'] ) > 5
+				&& in_array( $params['mtime'][0], array( '<', '>' ), true )
+			) {
+				$compare_operator = $params['mtime'][0];
+				$compare_mtime    = substr( $params['mtime'], 1 );
+				if ( ! is_numeric( $compare_mtime ) ) {
+					$compare_mtime = strtotime( $compare_mtime );
+				}
+			}
+
 			foreach ( $it as $path => $file_info ) {
 				$is_dir   = $file_info->isDir();
 				$filename = $file_info->getFilename();
@@ -94,6 +112,22 @@ class Local_FS_Utils {
 					&& ( ! $is_dir || ( 0 === $current_level || $params['apply_exclude_in_subfolders'] ) )
 				) {
 					continue;
+				}
+
+				if ( ! $is_dir && $compare_mtime ) {
+					$mtime = String_Utils::utc_to_local_time( $this->get_mtime( $file_info, $params['filename_ts_mode'] ) );
+
+					if ( false === $mtime ) {
+						continue;
+					}
+
+					if ( '<' === $compare_operator && $mtime >= $compare_mtime ) {
+						continue;
+					}
+
+					if ( '>' === $compare_operator && $mtime <= $compare_mtime ) {
+						continue;
+					}
 				}
 
 				if ( $is_dir ) {

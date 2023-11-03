@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_2;
+namespace immonex\WordPressFreePluginCore\V1_8_24;
 
 /**
  * String related utility methods.
@@ -828,7 +828,7 @@ class String_Utils {
 			$str = basename( $str );
 		}
 
-		if ( preg_match( '/^([0-9]{4})[-_ ]?([0-9]{2})[-_ ]?([0-9]{2})(([-_ ]?([0-9]{2})[-__: ]?([0-9]{2})[-_: ]?([0-9]{2})?))?([-_ ]|$)/', $str, $matches ) ) {
+		if ( preg_match( '/^([0-9]{4})[-_ ]?([0-9]{2})[-_ ]?([0-9]{2})(([-_ ]?([0-9]{2})[-__: ]?([0-9]{2})[-_: ]?([0-9]{2})?))?([-_ \.]|$)/', $str, $matches ) ) {
 			$y = $matches[1];
 			$m = $matches[2];
 			$d = $matches[3];
@@ -865,6 +865,33 @@ class String_Utils {
 
 		return false;
 	} // get_leading_timestamp
+
+	/**
+	 * Convert a UTC/GMT timestamp or date/time string to a local timestamp or date/time string.
+	 *
+	 * @since 1.8.23
+	 *
+	 * @param int|string $utc_time UTC timestamp or date/time string.
+	 * @param string     $format   Optional return date/time format string
+	 *                             (default: empty = return timestamp).
+	 *
+	 * @return int|string Local timestamp or date/time string.
+	 */
+	public static function utc_to_local_time( $utc_time, $format = '' ) {
+		$utc_datetime = date_create(
+			is_numeric( $utc_time ) ? "@{$utc_time}" : $utc_time,
+			new \DateTimeZone( 'UTC' )
+		);
+		if ( ! $utc_datetime ) {
+			return $utc_time;
+		}
+
+		if ( ! $format ) {
+			return strtotime( wp_date( 'Y-m-d H:i:s', $utc_datetime->getTimestamp() ) );
+		}
+
+		return $utc_datetime->setTimezone( wp_timezone() )->format( $format );
+	} // utc_to_local_time
 
 	/**
 	 * Replace certain characters by special codes (e.g. for use in shortcode attributes).

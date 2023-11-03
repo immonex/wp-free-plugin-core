@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_2;
+namespace immonex\WordPressFreePluginCore\V1_8_24;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.8.21
+ * @version 1.8.24
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.8.21';
+	const CORE_VERSION = '1.8.24';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -369,6 +369,7 @@ abstract class Base {
 			$this->plugin_main_file_rel   = $this->plugin_slug . '/' . $this->plugin_slug . '.php';
 			$this->plugin_options_name    = $plugin_slug . '_options';
 			$this->default_plugin_options = $this->plugin_options;
+			$this->is_addon_plugin        = defined( 'self::ADDON_NAME' ) && self::ADDON_NAME;
 
 			$this->plugin_infos = array(
 				'core_version'     => static::CORE_VERSION,
@@ -687,12 +688,16 @@ abstract class Base {
 		add_action( 'admin_init', array( $this, 'init_plugin_admin' ) );
 		add_action( 'admin_menu', array( $this, 'register_plugin_settings' ) );
 
-		// Exclude plugin JS/CSS from Autoptimize "optimizations".
+		/**
+		 * Exclude plugin JS/CSS from Autoptimize "optimizations".
+		 */
 		add_filter( 'option_autoptimize_js_exclude', array( $this, 'autoptimize_exclude' ), 10, 2 );
 		add_filter( 'option_autoptimize_css_exclude', array( $this, 'autoptimize_exclude' ), 10, 2 );
 
-		// Add filters for modifying the required user/role capability for
-		// accessing and updating plugin options.
+		/**
+		 * Add filters for modifying the required user/role capability for accessing
+		 * and updating plugin options.
+		 */
 		add_filter( "{$this->plugin_slug}_plugin_options_access_capability", array( $this, 'get_default_plugin_options_access_capability' ) );
 		add_filter( "option_page_capability_{$this->plugin_options_name}", array( $this, 'get_plugin_options_access_capability' ) );
 
@@ -700,7 +705,6 @@ abstract class Base {
 		$enable_separate_option_page = false;
 
 		if ( defined( get_called_class() . '::PARENT_PLUGIN_MAIN_CLASS' ) ) {
-			$this->is_addon_plugin         = true;
 			$this->is_parent_plugin_active = class_exists( get_called_class()::PARENT_PLUGIN_MAIN_CLASS );
 			$enable_option_page            = $this->is_parent_plugin_active;
 		}

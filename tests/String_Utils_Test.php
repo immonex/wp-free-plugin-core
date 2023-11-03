@@ -38,7 +38,23 @@ class String_Utils_Test extends WP_UnitTestCase {
 
 		$filename = '2299-10-08 01:23:24';
 		$this->assertFalse( ( "{$this->ns}\String_Utils" )::get_leading_timestamp( $filename ) );
+
+		$expected = strtotime( '2022-10-08 13:12' );
+		$filename = '20221008_1312_test.csv';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::get_leading_timestamp( $filename ) );
 	} // test_leading_timestamp
+
+	public function test_utc_to_local_time() {
+		$utc_time   = '2023-10-18 12:00:00';
+		$utc_ts     = 1697630400;
+		$local_time = get_date_from_gmt( $utc_time );
+		$local_ts   = strtotime( $local_time );
+
+		$this->assertEquals( $local_ts, ( "{$this->ns}\String_Utils" )::utc_to_local_time( $utc_time ) );
+		$this->assertEquals( $local_ts, ( "{$this->ns}\String_Utils" )::utc_to_local_time( $utc_ts ) );
+		$this->assertEquals( $local_time, ( "{$this->ns}\String_Utils" )::utc_to_local_time( $utc_time, 'Y-m-d H:i:s' ) );
+		$this->assertEquals( $local_time, ( "{$this->ns}\String_Utils" )::utc_to_local_time( $utc_ts, 'Y-m-d H:i:s' ) );
+	} // test_utc_to_local_time
 
 	public function test_encode_special_chars() {
 		$source   = 'foo [bar] \'baz\' "SNAFU"! test';
@@ -117,11 +133,11 @@ class String_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( 'filename.png', ( "{$this->ns}\String_Utils" )::get_plain_filename( 'filename-12-640x480-scaled.png', 'counter+size' ) );
 	} // test_get_plain_filename
 
-	function test_get_plain_unzip_folder_name() {
+	public function test_get_plain_unzip_folder_name() {
 		$this->assertEquals( 'filename-testarchive', ( "{$this->ns}\String_Utils" )::get_plain_unzip_folder_name( 'filename Test!archive.zip' ) );
 	} // get_plain_unzip_folder_name
 
-	function test_get_path_with_unified_directory_separators() {
+	public function test_get_path_with_unified_directory_separators() {
 		$this->assertEquals( '/path/to/dir', ( "{$this->ns}\String_Utils" )::unify_dirsep( '/path\to\dir', 0, '/' ) );
 		$this->assertEquals( '\\path\\to\\dir', ( "{$this->ns}\String_Utils" )::unify_dirsep( '\\path/to/dir', 0, '\\' ) );
 		$this->assertEquals( '/path/to/dir', ( "{$this->ns}\String_Utils" )::unify_dirsep( '/path\to\dir\\', -1, '/' ) );
@@ -130,5 +146,12 @@ class String_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( '\\path\\to\\dir\\', ( "{$this->ns}\String_Utils" )::unify_dirsep( '/path/to/dir', 1, '\\' ) );
 		$this->assertEquals( '\\path\\to\\dir\\', ( "{$this->ns}\String_Utils" )::unify_dirsep( '/path/to/dir/', 1, '\\' ) );
 	} // test_get_path_with_unified_directory_separators
+
+	public function test_smooth_round() {
+		$value = 1895000;
+
+		$this->assertEquals( 1900000, ( "{$this->ns}\String_Utils" )::smooth_round( $value ) );
+		$this->assertEquals( 1890000, ( "{$this->ns}\String_Utils" )::smooth_round( $value, true ) );
+	} // test_smooth_round
 
 } // class String_Utils_Test

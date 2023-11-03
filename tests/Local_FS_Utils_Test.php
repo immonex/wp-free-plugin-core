@@ -23,6 +23,7 @@ class Local_FS_Utils_Test extends WP_UnitTestCase {
 		$params = [
 			'file_extensions' => [ 'csV' ],
 			'return_paths'    => true,
+			'exclude'         => [ 'mtime_test' ],
 		];
 
 		$expected = [
@@ -54,7 +55,7 @@ class Local_FS_Utils_Test extends WP_UnitTestCase {
 		];
 		$this->assertEquals( $expected, $this->util->scan_dir( __DIR__ . '/data', $params ) );
 
-		$params['exclude']   = [ 'subfolder_1' ];
+		$params['exclude']   = [ 'mtime_test', 'subfolder_1' ];
 		$params['scope']     = 'files_and_folders';
 		$params['max_depth'] = 1;
 
@@ -144,6 +145,25 @@ class Local_FS_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $this->util->scan_dir( __DIR__ . '/data', $params ) );
 	} // test_get_regex_filtered_list
 
+	public function test_get_mtime_filtered_list() {
+		$params = ['return_paths' => true];
+
+		$params['mtime'] = '>2023-10-10';
+		$expected = [
+			__DIR__ . '/data/mtime_test/20231010_1726.txt',
+			__DIR__ . '/data/mtime_test/20231010_1800.txt',
+		];
+		$this->assertEquals( $expected, $this->util->scan_dir( __DIR__ . '/data/mtime_test', $params ) );
+
+		$params['mtime'] = '<1696946400'; // 2023-10-10 14:00:00 (UTC)
+
+		$expected = [
+			__DIR__ . '/data/mtime_test/20230930_1700.txt',
+			__DIR__ . '/data/mtime_test/20231002_1320.txt',
+		];
+		$this->assertEquals( $expected, $this->util->scan_dir( __DIR__ . '/data/mtime_test', $params ) );
+	} // test_get_mtime_filtered_list
+
 	public function test_get_folder_list() {
 		$params = [
 			'scope'        => 'folders',
@@ -151,6 +171,7 @@ class Local_FS_Utils_Test extends WP_UnitTestCase {
 		];
 
 		$expected = [
+			__DIR__ . '/data/mtime_test',
 			__DIR__ . '/data/subfolder_1',
 			__DIR__ . '/data/subfolder_2',
 			__DIR__ . '/data/subfolder_3',
@@ -161,6 +182,7 @@ class Local_FS_Utils_Test extends WP_UnitTestCase {
 		$params['max_depth'] = 1;
 
 		$expected = [
+			__DIR__ . '/data/mtime_test',
 			__DIR__ . '/data/subfolder_2',
 			__DIR__ . '/data/subfolder_2/subfolder_2_1',
 			__DIR__ . '/data/subfolder_3',

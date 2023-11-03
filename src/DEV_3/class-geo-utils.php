@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_21;
+namespace immonex\WordPressFreePluginCore\DEV_3;
 
 /**
  * Geocoding related utility methods.
@@ -87,20 +87,7 @@ class Geo_Utils {
 	 */
 	public static function geocode( $address, $return_type = 'compact', $use_providers = false, $keys = array(), $language = 'de', $countrycodes = false ) {
 		if ( $address ) {
-			if ( is_string( $use_providers ) ) {
-				$use_providers = array( $use_providers );
-			}
-
-			if ( $use_providers && is_array( $use_providers ) && count( $use_providers ) > 0 ) {
-				$providers = array();
-				foreach ( $use_providers as $provider ) {
-					if ( isset( self::$providers[ $provider ] ) ) {
-						$providers[ $provider ] = self::$providers[ $provider ];
-					}
-				}
-			} else {
-				$providers = self::$providers;
-			}
+			$providers = self::validate_providers( $use_providers );
 
 			if ( count( $providers ) > 0 ) {
 				if ( $countrycodes ) {
@@ -150,22 +137,18 @@ class Geo_Utils {
 	 *
 	 * @since 0.5.1
 	 *
-	 * @param string      $address Address for geocoding.
-	 * @param bool|string $use_provider Geocoding API to use (false = try one by one
-	 *     until a valid result is returned).
-	 * @param array       $keys Array of API keys (if required).
-	 * @param string      $language ISO-2 Language code for results (if supported, optional, default "de").
-	 * @param string|bool $countrycodes Comma separated list of ISO-2 country codes for limiting the geo query
+	 * @param string        $address Address for geocoding.
+	 * @param string[]|bool $use_providers Geocoding API to use in given order until a valid result is
+	 *     returned (false = use default provider list).
+	 * @param array         $keys Array of API keys (if required).
+	 * @param string        $language ISO-2 Language code for results (if supported, optional, default "de").
+	 * @param string|bool   $countrycodes Comma separated list of ISO-2 country codes for limiting the geo query
 	 *     ("germany_and_neighbors", "eu" or "europe" for respective default lists), false for no country limiting.
 	 *
 	 * @return string|bool Status information or false on retrieval error.
 	 */
-	public static function get_geocoding_status( $address = 'Platz der Republik 1, Berlin, Germany', $use_provider = false, $keys = array(), $language = 'de', $countrycodes = false ) {
-		if ( $use_provider && isset( self::$providers[ $use_provider ] ) ) {
-			$providers = array( $use_provider => self::$providers[ $use_provider ] );
-		} else {
-			$providers = self::$providers;
-		}
+	public static function get_geocoding_status( $address = 'Platz der Republik 1, Berlin, Germany', $use_providers = false, $keys = array(), $language = 'de', $countrycodes = false ) {
+		$providers = self::validate_providers( $use_providers );
 
 		if ( $countrycodes ) {
 			$countrycodes = self::parse_countrycodes( $countrycodes );
@@ -540,5 +523,35 @@ class Geo_Utils {
 
 		return $countrycodes;
 	} // parse_countrycodes
+
+	/**
+	 * Validate a given key or array of keys of geocoding providers to use for
+	 * a specific address.
+	 *
+	 * @since 1.8.22
+	 *
+	 * @param string|string[]|bool $use_providers Single provider key, array of keys
+	 *     or false to use all available providers one by one.
+	 *
+	 * @return string[] Array of valid geocoding provider keys.
+	 */
+	private static function validate_providers( $use_providers ) {
+		if ( empty( $use_providers ) ) {
+			return self::$providers;
+		}
+
+		if ( is_string( $use_providers ) ) {
+			$use_providers = array( $use_providers );
+		}
+
+		$providers = array();
+		foreach ( $use_providers as $provider ) {
+			if ( isset( self::$providers[ $provider ] ) ) {
+				$providers[ $provider ] = self::$providers[ $provider ];
+			}
+		}
+
+		return ! empty( $providers ) ? $providers : self::$providers;
+	} // validate_providers
 
 } // Geo_Utils
