@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_3;
+namespace immonex\WordPressFreePluginCore\DEV_4;
 
 /**
  * Mail utility methods.

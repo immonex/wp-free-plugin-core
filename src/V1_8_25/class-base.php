@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_24;
+namespace immonex\WordPressFreePluginCore\V1_8_25;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.8.24
+ * @version 1.8.25
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.8.24';
+	const CORE_VERSION = '1.8.25';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -1367,18 +1367,27 @@ abstract class Base {
 		$current_tab = $this->settings_helper->get_current_tab();
 		$tab_fields  = $this->settings_helper->get_tab_fields( $current_tab );
 
+		if (
+			count( $input ) === count( $this->plugin_options )
+			&& $current_tab
+			&& count( $input ) > count( $tab_fields )
+		) {
+			// Skip sanitizing full plugin options array if not submitted via settings page.
+			return $input;
+		}
+
 		if ( count( $tab_fields ) > 0 ) {
 			foreach ( $tab_fields as $name => $field ) {
 				$exists        = isset( $input[ $name ] );
-				$float_field   = in_array( $field['type'], [ 'float', 'lat', 'lon' ], true );
-				$int_field     = 'int' === $field['type'];
-				$numeric_field = $float_field || $int_field;
+				$float_field   = $exists && in_array( $field['type'], [ 'float', 'lat', 'lon' ], true );
+				$int_field     = $exists && 'int' === $field['type'];
+				$numeric_field = $exists && ( $float_field || $int_field );
 
-				if ( 'lat' === $field['type'] ) {
+				if ( $exists && 'lat' === $field['type'] ) {
 					$field['min'] = -90;
 					$field['max'] = 90;
 				}
-				if ( 'lon' === $field['type'] ) {
+				if ( $exists && 'lon' === $field['type'] ) {
 					$field['min'] = -180;
 					$field['max'] = 180;
 				}
@@ -1519,7 +1528,7 @@ abstract class Base {
 						}
 						break;
 					case 'checkbox':
-						$valid[ $name ] = $exists;
+						$valid[ $name ] = $exists && $value;
 						break;
 					case 'checkbox_group':
 						if ( $exists ) {
