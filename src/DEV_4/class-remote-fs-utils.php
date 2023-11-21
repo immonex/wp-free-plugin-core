@@ -80,7 +80,7 @@ class Remote_FS_Utils {
 		}
 
 		$headers = get_headers( $url );
-		if ( is_array( $headers ) || count( $headers ) > 0 ) {
+		if ( is_array( $headers ) && count( $headers ) > 0 ) {
 			$current_http_status_code = '';
 
 			foreach ( $headers as $line ) {

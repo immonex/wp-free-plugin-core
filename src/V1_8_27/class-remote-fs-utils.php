@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_25;
+namespace immonex\WordPressFreePluginCore\V1_8_27;
 
 /**
  * Remote filesystems related utilities.
