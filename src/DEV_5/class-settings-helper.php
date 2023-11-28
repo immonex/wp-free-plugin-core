@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_4;
+namespace immonex\WordPressFreePluginCore\DEV_5;
 
 /**
  * Helper class for dealing with the WordPress Settings API.
@@ -346,11 +346,11 @@ class Settings_Helper {
 			$section_count = 0;
 
 			$sections_html = str_replace(
-				array( '|X|', '|Y|' ),
+				array( '|CRLF|', '|LF|' ),
 				// Take mixed line breaks into account (e.g. due to textarea contents or in Windows environments).
 				array( "\r\n", "\n" ),
 				preg_replace_callback(
-					'/\<h2\>.*?\<\/table\>/',
+					'/\<h2\>.*?(\<\/table\>|(?=\<h2))/',
 					function ( $matches ) use ( &$section_count, $current_section_tab ) {
 						$section_count++;
 						$section_id = "tab-section-{$section_count}";
@@ -363,7 +363,7 @@ class Settings_Helper {
 					},
 					str_replace(
 						array( "\r\n", "\n" ),
-						array( '|X|', '|Y|' ),
+						array( '|CRLF|', '|LF|' ),
 						$sections_html
 					)
 				)
