@@ -4,11 +4,11 @@
 	padding: 0;
 	font-size: 1.3em;
 }
-.immonex-plugin-options h3.desc-hl,
-.immonex-plugin-options h4.desc-hl {
+.immonex-plugin-options .immonex-plugin-options-inside h3.desc-hl,
+.immonex-plugin-options .immonex-plugin-options-inside h4.desc-hl {
 	margin: .5em 0 .25em 0;
-	font-weight: 500;
-	color: #FFD8BF;
+	font-weight: 600;
+	color: #E9E9E8;
 }
 .immonex-plugin-options h3.desc-hl {
 	font-size: 1.1em;
@@ -120,7 +120,8 @@
 }
 
 .immonex-plugin-options .tab-description,
-.immonex-plugin-options .section-description {
+.immonex-plugin-options .section-description,
+.immonex-plugin-options .section-description + .immonex-plugin-options__ext-description {
 	padding: 16px;
 }
 
@@ -135,30 +136,50 @@
 	font-size: 14px;
 }
 
-.immonex-plugin-options .section-description {
+.immonex-plugin-options .section-description,
+.immonex-plugin-options .section-description + .immonex-plugin-options__ext-description {
 	margin: 1em 0;
 	color: #E0E0E0;
 	border-left: 4px solid #E77906;
 	background-color: #434341;
 }
 
-.immonex-plugin-options .section-description a {
+.immonex-plugin-options .section-description.has-ext-contents {
+	margin-bottom: 0;
+}
+
+.immonex-plugin-options .section-description a,
+.immonex-plugin-options .section-description + .immonex-plugin-options__ext-description a {
 	color: #7DC1E8;
 }
 
-.immonex-plugin-options div.section-description code {
+.immonex-plugin-options div.section-description code,
+.immonex-plugin-options div.section-description + .immonex-plugin-options__ext-description code {
 	color: #434341;
 	background-color: #E0E0E0;
 	border-radius: 3px;
 }
 
+.immonex-plugin-options .tab-description > p,
+.immonex-plugin-options .section-description > p,
+.immonex-plugin-options__ext-description-content > p {
+	max-width: 1200px;
+}
+
 .immonex-plugin-options .tab-description p:first-child,
-.immonex-plugin-options .section-description p:first-child {
+.immonex-plugin-options .section-description p:first-child,
+.immonex-plugin-options .section-description + .immonex-plugin-options__ext-description p:first-child {
 	margin-top: 0;
 }
 .immonex-plugin-options .tab-description p:last-child,
-.immonex-plugin-options .section-description p:last-child {
+.immonex-plugin-options .section-description p:last-child,
+.immonex-plugin-options .section-description + .immonex-plugin-options__ext-description p:last-child {
 	margin-bottom: 0;
+}
+
+.immonex-plugin-options .section-description + .immonex-plugin-options__ext-description {
+	margin-top: 0;
+	background: linear-gradient(#434341, rgba(91, 91, 89, 1) 32px);
 }
 
 .immonex-plugin-options__ext-description-hide,
@@ -348,6 +369,8 @@
 	}
 }
 
+/* Wiget Configuration Forms */
+
 .editor-styles-wrapper .immonex-be-widget-form p,
 .wp-block-legacy-widget__edit-form .widget-inside .immonex-be-widget-form label {
 	line-height: 1.1em;
@@ -425,6 +448,39 @@
 .immonex-plugin-options__infobox ul {
 	margin-left: 16px;
 	list-style-type: disc;
+}
+
+/* Quick('n'Dirty) Source Code Formatting */
+
+pre code.immonex-qformat-source {
+	display: inline-block;
+	padding: 1em;
+	color: #E0E0E0;
+	border-radius: 3px;
+	background-color: #F7F7F7;
+	white-space: break-spaces;
+}
+
+pre code.immonex-qformat-source span.html-tag {
+	color: #1A32E6;
+}
+
+pre code.immonex-qformat-source span.comment {
+	color: #A0A0A0;
+	font-style: italic;
+}
+
+pre code.immonex-qformat-source span.twig-var,
+pre code.immonex-qformat-source span.twig-control,
+.immonex-plugin-options div.section-description code.immonex-qformat-source.mandatory,
+.immonex-plugin-options div.section-description + .immonex-plugin-options__ext-description code.immonex-qformat-source.mandatory {
+	font-weight: bold;
+	color: #C40A0A;
+}
+
+pre code.immonex-qformat-source span.twig-var > span,
+pre code.immonex-qformat-source span.twig-control > span {
+	font-weight: bold;
 }
 
 /* Doc Link */

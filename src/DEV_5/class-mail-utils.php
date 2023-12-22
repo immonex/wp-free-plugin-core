@@ -352,27 +352,31 @@ class Mail_Utils {
 			'logo_alt'      => 'Logo',
 			'logo_link_url' => '',
 			'layout'        => array(
-				'align'            => 'center',
-				'max_width'        => '640px',
-				'margin_top'       => '24px',
-				'margin_bottom'    => '24px',
-				'border_radius'    => '8px',
-				'padding_px'       => '14',
-				'logo_position'    => 'footer_right',
-				'max_logo_width'   => '160px',
-				'max_logo_height'  => '80px',
-				'header_text_size' => '16px',
-				'header_text_size' => '16px',
-				'footer_text_size' => '14px',
+				'align'              => 'center',
+				'max_width'          => '640px',
+				'margin_top'         => '24px',
+				'margin_bottom'      => '24px',
+				'border_radius'      => '8px',
+				'padding_px'         => '14',
+				'logo_position'      => 'footer_right',
+				'max_logo_width'     => '160px',
+				'max_logo_height'    => '80px',
+				'header_text_size'   => '14px',
+				'header_line_height' => '1.3',
+				'body_text_size'     => '14px',
+				'body_line_height'   => '1.3',
+				'body_border_radius' => '8px',
+				'footer_text_size'   => '14px',
+				'footer_line_height' => '14px',
 			),
 			'colors'        => array(
 				'text'        => '#303030',
 				'text_header' => '#707070',
 				'text_footer' => '#707070',
 				'bg'          => '#EEE',
-				'bg_header'   => '#FFF',
+				'bg_header'   => '#EEE',
 				'bg_body'     => '#FFF',
-				'bg_footer'   => '#FFF',
+				'bg_footer'   => '#EEE',
 			),
 		);
 
@@ -413,6 +417,38 @@ class Mail_Utils {
 			$this->plugin_slug . '_html_mail_template_data',
 			array_merge( $defaults, $org_data )
 		);
+
+		if (
+			strlen( $data['layout']['body_border_radius'] ) <= 3
+			&& (
+				$data['colors']['bg_body'] === $data['colors']['bg_header']
+				|| $data['colors']['bg_body'] === $data['colors']['bg_footer']
+			)
+		) {
+			$data['layout']['body_border_radius'] = '0';
+		}
+
+		if (
+			! $data['footer']
+			&& $data['colors']['bg_body'] !== $data['colors']['bg_footer']
+		) {
+			$data['layout']['footer_padding_top'] = '16px';
+		} else {
+			$data['layout']['footer_padding_top'] = '0';
+		}
+
+		if (
+			! $data['footer']
+			&& 'footer_center' === $data['layout']['logo_position']
+			&& (
+				$data['footer_text']
+				|| $data['colors']['bg_body'] !== $data['colors']['bg_footer']
+			)
+		) {
+			$data['layout']['footer_logo_padding_top'] = '16px';
+		} else {
+			$data['layout']['footer_logo_padding_top'] = '0';
+		}
 
 		$data['body'] = $body;
 

@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_25;
+namespace immonex\WordPressFreePluginCore\V1_9_0;
 
 /**
  * Geocoding related utility methods.
@@ -89,7 +89,7 @@ class Geo_Utils {
 		if ( $address ) {
 			$providers = self::validate_providers( $use_providers );
 
-			if ( count( $providers ) > 0 ) {
+			if ( is_array( $providers ) && count( $providers ) > 0 ) {
 				if ( $countrycodes ) {
 					$countrycodes = self::parse_countrycodes( $countrycodes );
 				}
@@ -226,10 +226,7 @@ class Geo_Utils {
 	 * @return string|bool Geo data or false on error.
 	 */
 	private static function get_result_nominatim( $response, $return_type ) {
-		if (
-			is_array( $response ) &&
-			count( $response ) > 0
-		) {
+		if ( is_array( $response ) && count( $response ) > 0 ) {
 			foreach ( $response as $geo_object ) {
 				if (
 					isset( $geo_object->lat ) &&
@@ -302,8 +299,9 @@ class Geo_Utils {
 	 */
 	private static function get_result_photon( $response, $return_type ) {
 		if (
-			isset( $response->features ) &&
-			count( $response->features ) > 0
+			isset( $response->features )
+			&& is_array( $response->features )
+			&& count( $response->features ) > 0
 		) {
 			foreach ( $response->features as $geo_object ) {
 				if ( isset( $geo_object->geometry->coordinates ) ) {

@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_25;
+namespace immonex\WordPressFreePluginCore\V1_9_0;
 
 /**
  * Utility methods for a very simple kind of templating.
@@ -65,6 +65,7 @@ class Template_Utils {
 	 */
 	public function render_twig_template( $filename, $template_data = array() ) {
 		$template_file = false;
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
 
 		if (
 			false !== strpos( $filename, '/' )
@@ -102,7 +103,7 @@ class Template_Utils {
 	 * @return string Parsed template content.
 	 */
 	public function render_twig_template_string( $template, $template_data = array() ) {
-		if ( ! trim( $template ) ) {
+		if ( ! is_string( $template ) && ! trim( $template ) ) {
 			return '';
 		}
 
@@ -112,6 +113,8 @@ class Template_Utils {
 		}
 
 		$twig->getLoader()->setTemplate( 'template', $template );
+
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
 
 		return $twig->render( 'template', $template_data );
 	} // render_twig_template_string
@@ -132,6 +135,8 @@ class Template_Utils {
 		if ( ! $template_file ) {
 			return false;
 		}
+
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
 
 		// Alternative variable name for compatibility with legacy templates.
 		$template_vars = $template_data;
@@ -163,7 +168,9 @@ class Template_Utils {
 			return false;
 		}
 
-		if ( count( $template_data ) > 0 ) {
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
+
+		if ( is_array( $template_data ) && count( $template_data ) > 0 ) {
 			foreach ( $template_data as $var_name => $value ) {
 				$template = str_replace( "[$var_name]", $value, $template );
 			}
@@ -245,8 +252,9 @@ class Template_Utils {
 		$template_file = false;
 
 		if (
-			'override' === $add_folder_mode &&
-			count( $add_folders ) > 0
+			'override' === $add_folder_mode
+			&& is_array( $add_folders )
+			&& count( $add_folders ) > 0
 		) {
 			$search_folders = $add_folders;
 		} else {
@@ -256,7 +264,8 @@ class Template_Utils {
 		$search_folders = array_unique( $search_folders );
 
 		if (
-			count( $add_folders ) > 0
+			is_array( $add_folders )
+			&& count( $add_folders ) > 0
 			&& 'override' !== $add_folder_mode
 		) {
 			if ( 'before' === $add_folder_mode ) {
@@ -417,6 +426,8 @@ class Template_Utils {
 	 * @return string Insertable attribute string.
 	 */
 	public function get_attr_from_template_var( $template_data, $var, $attr_name ) {
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
+
 		$value = $this->get_template_var( $template_data, $var );
 		return $value ? wp_sprintf( ' %s="%s"', esc_html( $attr_name ), esc_html( $value ) ) : '';
 	} // get_attr_from_template_var
@@ -433,6 +444,8 @@ class Template_Utils {
 	 * @return string|bool Variable value or false if nonexistent.
 	 */
 	public function get_template_var( $template_data, $var ) {
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
+
 		if ( is_array( $var ) ) {
 			if ( 0 === count( $var ) ) {
 				return false;
@@ -472,7 +485,7 @@ class Template_Utils {
 		foreach ( $template_folders as $folder ) {
 			$temp_folders = glob( trailingslashit( "$folder/*" ), GLOB_ONLYDIR );
 
-			if ( count( $temp_folders ) > 0 ) {
+			if ( is_array( $temp_folders ) && count( $temp_folders ) > 0 ) {
 				foreach ( $temp_folders as $temp_folder ) {
 					if ( ! in_array( basename( $temp_folder ), self::INVALID_SKIN_FOLDER_NAMES, true ) ) {
 						$folders[ basename( $temp_folder ) ] = $temp_folder;
@@ -482,7 +495,7 @@ class Template_Utils {
 		}
 
 		$named_folders = array();
-		if ( count( $folders ) > 0 ) {
+		if ( is_array( $folders ) && count( $folders ) > 0 ) {
 			foreach ( $folders as $name => $path ) {
 				$index_file = $this->locate_template_file( 'index.php', array(), 'before', $name );
 
@@ -565,7 +578,7 @@ class Template_Utils {
 		$all_pages = get_pages( $args );
 		$pages     = array();
 
-		if ( count( $all_pages ) > 0 ) {
+		if ( is_array( $all_pages ) && count( $all_pages ) > 0 ) {
 			foreach ( $all_pages as $page ) {
 				$pages[ $page->ID ] = $page->post_title;
 			}
@@ -573,6 +586,33 @@ class Template_Utils {
 
 		return $pages;
 	} // get_page_list
+
+	/**
+	 * Add some defaults to the array of variables to be replaced during
+	 * template rendering (filter callback).
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param mixed[] $template_data Template variables (key-value array).
+	 * @param string  $plugin_slug   Related plugin slug.
+	 *
+	 * @return mixed[] Extended template data array.
+	 */
+	public function add_default_template_data( $template_data, $plugin_slug ) {
+		if ( ! is_array( $template_data ) ) {
+			$template_data = array();
+		}
+
+		$defaults = array(
+			'site_title' => get_bloginfo( 'name' ),
+			'site_url'   => home_url(),
+		);
+
+		return array_merge(
+			$defaults,
+			$template_data
+		);
+	} // add_default_template_data
 
 	/**
 	 * Create and return a Twig Environment instance.

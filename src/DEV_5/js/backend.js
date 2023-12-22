@@ -16,14 +16,16 @@ immonex[iwpfpc_subns] = immonex[iwpfpc_subns] || ( function( $ ) {
 	/**
 	 * Set/Show the currently active section tab in a plugin options page.
 	 */
-	const set_active_section_tab = function() {
-		const new_section_tab = this.id.match( /[0-9]+$/ )[0]
+	const set_active_section_tab = function( new_section_tab_id = null ) {
+		const new_section_tab = typeof new_section_tab_id === 'number' && new_section_tab_id
+			? new_section_tab_id :
+			this.id.match( /[0-9]+$/ )[0]
 
-		$( '.nav-tab-section' ).removeClass( 'nav-tab-active' );
-		$( '.tabbed-section' ).removeClass( 'is-active' );
+		$( '.nav-tab-section' ).removeClass( 'nav-tab-active' )
+		$( '.tabbed-section' ).removeClass( 'is-active' )
 
-		$( '#section-nav-tab-' + new_section_tab ).addClass( 'nav-tab-active' );
-		$( '#tab-section-' + new_section_tab ).addClass( 'is-active' );
+		$( '#section-nav-tab-' + new_section_tab ).addClass( 'nav-tab-active' )
+		$( '#tab-section-' + new_section_tab ).addClass( 'is-active' )
 
 		let location = window.location.href
 		if (location.indexOf('section_tab') !== -1) {
@@ -31,7 +33,7 @@ immonex[iwpfpc_subns] = immonex[iwpfpc_subns] || ( function( $ ) {
 		} else {
 			location += '&section_tab=' + new_section_tab
 		}
-		window.history.replaceState(null, '', location);
+		window.history.replaceState(null, '', location)
 
 		const refs = document.getElementsByName( "_wp_http_referer" )
 
@@ -155,7 +157,7 @@ immonex[iwpfpc_subns] = immonex[iwpfpc_subns] || ( function( $ ) {
 		} )
 
 		$( "a.add_media" ).on( "click", function() {
-			wp.media.model.settings.post.id = wp_media_post_id;
+			wp.media.model.settings.post.id = wp_media_post_id
 		} )
 	} // register_media_select_cb
 
@@ -198,7 +200,7 @@ immonex[iwpfpc_subns] = immonex[iwpfpc_subns] || ( function( $ ) {
 			} )
 
 			$( ".immonex-plugin-options.immonex-plugin-core-" + core_version_slug + " .nav-tab.nav-tab-section" ).each( function() {
-				if ( ! $._data( this, "events" ) ) {
+				if ( $._data( this, "events" ) ) {
 					// Remove previously set event listeners (possibly by an older core version).
 					$( this ).off( "click" )
 				}

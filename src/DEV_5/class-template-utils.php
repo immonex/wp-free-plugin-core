@@ -65,6 +65,7 @@ class Template_Utils {
 	 */
 	public function render_twig_template( $filename, $template_data = array() ) {
 		$template_file = false;
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
 
 		if (
 			false !== strpos( $filename, '/' )
@@ -102,7 +103,7 @@ class Template_Utils {
 	 * @return string Parsed template content.
 	 */
 	public function render_twig_template_string( $template, $template_data = array() ) {
-		if ( ! trim( $template ) ) {
+		if ( ! is_string( $template ) && ! trim( $template ) ) {
 			return '';
 		}
 
@@ -112,6 +113,8 @@ class Template_Utils {
 		}
 
 		$twig->getLoader()->setTemplate( 'template', $template );
+
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
 
 		return $twig->render( 'template', $template_data );
 	} // render_twig_template_string
@@ -132,6 +135,8 @@ class Template_Utils {
 		if ( ! $template_file ) {
 			return false;
 		}
+
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
 
 		// Alternative variable name for compatibility with legacy templates.
 		$template_vars = $template_data;
@@ -162,6 +167,8 @@ class Template_Utils {
 		if ( ! $template ) {
 			return false;
 		}
+
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
 
 		if ( is_array( $template_data ) && count( $template_data ) > 0 ) {
 			foreach ( $template_data as $var_name => $value ) {
@@ -419,6 +426,8 @@ class Template_Utils {
 	 * @return string Insertable attribute string.
 	 */
 	public function get_attr_from_template_var( $template_data, $var, $attr_name ) {
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
+
 		$value = $this->get_template_var( $template_data, $var );
 		return $value ? wp_sprintf( ' %s="%s"', esc_html( $attr_name ), esc_html( $value ) ) : '';
 	} // get_attr_from_template_var
@@ -435,6 +444,8 @@ class Template_Utils {
 	 * @return string|bool Variable value or false if nonexistent.
 	 */
 	public function get_template_var( $template_data, $var ) {
+		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
+
 		if ( is_array( $var ) ) {
 			if ( 0 === count( $var ) ) {
 				return false;
@@ -575,6 +586,33 @@ class Template_Utils {
 
 		return $pages;
 	} // get_page_list
+
+	/**
+	 * Add some defaults to the array of variables to be replaced during
+	 * template rendering (filter callback).
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param mixed[] $template_data Template variables (key-value array).
+	 * @param string  $plugin_slug   Related plugin slug.
+	 *
+	 * @return mixed[] Extended template data array.
+	 */
+	public function add_default_template_data( $template_data, $plugin_slug ) {
+		if ( ! is_array( $template_data ) ) {
+			$template_data = array();
+		}
+
+		$defaults = array(
+			'site_title' => get_bloginfo( 'name' ),
+			'site_url'   => home_url(),
+		);
+
+		return array_merge(
+			$defaults,
+			$template_data
+		);
+	} // add_default_template_data
 
 	/**
 	 * Create and return a Twig Environment instance.

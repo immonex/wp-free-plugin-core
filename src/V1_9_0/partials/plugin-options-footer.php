@@ -28,7 +28,7 @@ $iwpfpc_inveris_plugin_logo_url = plugins_url(
 	<div class="options-page-footer">
 		<div>
 			<?php
-			if ( ! empty( $iwpfpc_plugin_infos['footer'] ) ) {
+			if ( is_array( $iwpfpc_plugin_infos['footer'] ) && ! empty( $iwpfpc_plugin_infos['footer'] ) ) {
 				foreach ( $iwpfpc_plugin_infos['footer'] as $iwpfpc_i => $iwpfpc_info ) {
 					echo $iwpfpc_info;
 					if ( $iwpfpc_i < count( $iwpfpc_plugin_infos['footer'] ) - 1 ) {

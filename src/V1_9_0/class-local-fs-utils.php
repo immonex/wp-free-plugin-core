@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_25;
+namespace immonex\WordPressFreePluginCore\V1_9_0;
 
 /**
  * Local filesystem related utilities.
@@ -170,6 +170,7 @@ class Local_FS_Utils {
 
 		if (
 			0 === $current_level
+			&& is_array( $files )
 			&& count( $files ) > 0
 			&& $params['return_paths']
 		) {

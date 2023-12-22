@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_25;
+namespace immonex\WordPressFreePluginCore\V1_9_0;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.8.25
+ * @version 1.9.0
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.8.25';
+	const CORE_VERSION = '1.9.0';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -372,14 +372,15 @@ abstract class Base {
 			$this->is_addon_plugin        = defined( 'self::ADDON_NAME' ) && self::ADDON_NAME;
 
 			$this->plugin_infos = array(
-				'core_version'     => static::CORE_VERSION,
-				'plugin_main_file' => $this->plugin_main_file,
-				'name'             => defined( 'static::PLUGIN_NAME' ) ? static::PLUGIN_NAME : '',
-				'logo_link_url'    => defined( 'static::PLUGIN_HOME_URL' ) ? static::PLUGIN_HOME_URL : '',
-				'prefix'           => defined( 'static::PLUGIN_PREFIX' ) ? static::PLUGIN_PREFIX : '',
-				'has_free_license' => ! defined( 'static::FREE_LICENSE' ) || static::FREE_LICENSE,
-				'settings_page'    => '',
-				'footer'           => array(),
+				'core_version'        => static::CORE_VERSION,
+				'plugin_main_file'    => $this->plugin_main_file,
+				'name'                => defined( 'static::PLUGIN_NAME' ) ? static::PLUGIN_NAME : '',
+				'logo_link_url'       => defined( 'static::PLUGIN_HOME_URL' ) ? static::PLUGIN_HOME_URL : '',
+				'prefix'              => defined( 'static::PLUGIN_PREFIX' ) ? static::PLUGIN_PREFIX : '',
+				'has_free_license'    => ! defined( 'static::FREE_LICENSE' ) || static::FREE_LICENSE,
+				'settings_page'       => '',
+				'footer'              => array(),
+				'translations_loaded' => $this->translations_loaded,
 			);
 		} else {
 			throw new \Exception( 'inveris WP Free Plugin Core: Plugin slug (= directory name) not provided.' );
@@ -959,6 +960,8 @@ abstract class Base {
 			$this->utils = $this->core_utils;
 		}
 
+		add_filter( 'immonex_core_template_data', array( $this->template_utils, 'add_default_template_data' ), 90, 2 );
+
 		$this->utils_init_done = true;
 	} // init_utils
 
@@ -1368,7 +1371,8 @@ abstract class Base {
 		$tab_fields  = $this->settings_helper->get_tab_fields( $current_tab );
 
 		if (
-			count( $input ) === count( $this->plugin_options )
+			is_array( $input )
+			&& count( $input ) === count( $this->plugin_options )
 			&& $current_tab
 			&& count( $input ) > count( $tab_fields )
 		) {
@@ -1376,8 +1380,11 @@ abstract class Base {
 			return $input;
 		}
 
-		if ( count( $tab_fields ) > 0 ) {
+		if ( is_array( $tab_fields ) && count( $tab_fields ) > 0 ) {
 			foreach ( $tab_fields as $name => $field ) {
+				$show_mandatory_contents_notice = false;
+				$show_generic_required_error    = false;
+
 				$exists        = isset( $input[ $name ] );
 				$float_field   = $exists && in_array( $field['type'], [ 'float', 'lat', 'lon' ], true );
 				$int_field     = $exists && 'int' === $field['type'];
@@ -1461,7 +1468,7 @@ abstract class Base {
 							// translators: %1$s = field label/name, %s2$s = min. value %3$s = max. value, %4$s = "or 0".
 							__( '%1$s: Please enter a value between %2$s and %3$s%4$s.', 'immonex-wp-free-plugin-core' ),
 							! empty( $field['label'] ) ? $field['label'] : $field['name'],
-							! isset( $field['min'] ) ? $field['min'] : __( 'unlimited', 'immonex-wp-free-plugin-core' ),
+							! empty( $field['min'] ) ? $field['min'] : __( 'unlimited', 'immonex-wp-free-plugin-core' ),
 							$field['max'],
 							$field['allow_zero'] ? ' ' . __( 'or 0', 'immonex-wp-free-plugin-core' ) : ''
 						)
@@ -1538,12 +1545,33 @@ abstract class Base {
 						}
 						break;
 					case 'wysiwyg':
-						$valid[ $name ] = wp_kses_post( trim( $value ) );
+						$value = wp_kses_post( trim( $value ) );
+
+						if ( ! empty( $field['add_if_missing'] ) ) {
+							$source = $value;
+							$value  = $this->string_utils->add_text_if_missing( $value, $field['add_if_missing'], PHP_EOL );
+
+							if ( $value !== $source ) {
+								$show_mandatory_contents_notice = true;
+							}
+						}
+
+						$valid[ $name ] = $value;
 						break;
 					case 'textarea':
 						if ( empty( $field['no_sanitize'] ) ) {
 							$value = sanitize_textarea_field( $value );
 						}
+
+						if ( ! empty( $field['add_if_missing'] ) ) {
+							$source = $value;
+							$value  = $this->string_utils->add_text_if_missing( $value, $field['add_if_missing'], PHP_EOL );
+
+							if ( $value !== $source ) {
+								$show_mandatory_contents_notice = true;
+							}
+						}
+
 						if ( $field['required'] && ! $value ) {
 							$show_generic_required_error = true;
 							break;
@@ -1584,7 +1612,7 @@ abstract class Base {
 						$valid_addresses = array();
 						$invalid_cnt     = 0;
 
-						if ( count( $email_addresses ) ) {
+						if ( is_array( $email_addresses ) && count( $email_addresses ) ) {
 							foreach ( $email_addresses as $email ) {
 								$email = empty( $field['no_sanitize'] ) ?
 									sanitize_email( trim( $email ) ) :
@@ -1647,12 +1675,34 @@ abstract class Base {
 						if ( empty( $field['no_sanitize'] ) ) {
 							$value = sanitize_text_field( $value );
 						}
+
+						if ( ! empty( $field['add_if_missing'] ) ) {
+							$source = $value;
+							$value  = $this->string_utils->add_text_if_missing( $value, $field['add_if_missing'] );
+
+							if ( $value !== $source ) {
+								$show_mandatory_contents_notice = true;
+							}
+						}
+
 						if ( $field['required'] && ! $value ) {
 							$show_generic_required_error = true;
 							break;
 						}
 
 						$valid[ $name ] = $value;
+				}
+
+				if ( $show_mandatory_contents_notice ) {
+					add_settings_error(
+						$field['id'],
+						$field['id'] . '_value_error',
+						wp_sprintf(
+							// translators: %s = field label/name.
+							__( '%s: Mandatory contents have been added.', 'immonex-wp-free-plugin-core' ),
+							! empty( $field['label'] ) ? $field['label'] : $field['name']
+						)
+					);
 				}
 
 				if ( $show_generic_required_error ) {
@@ -1752,8 +1802,9 @@ abstract class Base {
 		}
 
 		if (
-			defined( 'static::PLUGIN_DOC_URLS' ) &&
-			count( static::PLUGIN_DOC_URLS ) > 0
+			defined( 'static::PLUGIN_DOC_URLS' )
+			&& is_array( static::PLUGIN_DOC_URLS )
+			&& count( static::PLUGIN_DOC_URLS ) > 0
 		) {
 			$infos[] = $this->get_language_link(
 				static::PLUGIN_DOC_URLS,
@@ -1762,8 +1813,9 @@ abstract class Base {
 		}
 
 		if (
-			defined( 'static::PLUGIN_SUPPORT_URLS' ) &&
-			count( static::PLUGIN_SUPPORT_URLS ) > 0
+			defined( 'static::PLUGIN_SUPPORT_URLS' )
+			&& is_array( static::PLUGIN_SUPPORT_URLS )
+			&& count( static::PLUGIN_SUPPORT_URLS ) > 0
 		) {
 			$infos[] = $this->get_language_link(
 				static::PLUGIN_SUPPORT_URLS,
@@ -1772,8 +1824,9 @@ abstract class Base {
 		}
 
 		if (
-			defined( 'static::PLUGIN_DEV_URLS' ) &&
-			count( static::PLUGIN_DEV_URLS ) > 0
+			defined( 'static::PLUGIN_DEV_URLS' )
+			&& is_array( static::PLUGIN_DEV_URLS )
+			&& count( static::PLUGIN_DEV_URLS ) > 0
 		) {
 			$infos[] = $this->get_language_link(
 				static::PLUGIN_DEV_URLS,
@@ -2002,7 +2055,8 @@ abstract class Base {
 			}
 		}
 
-		$this->translations_loaded = true;
+		$this->translations_loaded                 = true;
+		$this->plugin_infos['translations_loaded'] = true;
 	} // load_translations
 
 	/**

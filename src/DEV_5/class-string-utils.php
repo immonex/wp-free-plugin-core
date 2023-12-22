@@ -743,73 +743,92 @@ class String_Utils {
 	} // mb_sub_str
 
 	/**
-	 * Simple HTML to plain text conversion.
+	 * Simple HTML to plain text conversion using the Html2Text library.
+	 *
+	 * @see https://github.com/mtibben/html2text
 	 *
 	 * @since 1.3.5
 	 *
 	 * @param string      $html        HTML string.
 	 * @param bool|string $list_bullet List item bullet character (optional; defaults
-	 *                                 to false for no bullet points; true for "-" or
-	 *                                 an arbitrary other character as alternative.
+	 *                                 to an empty string for no bullet points; true
+	 *                                 for "-" or an arbitrary other character as
+	 *                                 alternative; false for the Html2Text default
+	 *                                 character (*) and indentation.
+	 * @param mixed[]     $options     Html2Text options (optional) + add_colon for adding
+	 *                                 colons to DT titles if missing (default: true).
 	 *
 	 * @return string Plain text version.
 	 */
-	public static function html_to_plain_text( $html, $list_bullet = false ) {
+	public static function html_to_plain_text( $html, $list_bullet = '', $options = array() ) {
+		$options = array_merge(
+			array( 'add_colon' => true ),
+			$options
+		);
+
 		$plain = trim( stripslashes( $html ) );
 		if ( false === strpos( $plain, '<' ) ) {
 			// Return stripslashed/decoded original content if it doesn't contain any HTML tags.
 			return html_entity_decode( $plain, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' );
 		}
 
-		// Convert links to plain text (link text + URL).
-		$plain = self::convert_link_tags_to_plain_text( $plain );
-
-		// Extract alt and title attributes of IMG tags.
-		$plain = self::convert_img_tag_alt_to_plain_text( $plain, '<div>$1</div>' );
-
-		// Convert BR, DIV and H Tags.
-		$plain = preg_replace(
-			array( '/<br([ \/]+)?>/i', '/<(div|h1|h2|h3|h4|h5|h6)[^>]*>(.*?)<\/[a-z0-9]+>/i' ),
-			array( '{BR}', '<p>$2</p>' ),
-			$plain
-		);
-
 		/**
-		 * Strip line breaks and unnecessary spaces.
+		 * Remove STRONG/EM/I tags, wrap single-line A and IMG tags in P tags and
+		 * convert TH to TD tags before regular conversion (special cases).
 		 */
 
-		$plain = preg_replace(
-			'/(?<=({BR}|\<\/p\>))(\r\n|\n|\r)/i',
-			' ',
-			strip_tags( $plain, '<br><p><ul><li>' )
+		$pre_convert_adjustments = array(
+			'/<(strong|em|i)>(.*)<\/(strong|em|i)>/i' => '$2',
+			'/(\r\n\r\n|\n\n)?(?<!<p>)(<a[^>]*>(.*)<\/a>)(\r\n\r\n|\n\n)?/im' => '$1<p>$2</p>$4',
+			'/(\r\n\r\n|\n\n)?(?<!<p>)(<img[^>]*>)(\r\n\r\n|\n\n)?/im' => '$1<p>$2</p>$3',
+			'/<th[^>]*>(.*)<\/th>/im'                 => '<td>$1</td>',
 		);
-		$plain = preg_replace( '/>[\s]+</', '><', $plain );
-		$plain = preg_replace( '/(^|<\/[a-zA-Z]+>)([^<>]{1,})(<|$)/', '$1<p>$2</p>$3', $plain );
-		$plain = preg_replace( '/(?<=>)\s+|\s+(?=<)/', '', $plain );
-		$plain = preg_replace( '/[\h]{2,}/', ' ', $plain );
 
-		// Convert "pseudo breaks" back to regular BR tags.
-		$plain = str_replace( '{BR}', '<br>', $plain );
-
-		if ( ! empty( $list_bullet ) ) {
-			// Add list bullet point characters.
-			if ( true === $list_bullet ) {
-				$list_bullet = '-';
-			} else {
-				$list_bullet = $list_bullet[0];
-			}
-
-			$plain = preg_replace( '/<li[^>]*>/', "<li>{$list_bullet} ", $plain );
+		foreach ( $pre_convert_adjustments as $regex => $replace ) {
+			$plain = preg_replace( $regex, $replace, $plain );
 		}
 
-		// Add plain text line breaks.
-		$plain = preg_replace(
-			array( '/<\/p>/', '/<br>|<\/(?!p)[^>]*>/' ),
-			array( PHP_EOL . PHP_EOL, PHP_EOL ),
+		$plain = preg_replace_callback(
+			'/(<dt[^>]*>)(.*)(<\/dt>)/',
+			function ( $matches ) {
+				$title = trim( str_replace( '&nbsp;', '', $matches[2] ) );
+				if (
+					! empty( $options['add_colon'] )
+					&& ':' !== substr( $title, -1 )
+				) {
+					$title .= ':';
+				}
+				return "{$matches[1]}{$title}{$matches[3]}";
+			},
 			$plain
 		);
 
-		return trim( html_entity_decode( wp_strip_all_tags( $plain ), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' ) );
+		try {
+			$h2t       = new \Html2Text\Html2Text( $plain, $options );
+			$plain_h2t = $h2t->getText();
+			if ( empty( $plain_h2t ) ) {
+				return $plain;
+			}
+
+			$plain = $plain_h2t;
+		} catch ( Exception $e ) {
+			return $plain;
+		}
+
+		if ( false !== $list_bullet ) {
+			// Replace list bullets and remove indentation.
+			$list_bullet_repl = '';
+			if ( $list_bullet ) {
+				$list_bullet_repl = true === $list_bullet ? '- ' : $list_bullet[0] . ' ';
+			}
+
+			$plain = preg_replace( '/^[ \t]+\* (.*)$/m', "{$list_bullet_repl}$1", $plain );
+		}
+
+		// Remove space + double tab indents on line beginnings.
+		$plain = preg_replace( '/^ \t\t/im', '', $plain );
+
+		return $plain;
 	} // html_to_plain_text
 
 	/**
@@ -1067,5 +1086,83 @@ class String_Utils {
 
 		return str_replace( array( '/', '\\' ), $dirsep, $path );
 	} // unify_dirsep
+
+	/**
+	 * Basic HTML/Twig source code formatting for output purposes (e.g. in plugin
+	 * option description sections).
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param string $source Source code.
+	 * @param string $class  Optional CSS class name for the code tag
+	 *                       (defaults to immonex-qformat-source)
+	 *
+	 * @return string Rendered HTML output.
+	 */
+	public static function quick_format_source_code( $source, $class = 'immonex-qformat-source' ) {
+		$formatted = trim( $source );
+
+		$replace = array(
+			array(
+				'/\t/' => '    ',
+				'/</'  => '&lt;',
+				'/>/'  => '&gt;',
+			),
+			array(
+				'/&lt;(?!\!-- )(.*)&gt;/'            => '<span class="html-tag">&lt;$1&gt;</span>',
+				'/&lt;!-- (.*) --&gt;/'              => '<span class="comment">&lt;-- <span>$1</span> --&gt;</span>',
+				'/(\/[*]{1,2}|\s+\*)(.*)(\r\n|\n)/m' => '<span class="comment">$1<span>$2</span>$3</span>',
+				'/([{]?# )(.*)/'                     => '<span class="comment">$1<span>$2</span></span>',
+				'/{{ ([^}]*) }}/'                    => '<span class="twig-var">{{ <span>$1</span> }}</span>',
+				'/{% ([^%]*) %}/'                    => '<span class="twig-control">{% <span>$1</span> %}</span>',
+			),
+		);
+
+		foreach ( $replace as $level ) {
+			foreach ( $level as $regex => $replacement ) {
+				$formatted = preg_replace( $regex, $replacement, $formatted );
+			}
+		}
+
+		return wp_sprintf(
+			'<pre><code class="%1$s">%2$s</code></pre>' . PHP_EOL,
+			$class,
+			$formatted
+		);
+	} // quick_format_source_code
+
+	/**
+	 * Add text to the beginning or end of a string if it is not included already.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param string          $source    Source text.
+	 * @param string|string[] $add_texts Text(s) to add if not included.
+	 * @param string          $separator Separator to add between source and
+	 *                                   additional text (optional).
+	 * @param bool            $before    Add additional text before source text
+	 *                                   (optional, default false = append text).
+	 *
+	 * @return string Possibly extended source text.
+	 */
+	public function add_text_if_missing( $source, $add_texts, $separator = ' ', $before = false ) {
+		if ( empty( $add_texts ) ) {
+			return $source;
+		}
+
+		if ( ! is_array( $add_texts ) ) {
+			$add_texts = (string) $add_texts;
+		}
+
+		foreach ( $add_texts as $add_text ) {
+			if ( false === strpos( $source, $add_text ) ) {
+				$source = $before ?
+					$add_text . $separator . $source :
+					$source . $separator . $add_text;
+			}
+		}
+
+		return trim( $source );
+	} // add_text_if_missing
 
 } // String_Utils

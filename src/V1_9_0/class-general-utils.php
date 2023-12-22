@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_25;
+namespace immonex\WordPressFreePluginCore\V1_9_0;
 
 /**
  * General (mostly WordPress related) utility methods.
@@ -98,7 +98,7 @@ class General_Utils {
 		if ( false === $taxonomies ) {
 			$taxonomies = get_taxonomies();
 		}
-		if ( count( $taxonomies ) > 0 ) {
+		if ( is_array( $taxonomies ) && count( $taxonomies ) > 0 ) {
 			if ( is_array( $languages ) && count( $languages ) > 0 ) {
 				foreach ( $languages as $language ) {
 					do_action( 'wpml_switch_language', $language );
@@ -114,7 +114,7 @@ class General_Utils {
 		 * Delete post metadata.
 		 */
 		$meta = get_post_meta( $post_id );
-		if ( count( $meta ) > 0 ) {
+		if ( is_array( $meta ) && count( $meta ) > 0 ) {
 			foreach ( $meta as $meta_key => $meta_value ) {
 				if ( empty( $exclude_meta ) || ! in_array( $meta_key, $exclude_meta, true ) ) {
 					delete_post_meta( $post_id, $meta_key );
@@ -150,7 +150,7 @@ class General_Utils {
 				}
 
 				$attachments = get_posts( $args );
-				if ( count( $attachments ) > 0 ) {
+				if ( is_array( $attachments ) && count( $attachments ) > 0 ) {
 					foreach ( $attachments as $att ) {
 						wp_delete_attachment( $att->ID, true );
 					}
@@ -329,7 +329,7 @@ class General_Utils {
 
 		$error_descr = $error->get_error_message();
 
-		if ( count( $error->error_data ) > 0 ) {
+		if ( is_array( $error->error_data ) && count( $error->error_data ) > 0 ) {
 			$error_descr .= ' (';
 
 			foreach ( $error->error_data as $key => $value ) {

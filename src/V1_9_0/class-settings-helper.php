@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_8_25;
+namespace immonex\WordPressFreePluginCore\V1_9_0;
 
 /**
  * Helper class for dealing with the WordPress Settings API.
@@ -221,7 +221,7 @@ class Settings_Helper {
 	public function get_media_fields() {
 		$media_fields = array();
 
-		if ( ! empty( $this->fields ) ) {
+		if ( ! empty( $this->fields ) && is_array( $this->fields ) ) {
 			foreach ( $this->fields as $tab => $fields ) {
 				if ( count( $fields ) > 0 ) {
 					foreach ( $fields as $field ) {
@@ -242,7 +242,7 @@ class Settings_Helper {
 	 * @since 0.1
 	 */
 	private function display_tab_nav() {
-		if ( count( $this->option_page_tabs ) > 0 ) {
+		if ( ! empty( $this->option_page_tabs ) && is_array( $this->option_page_tabs ) ) {
 			echo '<h2 class="nav-tab-wrapper">';
 
 			foreach ( $this->option_page_tabs as $tab_id => $tab ) {
@@ -292,7 +292,7 @@ class Settings_Helper {
 	 */
 	private function display_section_nav( $tab_id, $current_section_tab = 1 ) {
 		$tab_sections = $this->get_tab_sections( $tab_id );
-		if ( count( $tab_sections ) < 2 ) {
+		if ( ! is_array( $tab_sections ) || count( $tab_sections ) < 2 ) {
 			return;
 		}
 
@@ -327,6 +327,7 @@ class Settings_Helper {
 
 		if (
 			! empty( $this->option_page_tabs[ $tab_id ]['attributes']['tabbed_sections'] )
+			&& is_array( $tab_sections )
 			&& count( $tab_sections ) > 1
 		) {
 			$current_section_tab = ! empty( $_GET['section_tab'] ) ? (int) $_GET['section_tab'] : 1;
@@ -345,11 +346,11 @@ class Settings_Helper {
 			$section_count = 0;
 
 			$sections_html = str_replace(
-				array( '|X|', '|Y|' ),
+				array( '|CRLF|', '|LF|' ),
 				// Take mixed line breaks into account (e.g. due to textarea contents or in Windows environments).
 				array( "\r\n", "\n" ),
 				preg_replace_callback(
-					'/\<h2\>.*?\<\/table\>/',
+					'/\<h2\>.*?(\<\/table\>|(?=\<h2))/',
 					function ( $matches ) use ( &$section_count, $current_section_tab ) {
 						$section_count++;
 						$section_id = "tab-section-{$section_count}";
@@ -362,7 +363,7 @@ class Settings_Helper {
 					},
 					str_replace(
 						array( "\r\n", "\n" ),
-						array( '|X|', '|Y|' ),
+						array( '|CRLF|', '|LF|' ),
 						$sections_html
 					)
 				)
@@ -384,8 +385,9 @@ class Settings_Helper {
 	 * @param string $title Section title.
 	 * @param string $description Description text to be displayed.
 	 * @param string $tab Tab for section display (optional).
+	 * @param string $args Optional section properties.
 	 */
-	public function add_section( $id, $title, $description = false, $tab = false ) {
+	public function add_section( $id, $title, $description = false, $tab = false, $args = array() ) {
 		// Use the default options page name if no tab is given.
 		$page = $tab ? $this->plugin_slug . '_' . $tab : $this->plugin_slug . '_settings';
 
@@ -403,6 +405,7 @@ class Settings_Helper {
 			'title'       => $title,
 			'description' => $description,
 			'tab'         => $tab,
+			'args'        => $args,
 		);
 
 		$this->section_page[ $section_id ] = $page;
@@ -484,7 +487,10 @@ class Settings_Helper {
 	 * @param mixed[] $tabs Array of tab data.
 	 */
 	public function register_extension_tabs( $extension_plugin_slug, $tabs ) {
-		if ( $extension_plugin_slug !== $this->plugin_slug ) {
+		if (
+			$extension_plugin_slug !== $this->plugin_slug
+			|| ! is_array( $tabs )
+		) {
 			return;
 		}
 
@@ -511,7 +517,10 @@ class Settings_Helper {
 	 * @param mixed[] $sections Array of section data.
 	 */
 	public function register_extension_sections( $extension_plugin_slug, $sections ) {
-		if ( $extension_plugin_slug !== $this->plugin_slug ) {
+		if (
+			$extension_plugin_slug !== $this->plugin_slug
+			|| ! is_array( $section )
+		) {
 			return;
 		}
 
@@ -538,7 +547,10 @@ class Settings_Helper {
 	 * @param mixed[] $fields Array of field data.
 	 */
 	public function register_extension_fields( $extension_plugin_slug, $fields ) {
-		if ( $extension_plugin_slug !== $this->plugin_slug ) {
+		if (
+			$extension_plugin_slug !== $this->plugin_slug
+			|| ! is_array( $fields )
+		) {
 			return;
 		}
 
@@ -597,7 +609,7 @@ class Settings_Helper {
 		// @codingStandardsIgnoreLine
 		$this->option_page_tabs = apply_filters( $this->plugin_slug . '_option_page_tabs', $this->option_page_tabs );
 
-		if ( count( $this->option_page_tabs ) > 0 ) {
+		if ( is_array( $this->option_page_tabs ) && count( $this->option_page_tabs ) > 0 ) {
 			// Tabs in use...
 			$option_page_tab_keys = array_keys( $this->option_page_tabs );
 
@@ -658,9 +670,10 @@ class Settings_Helper {
 
 		if ( $description ) {
 			echo wp_sprintf(
-				'<div class="section-description">%s%s</div>' . PHP_EOL,
+				'<div class="section-description%1$s">%2$s</div>%3$s' . PHP_EOL,
+				$ext_description ? ' has-ext-contents' : '',
 				$description,
-				$ext_description ? $this->get_extended_description_section( $ext_description ) : ''
+				$ext_description ? $this->get_extended_description_section( $ext_description, $args['id'] ) : ''
 			);
 		}
 	} // render_section
@@ -697,14 +710,25 @@ class Settings_Helper {
 	 * @since 1.4.0
 	 *
 	 * @param string $content Extended description content.
+	 * @param array  $section_id Section ID.
+	 *
+	 * @return string Extended description HTML markup.
 	 */
-	private function get_extended_description_section( $content ) {
+	private function get_extended_description_section( $content, $section_id ) {
+		$args             = $this->sections[ $section_id ]['args'];
+		$show_button_text = ! empty( $args['ext_desc_show_button_text'] ) ?
+			$args['ext_desc_show_button_text'] :
+			__( 'more details', 'immonex-wp-free-plugin-core' );
+		$hide_button_text = ! empty( $args['ext_desc_hide_button_text'] ) ?
+			$args['ext_desc_hide_button_text'] :
+			__( 'hide details', 'immonex-wp-free-plugin-core' );
+
 		return wp_sprintf(
 			'<div class="immonex-plugin-options__ext-description">%s%s%s</div>',
 			'<div class="immonex-plugin-options__ext-description-show"><button class="button button-primary"><span class="dashicons dashicons-arrow-down-alt2"></span>' .
-				__( 'more details', 'immonex-wp-free-plugin-core' ) . '</button></div>',
+				$show_button_text . '</button></div>',
 			'<div class="immonex-plugin-options__ext-description-hide"><button class="button button-primary"><span class="dashicons dashicons-arrow-up-alt2"></span>' .
-				__( 'hide details', 'immonex-wp-free-plugin-core' ) . '</button></div>',
+				$hide_button_text . '</button></div>',
 			'<div class="immonex-plugin-options__ext-description-content">' . $content . '</div>'
 		);
 	} // get_extended_description_section
@@ -888,7 +912,7 @@ class Settings_Helper {
 	 * @param array $args Checkbox properties.
 	 */
 	private function render_checkbox_group( $args ) {
-		if ( ! isset( $args['options'] ) || 0 === count( $args['options'] ) ) {
+		if ( empty( $args['options'] ) ) {
 			return;
 		}
 
@@ -1048,5 +1072,146 @@ class Settings_Helper {
 
 		return $current_options;
 	} // merge_options
+
+	/**
+	 * Generate Twig templating info section contents based on the given intro text,
+	 * title and tag descriptions.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param array           $tag_descriptions Descriptions of ALL available tags (tag key => description).
+	 * @param array|string    $tags             Keys of tags to display.
+	 * @param string          $intro            Intro text ("default" or "default_ext" for a generic description).
+	 * @param string|string[] $title            Section title(s) as single string or array of two strings.
+	 *
+	 * @return string Section output.
+	 */
+	public function get_twig_templating_info_section( $tag_descriptions, $tags, $intro = '', $title = '' ) {
+		if ( ! is_array( $tags ) ) {
+			$tags = array( $tags );
+		}
+
+		if ( 'default' === $intro || 'default_ext' === $intro ) {
+			$intro = $this->get_twig_templating_default_desc( 'intro' . ( 'default_ext' === $intro ? '_ext' : '' ) );
+		}
+
+		$section_output = array();
+		if ( $intro ) {
+			$section_output[] = $intro;
+		}
+
+		if ( is_array( $title ) ) {
+			if ( ! empty( $title[0] ) ) {
+				$section_output[] = "<h3 class=\"desc-hl\">{$title[0]}</h3>";
+			}
+			if ( ! empty( $title[1] ) ) {
+				$section_output[] = "<h4 class=\"desc-hl\">{$title[1]}</h4>";
+			}
+		} elseif ( $title ) {
+			$section_output[] = "<h4 class=\"desc-hl\">{$title}</h4>";
+		}
+
+		$mandatory_contents = false;
+
+		if ( ! empty( $tags ) ) {
+			$section_output[] = '<dl>';
+
+			foreach ( $tags as $tag ) {
+				if ( ! isset( $tag_descriptions[ $tag ] ) ) {
+					continue;
+				}
+
+				$tag_out      = $tag;
+				$is_mandatory = false;
+
+				if ( '-' === $tag_out[0] ) {
+					// Display tag without brackets.
+					$tag_out      = substr( $tag_out, 1 );
+					$tag_template = '<dt><code>%s</code></dt>';
+				} elseif ( '*' === $tag_out[0] ) {
+					// Display as mandatory tag.
+					$tag_out            = substr( $tag_out, 1 );
+					$tag_template       = '<dt><code class="immonex-qformat-source mandatory">{{ %s }}</code>*</dt>';
+					$is_mandatory       = true;
+					$mandatory_contents = true;
+				} elseif ( '[M]' === substr( $tag, -3 ) ) {
+					$tag_out      = substr( $tag_out, 0, -3 );
+					$tag_template = '<dt><code>{{ %s<em>.key/index.element</em> }}</code></dt>';
+				} elseif ( '[]' === substr( $tag, -2 ) ) {
+					$tag_out      = substr( $tag_out, 0, -2 );
+					$tag_template = '<dt><code>{{ %s<em>.key/index</em> }}</code></dt>';
+				} else {
+					$tag_template = '<dt><code>{{ %s }}</code></dt>';
+				}
+
+				$section_output[] = wp_sprintf( $tag_template, $tag_out );
+				$section_output[] = wp_sprintf(
+					'<dd>%1$s%2$s</dd>',
+					$tag_descriptions[ $tag ],
+					$is_mandatory ? ' (<strong>' . __( 'mandatory', 'immonex-wp-free-plugin-core' ) . '</strong>)' : ''
+				);
+			}
+
+			$section_output[] = '</dl>';
+
+			if ( $mandatory_contents ) {
+				$section_output[] = '<p>* ' . __( 'Mandatory contents will be added automatically if missing.', 'immonex-wp-free-plugin-core' ) . '</p>';
+			}
+		}
+
+		return implode( PHP_EOL, $section_output );
+	} // get_twig_templating_info_section
+
+	/**
+	 * Return default Twig templating description text of the given type.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param string $type Description type.
+	 *
+	 * @return string Description text.
+	 */
+	public function get_twig_templating_default_desc( $type = 'intro' ) {
+		$defaults = array(
+			'intro'     => '<p>' . wp_sprintf(
+				/* translators: %s = Twig 3 documentation URL. */
+				__( 'Mail <strong>subject, body and signature</strong> templates can contain dynamic contents like <em>variables, conditions and loops</em> based on the %s. All variables, basic control structures and examples relevant for the <strong>fields on this page</strong> are listed in the following sections and/or the descriptions of the related input fields.', 'immonex-wp-free-plugin-core' ),
+				$this->string_utils->doc_link( 'https://twig.symfony.com/doc/3.x/templates.html', __( 'Twig 3 Template Engine', 'immonex-wp-free-plugin-core' ) )
+			) . '</p>',
+			'intro_ext' => '<p>' . wp_sprintf(
+				/* translators: %s = Twig 3 documentation URL. */
+				__( 'Mail <strong>subject, body and signature</strong> templates can contain dynamic contents like <em>variables, conditions and loops</em> based on the %s. All variables, basic control structures and examples relevant the <strong>fields on for this page</strong> are listed in the extended description (click button below) and/or the descriptions of the related input fields.', 'immonex-wp-free-plugin-core' ),
+				$this->string_utils->doc_link( 'https://twig.symfony.com/doc/3.x/templates.html', __( 'Twig 3 Template Engine', 'immonex-wp-free-plugin-core' ) )
+			) . '</p>',
+			'control'   => '<h3 class="desc-hl">' . __( 'Control Structures', 'immonex-wp-free-plugin-core' ) . '</h3>'
+				. PHP_EOL
+				. '<dl>'
+				. wp_sprintf(
+					'<dt><code>%1$s</code></dt><dd>%2$s</dd>' . PHP_EOL,
+					'{% if <em>' . __( 'condition', 'immonex-wp-free-plugin-core' ) . '</em> %} … {% else %} … {% endif %}',
+					wp_sprintf(
+						/* translators: %s = documentation link. */
+						__( '<strong>Conditional display</strong> of contents or an (optional) alternative with an %s', 'immonex-wp-free-plugin-core' ),
+						$this->string_utils->doc_link( 'https://twig.symfony.com/doc/3.x/tags/if.html', __( 'if/else statement', 'immonex-wp-free-plugin-core' ) )
+					)
+				)
+				. wp_sprintf(
+					'<dt><code>%1$s</code></dt><dd>%2$s</dd>' . PHP_EOL,
+					'{% for <em>' . __( 'element_name(s)', 'immonex-wp-free-plugin-core' ) . '</em> in <em>' . __( 'variable_name', 'immonex-wp-free-plugin-core' ) . '</em> % } … {{ element_name }} … {% endfor %}',
+					wp_sprintf(
+						/* translators: %s = Twig 3 documentation URL. */
+						__( 'Displaying elements of an array variable with a %s', 'immonex-wp-free-plugin-core' ),
+						$this->string_utils->doc_link( 'https://twig.symfony.com/doc/3.x/tags/for.html', __( 'for loop', 'immonex-wp-free-plugin-core' ) )
+					)
+				)
+				. '</dl>',
+		);
+
+		if ( ! isset( $defaults[ $type ] ) ) {
+			return '';
+		}
+
+		return $defaults[ $type ];
+	} // get_twig_templating_default_desc
 
 } // Settings_Helper

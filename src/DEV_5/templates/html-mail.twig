@@ -45,6 +45,7 @@
 
 									{% if header_text %}
 										<td style="width:100%; font-size:{{ layout.header_text_size|e('html_attr') }};
+											line-height:{{ layout.header_line_height|e('html_attr') }};
 											text-align:{{ layout.logo_position in ['header_center', 'top_center'] ? 'center' : 'left' }};
 											color:{{ colors.text_header|e('html_attr') }};
 											vertical-align:middle">{{ header_text }}</td>
@@ -62,8 +63,10 @@
 
 			<tr>
 				<td style="font-size:{{ layout.body_text_size|e('html_attr') }};
+					line-height:{{ layout.body_line_height|e('html_attr') }};
 					color:{{ colors.text|e('html_attr') }};
-					background-color:{{ colors.bg_body|e('html_attr') }}"
+					background-color:{{ colors.bg_body|e('html_attr') }};
+					border-radius:{{ layout.body_border_radius|e('html_attr') }}"
 				>
 					{{ body }}
 				</td>
@@ -71,27 +74,28 @@
 
 			{% if footer or footer_text or (logo and layout.logo_position in ['footer_left', 'footer_center', 'footer_right']) %}
 				<tr>
-					<td style="padding-top:0; color:{{ colors.text_footer|e('html_attr') }}; background-color:{{ colors.bg_footer|e('html_attr') }}">
+					<td style="padding-top:{{ layout.footer_padding_top|e('html_attr') }}; color:{{ colors.text_footer|e('html_attr') }}; background-color:{{ colors.bg_footer|e('html_attr') }}">
 						{% if footer %}
 							{{ footer }}
 						{% else %}
-							<table border="0" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse">
+							<table border="0" cellpadding="0" cellspacing="0" style="width:100%; margin-top:8px; border-collapse:collapse">
 								<tr>
 									{% if (logo and layout.logo_position == 'footer_left') %}
-										<td style="padding-right:16px; vertical-align:middle">{{ logo_tag }}</td>
+										<td style="padding-top:{{ layout.footer_logo_padding_top|e('html_attr') }}; padding-right:16px; vertical-align:middle">{{ logo_tag }}</td>
 									{% endif %}
 
 									{% if footer_text %}
 										<td style="width:100%; font-size:{{ layout.footer_text_size|e('html_attr') }};
+											line-height:{{ layout.footer_line_height|e('html_attr') }};
 											text-align:{{ layout.logo_position == 'footer_center' ? 'center' : 'left' }};
 											color:{{ colors.text_footer|e('html_attr') }};
 											vertical-align:middle">{{ footer_text }}</td>
 									{% endif %}
 
 									{% if (logo and layout.logo_position == 'footer_right') %}
-										<td style="padding-left:16px; text-align:right; vertical-align:middle">{{ logo_tag }}</td>
+										<td style="padding-top:{{ layout.footer_logo_padding_top|e('html_attr') }}; padding-left:16px; text-align:right; vertical-align:middle">{{ logo_tag }}</td>
 									{% elseif (logo and layout.logo_position == 'footer_center') %}
-										</tr><tr><td style="padding-top:16px; text-align:center">{{ logo_tag }}</td>
+										</tr><tr><td style="padding-top:{{ layout.footer_logo_padding_top|e('html_attr') }}; text-align:center">{{ logo_tag }}</td>
 									{% endif %}
 								</tr>
 							</table>
