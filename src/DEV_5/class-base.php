@@ -386,6 +386,8 @@ abstract class Base {
 			throw new \Exception( 'inveris WP Free Plugin Core: Plugin slug (= directory name) not provided.' );
 		}
 
+		add_filter( static::PLUGIN_PREFIX . '_plugin_infos', array( $this, 'get_plugin_infos' ) );
+		// For compatibility reasons only.
 		add_filter( "{$this->plugin_slug}_plugin_infos", array( $this, 'get_plugin_infos' ) );
 
 		$this->is_stable  = preg_match( '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/', static::PLUGIN_VERSION ) ? true : false;
