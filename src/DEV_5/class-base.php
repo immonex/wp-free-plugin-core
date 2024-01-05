@@ -1882,7 +1882,7 @@ abstract class Base {
 	 * @param string $type    Message type: "success" (default), "info", "warning", "error" or
 	 *                        "network info/warning/error" for network admin notices.
 	 * @param string $context Message context (e.g. if called as action hook callback; optional).
-	 * @param string $id      Optional message ID for the deferred messages or or "once" for one-time display.
+	 * @param string $id      Optional message ID for the deferred messages or "once" for one-time display.
 	 */
 	public function add_deferred_admin_notice( $message, $type = 'success', $context = '', $id = '' ) {
 		$raw_type = str_replace( 'network ', '', $type );
