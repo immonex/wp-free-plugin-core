@@ -519,7 +519,7 @@ class Settings_Helper {
 	public function register_extension_sections( $extension_plugin_slug, $sections ) {
 		if (
 			$extension_plugin_slug !== $this->plugin_slug
-			|| ! is_array( $section )
+			|| ! is_array( $sections )
 		) {
 			return;
 		}
