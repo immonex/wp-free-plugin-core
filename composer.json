@@ -1,6 +1,6 @@
 {
     "name": "immonex/wp-free-plugin-core",
-    "version": "1.9.0",
+    "version": "1.9.1",
     "type": "library",
     "description": "Shared basic functionality for free immonex WordPress plugins",
     "keywords": ["immonex", "wordpress", "wp", "real estate", "plugin", "openimmo", "immobilien"],
@@ -24,7 +24,7 @@
     },
     "require": {
         "symfony/polyfill-mbstring": "1.20.0",
-        "twig/twig": "^3.0",
+        "twig/twig": "^3",
         "html2text/html2text": "dev-master"
     }
 }
