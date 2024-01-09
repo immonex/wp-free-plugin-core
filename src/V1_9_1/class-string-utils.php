@@ -673,7 +673,7 @@ class String_Utils {
 		}
 
 		$pad_required = $length - mb_strlen( $str, $encoding );
-		if ( ! $pad_required ) {
+		if ( $pad_required <= 0 ) {
 			return $str;
 		}
 
