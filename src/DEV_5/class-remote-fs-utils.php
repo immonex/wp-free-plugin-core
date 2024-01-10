@@ -132,6 +132,7 @@ class Remote_FS_Utils {
 	 * @return int|bool Size in bytes of false if it could not be retrieved.
 	 */
 	public static function get_remote_filesize( $url ) {
+		$clen    = false;
 		$headers = get_headers( $url, 1 );
 		if ( $headers && is_array( $headers ) ) {
 			$head = array_change_key_case( $headers );

@@ -1174,12 +1174,12 @@ class Settings_Helper {
 	public function get_twig_templating_default_desc( $type = 'intro' ) {
 		$defaults = array(
 			'intro'     => '<p>' . wp_sprintf(
-				/* translators: %s = Twig 3 documentation URL. */
+				/* translators: %s = Twig 3 documentation link "Twig 3 Template Engine". */
 				__( 'Mail <strong>subject, body and signature</strong> templates can contain dynamic contents like <em>variables, conditions and loops</em> based on the %s. All variables, basic control structures and examples relevant for the <strong>fields on this page</strong> are listed in the following sections and/or the descriptions of the related input fields.', 'immonex-wp-free-plugin-core' ),
 				$this->string_utils->doc_link( 'https://twig.symfony.com/doc/3.x/templates.html', __( 'Twig 3 Template Engine', 'immonex-wp-free-plugin-core' ) )
 			) . '</p>',
 			'intro_ext' => '<p>' . wp_sprintf(
-				/* translators: %s = Twig 3 documentation URL. */
+				/* translators: %s = Twig 3 documentation link "Twig 3 Template Engine". */
 				__( 'Mail <strong>subject, body and signature</strong> templates can contain dynamic contents like <em>variables, conditions and loops</em> based on the %s. All variables, basic control structures and examples relevant the <strong>fields on for this page</strong> are listed in the extended description (click button below) and/or the descriptions of the related input fields.', 'immonex-wp-free-plugin-core' ),
 				$this->string_utils->doc_link( 'https://twig.symfony.com/doc/3.x/templates.html', __( 'Twig 3 Template Engine', 'immonex-wp-free-plugin-core' ) )
 			) . '</p>',
@@ -1190,7 +1190,7 @@ class Settings_Helper {
 					'<dt><code>%1$s</code></dt><dd>%2$s</dd>' . PHP_EOL,
 					'{% if <em>' . __( 'condition', 'immonex-wp-free-plugin-core' ) . '</em> %} … {% else %} … {% endif %}',
 					wp_sprintf(
-						/* translators: %s = documentation link. */
+						/* translators: %s = documentation link "if/else statement". */
 						__( '<strong>Conditional display</strong> of contents or an (optional) alternative with an %s', 'immonex-wp-free-plugin-core' ),
 						$this->string_utils->doc_link( 'https://twig.symfony.com/doc/3.x/tags/if.html', __( 'if/else statement', 'immonex-wp-free-plugin-core' ) )
 					)
@@ -1199,7 +1199,7 @@ class Settings_Helper {
 					'<dt><code>%1$s</code></dt><dd>%2$s</dd>' . PHP_EOL,
 					'{% for <em>' . __( 'element_name(s)', 'immonex-wp-free-plugin-core' ) . '</em> in <em>' . __( 'variable_name', 'immonex-wp-free-plugin-core' ) . '</em> % } … {{ element_name }} … {% endfor %}',
 					wp_sprintf(
-						/* translators: %s = Twig 3 documentation URL. */
+						/* translators: %s = documentation link "for loop". */
 						__( 'Displaying elements of an array variable with a %s', 'immonex-wp-free-plugin-core' ),
 						$this->string_utils->doc_link( 'https://twig.symfony.com/doc/3.x/tags/for.html', __( 'for loop', 'immonex-wp-free-plugin-core' ) )
 					)

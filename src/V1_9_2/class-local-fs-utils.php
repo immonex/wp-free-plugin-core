@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_9_1;
+namespace immonex\WordPressFreePluginCore\V1_9_2;
 
 /**
  * Local filesystem related utilities.
