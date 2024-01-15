@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5b221511363e8df0c54fbd55288da547",
+    "content-hash": "f9f1169157599de59fafa476074d7c1c",
     "packages": [
         {
             "name": "html2text/html2text",
@@ -365,12 +365,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "8b4aa84fe12f12ff2c04b7bf610ef1d9956fe8ab"
+                "reference": "4c179c8a64fece77e17ef299d1a2a3f908993107"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/8b4aa84fe12f12ff2c04b7bf610ef1d9956fe8ab",
-                "reference": "8b4aa84fe12f12ff2c04b7bf610ef1d9956fe8ab",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/4c179c8a64fece77e17ef299d1a2a3f908993107",
+                "reference": "4c179c8a64fece77e17ef299d1a2a3f908993107",
                 "shasum": ""
             },
             "require": {
@@ -437,7 +437,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-05T17:52:53+00:00"
+            "time": "2024-01-12T11:20:12+00:00"
         }
     ],
     "packages-dev": [
@@ -1043,12 +1043,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "e03361ca67e7e88452c46c28caca34309be40f53"
+                "reference": "fad452781b3d774e3337b0c0b245dd8e5a4455fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/e03361ca67e7e88452c46c28caca34309be40f53",
-                "reference": "e03361ca67e7e88452c46c28caca34309be40f53",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/fad452781b3d774e3337b0c0b245dd8e5a4455fc",
+                "reference": "fad452781b3d774e3337b0c0b245dd8e5a4455fc",
                 "shasum": ""
             },
             "require": {
@@ -1092,9 +1092,9 @@
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
             "support": {
                 "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
-                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.x"
+                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.8.0"
             },
-            "time": "2023-12-24T20:03:22+00:00"
+            "time": "2024-01-11T11:49:22+00:00"
         },
         {
             "name": "phpspec/prophecy",
