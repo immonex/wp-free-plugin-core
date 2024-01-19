@@ -493,6 +493,7 @@ a.immonex-doc-link {
 
 a.immonex-doc-link::after {
 	position: absolute;
+	top: -2px;
 	right: 0;
 	line-height: 135%;
 	font-family: dashicons;

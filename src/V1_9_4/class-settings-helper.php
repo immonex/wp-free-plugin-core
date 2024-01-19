@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_9_3;
+namespace immonex\WordPressFreePluginCore\V1_9_4;
 
 /**
  * Helper class for dealing with the WordPress Settings API.
@@ -381,18 +381,26 @@ class Settings_Helper {
 	 *
 	 * @since 0.1
 	 *
-	 * @param string $id Section ID.
-	 * @param string $title Section title.
-	 * @param string $description Description text to be displayed.
-	 * @param string $tab Tab for section display (optional).
-	 * @param string $args Optional section properties.
+	 * @param string      $id Section ID.
+	 * @param string      $title Section title.
+	 * @param string|bool $description Description text to be displayed (optional).
+	 * @param string|bool $tab_id ID of the tab the section section shall be part of (optional).
+	 * @param mixed[]     $args Optional section properties.
 	 */
-	public function add_section( $id, $title, $description = false, $tab = false, $args = array() ) {
+	public function add_section( $id, $title, $description = false, $tab_id = false, $args = array() ) {
 		// Use the default options page name if no tab is given.
-		$page = $tab ? $this->plugin_slug . '_' . $tab : $this->plugin_slug . '_settings';
+		$page = $tab_id ? $this->plugin_slug . '_' . $tab_id : $this->plugin_slug . '_settings';
 
 		// Prefix the section with the plugin name (slug) before adding it.
 		$section_id = $this->plugin_slug . '_' . $id;
+
+		if (
+			! $title
+			&& $tab_id
+			&& ! empty( $this->option_page_tabs[ $tab_id ]['attributes']['tabbed_sections'] )
+		) {
+			$title = __( 'General', 'immonex-wp-free-plugin-core' );
+		}
 
 		add_settings_section(
 			$section_id,
@@ -404,7 +412,7 @@ class Settings_Helper {
 		$this->sections[ $section_id ] = array(
 			'title'       => $title,
 			'description' => $description,
-			'tab'         => $tab,
+			'tab'         => $tab_id,
 			'args'        => $args,
 		);
 
