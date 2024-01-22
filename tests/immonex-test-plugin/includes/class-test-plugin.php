@@ -10,7 +10,7 @@ namespace myimmonex\TestPlugin;
 /**
  * Main test plugin class.
  */
-class Test_Plugin extends \immonex\WordPressFreePluginCore\V1_9_4\Base {
+class Test_Plugin extends \immonex\WordPressFreePluginCore\V1_9_5\Base {
 
 	const PLUGIN_NAME    = 'My immonex Test Plugin';
 	const PLUGIN_PREFIX  = 'testplugin_';
