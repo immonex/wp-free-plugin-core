@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_9_4;
+namespace immonex\WordPressFreePluginCore\V1_9_5;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.9.4
+ * @version 1.9.5
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.9.4';
+	const CORE_VERSION = '1.9.5';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -2016,7 +2016,7 @@ abstract class Base {
 		$fallback_locale     = apply_filters(
 			// @codingStandardsIgnoreLine
 			$this->plugin_slug . '_fallback_locale',
-			'de_DE'
+			'de_' === substr( $locale, 0, 3 ) ? 'de_DE' : ''
 		);
 		$locales = array_filter( array( $locale, $fallback_locale ) );
 
