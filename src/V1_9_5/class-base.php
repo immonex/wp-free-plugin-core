@@ -2016,7 +2016,7 @@ abstract class Base {
 		$fallback_locale     = apply_filters(
 			// @codingStandardsIgnoreLine
 			$this->plugin_slug . '_fallback_locale',
-			'de_' === substr( $locale, 0, 3 ) ? 'de_DE' : ''
+			substr( $locale, 0, 3 ) === 'de_' ? 'de_DE' : ''
 		);
 		$locales = array_filter( array( $locale, $fallback_locale ) );
 
