@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_9_5;
+namespace immonex\WordPressFreePluginCore\V1_9_6;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.9.5
+ * @version 1.9.6
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.9.5';
+	const CORE_VERSION = '1.9.6';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -638,8 +638,10 @@ abstract class Base {
 			)
 		);
 
-		if ( $this->enable_separate_option_page ) {
-			if ( 'settings' === static::OPTIONS_LINK_MENU_LOCATION ) {
+		$options_link_menu_location = $this->get_options_link_menu();
+
+		if ( $this->enable_separate_option_page && $options_link_menu_location[0] ) {
+			if ( 'settings' === $options_link_menu_location[0] ) {
 				// Add options page link in WP default settings menu.
 				add_options_page(
 					$this->options_page_title,
@@ -649,9 +651,9 @@ abstract class Base {
 					array( $this->settings_helper, 'render_page' )
 				);
 			} else {
-				// Add options page link as submenu item.
+				// Append options page/settings link as submenu item.
 				$options_menu_item = array(
-					static::OPTIONS_LINK_MENU_LOCATION,
+					$options_link_menu_location[0],
 					$this->options_page_title,
 					$this->options_link_title,
 					$plugin_options_access_capability,
@@ -686,10 +688,12 @@ abstract class Base {
 	public function init_base() {
 		$this->load_translations();
 
+		$options_link_menu_location = $this->get_options_link_menu();
+
 		add_action( 'init', array( $this, 'init_plugin' ), $this->init_plugin_priority );
 		add_action( 'widgets_init', array( $this, 'init_plugin_widgets' ) );
 		add_action( 'admin_init', array( $this, 'init_plugin_admin' ) );
-		add_action( 'admin_menu', array( $this, 'register_plugin_settings' ) );
+		add_action( 'admin_menu', array( $this, 'register_plugin_settings' ), $options_link_menu_location[1] );
 
 		/**
 		 * Exclude plugin JS/CSS from Autoptimize "optimizations".
@@ -714,10 +718,9 @@ abstract class Base {
 
 		if (
 			$enable_option_page &&
-			defined( 'static::OPTIONS_LINK_MENU_LOCATION' ) &&
-			static::OPTIONS_LINK_MENU_LOCATION
+			$options_link_menu_location[0]
 		) {
-			if ( 'settings' === static::OPTIONS_LINK_MENU_LOCATION ) {
+			if ( 'settings' === $options_link_menu_location[0] ) {
 				$this->settings_page = wp_sprintf(
 					'options-general.php?page=%s_settings',
 					$this->plugin_slug
@@ -2115,5 +2118,36 @@ abstract class Base {
 			$link_text
 		);
 	} // get_language_link
+
+	/**
+	 * Split variable admin menu definition (position dependent on another active
+	 * plugin) or return the original value and the related admin_menu hook priority.
+	 *
+	 * @since 1.9.6
+	 *
+	 * @return mixed[] Array with menu name/key and hook priority.
+	 */
+	private function get_options_link_menu() {
+		$menu = defined( 'static::OPTIONS_LINK_MENU_LOCATION' ) ? static::OPTIONS_LINK_MENU_LOCATION : '';
+		if ( ! $menu || false === strpos( $menu, '?' ) || false === strpos( $menu, ':' ) ) {
+			return array( $menu, 10 );
+		}
+
+		$plugin_query = explode( '?', $menu );
+		if ( 2 !== count( $plugin_query ) || false === strpos( $plugin_query[1], ':' ) ) {
+			return array( '', 10 );
+		}
+
+		$menu_options = explode( ':', $plugin_query[1] );
+		if ( 2 !== count( $menu_options ) ) {
+			return array( '', 10 );
+		}
+
+		$plugin = $plugin_query[0] . DIRECTORY_SEPARATOR . $plugin_query[0] . '.php';
+
+		return is_plugin_active( $plugin ) ?
+			array( $menu_options[0], 20 ) :
+			array( $menu_options[1], 10 );
+	} // get_options_link_menu
 
 } // Base

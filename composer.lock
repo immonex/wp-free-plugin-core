@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8f3c23918f90d26428fac1f637803338",
+    "content-hash": "c9cdaad330ea6808f4b202d40abb89ce",
     "packages": [
         {
             "name": "html2text/html2text",
@@ -365,12 +365,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "4c179c8a64fece77e17ef299d1a2a3f908993107"
+                "reference": "594c548b9224b06683806806875d1583dcb7a59b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/4c179c8a64fece77e17ef299d1a2a3f908993107",
-                "reference": "4c179c8a64fece77e17ef299d1a2a3f908993107",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/594c548b9224b06683806806875d1583dcb7a59b",
+                "reference": "594c548b9224b06683806806875d1583dcb7a59b",
                 "shasum": ""
             },
             "require": {
@@ -382,7 +382,7 @@
             },
             "require-dev": {
                 "psr/container": "^1.0|^2.0",
-                "symfony/phpunit-bridge": "^5.4.9|^6.3|^7.0"
+                "symfony/phpunit-bridge": "^5.4.9|^6.4|^7.0"
             },
             "default-branch": true,
             "type": "library",
@@ -437,7 +437,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-12T11:20:12+00:00"
+            "time": "2024-01-25T08:27:19+00:00"
         }
     ],
     "packages-dev": [
