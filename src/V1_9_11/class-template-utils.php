@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_9_10;
+namespace immonex\WordPressFreePluginCore\V1_9_11;
 
 /**
  * Utility methods for a very simple kind of templating.
@@ -75,7 +75,12 @@ class Template_Utils {
 
 		$template_data    = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
 		$template_folders = $this->get_default_template_folders( false, true, true );
-		if ( DIRECTORY_SEPARATOR === $filename[0] ) {
+
+		if ( ! empty( $template_data['template_folders'] ) ) {
+			$template_folders = array_merge( $template_folders, $template_data['template_folders'] );
+		}
+
+		if ( DIRECTORY_SEPARATOR === $filename[0] || false === strpos( DIRECTORY_SEPARATOR, $filename ) ) {
 			array_unshift( $template_folders, dirname( $filename ) );
 		}
 

@@ -1,6 +1,6 @@
 {
     "name": "immonex/wp-free-plugin-core",
-    "version": "1.9.10",
+    "version": "1.9.11",
     "type": "library",
     "description": "Shared basic functionality for free immonex WordPress plugins",
     "keywords": ["immonex", "wordpress", "wp", "real estate", "plugin", "openimmo", "immobilien"],
