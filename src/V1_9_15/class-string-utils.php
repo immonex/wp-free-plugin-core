@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_9_14;
+namespace immonex\WordPressFreePluginCore\V1_9_15;
 
 /**
  * String related utility methods.
@@ -1206,18 +1206,21 @@ class String_Utils {
 	 *
 	 * @since 1.9.14
 	 *
-	 * @param string $source      Source list string.
-	 * @param string $mode        Optional split/return mode selection:
-	 *                                - "auto" (default): automatic list type detection
-	 *                                - "list": plain value array
-	 *                                - "list_or_single": plain value array or single value as string
-	 *                                - "key_value": associative key-value array (possibly nested)
-	 *                                - "key_value_non_empty": like "key_value", but without empty elements
-	 * @param string $valid_chars Valid key/value characters (optional).
+	 * @param string $source        Source list string.
+	 * @param string $mode          Optional split/return mode selection:
+	 *                                  - "auto" (default): automatic list type detection
+	 *                                  - "list": plain value array
+	 *                                  - "list_or_single": plain value array or single value as string
+	 *                                  - "key_value": associative key-value array (possibly nested)
+	 *                                  - "key_value_non_empty": like "key_value", but without empty elements
+	 * @param string $valid_chars   Valid key/value characters as RegEx (optional).
+	 * @param string $divider_chars Key/Value divider characters (optional, default: =:).
+	 * @param bool   $convert_bool  Convert "true" and "false" strings to real boolean values
+	 *                              (optional, true by default).
 	 *
 	 * @return mixed[]|string List elements as array or string (if single).
 	 */
-	public function split_list_string( $source, $mode = 'auto', $valid_chars = false ) {
+	public function split_list_string( $source, $mode = 'auto', $valid_chars = false, $divider_chars = '=:', $convert_bool = true ) {
 		if (
 			! is_string( $source )
 			|| ! empty( json_decode( $source ) )
@@ -1238,6 +1241,9 @@ class String_Utils {
 		if ( empty( $valid_chars ) ) {
 			$valid_chars = 'a-z0-9äöüÄÖÜß_ {}\[\]\'"\.:;*#\-!$%&\/|?<>';
 		}
+		if ( 'key_value' === substr( $mode, 0, 9 ) ) {
+			$valid_chars = preg_replace( "/[$divider_chars]/", '', $valid_chars );
+		}
 
 		$empty_return_value = 'list_or_single' === $mode ? '' : array();
 		$source             = preg_replace( '/^(\s*)?\((\s*)?(.*?)(\s*)?(?<!\\\)\)(\s*)?$/', '$3', $source );
@@ -1257,13 +1263,18 @@ class String_Utils {
 			return 'list_or_single' === $mode && 1 === count( $matches ) ? $matches[0] : $matches;
 		}
 
-		$replace_masked = function ( $value, $decode = false ) {
+		$replace_masked = function ( $value, $divider_chars, $decode = false ) {
 			$mapping = array(
 				'(' => '|--',
 				')' => '--|',
 				'=' => '|--|',
 				',' => '|_|',
 			);
+
+			$divider_chars_length = strlen( $divider_chars );
+			for ( $i = 0; $i < $divider_chars_length; $i++ ) {
+				$mapping[ $divider_chars[ $i ] ] = "|-{$i}-|";
+			}
 
 			if ( ! $decode ) {
 				$masked_keys = array_map(
@@ -1279,8 +1290,8 @@ class String_Utils {
 				str_replace( $masked_keys, array_values( $mapping ), $value );
 		}; // replace_masked
 
-		$source  = $replace_masked( $source );
-		$pattern = "/\s*(?P<key>[{$valid_chars}]+)\s*(=\s*(?P<value>[{$valid_chars}]+|(?P<list>\(([^()]|(?P>list))*\)))\s*)?(?:[,)]|$)/i";
+		$source  = $replace_masked( $source, $divider_chars );
+		$pattern = "/\s*(?P<key>[{$valid_chars}]+)\s*([{$divider_chars}]\s*(?P<value>[{$valid_chars}]+|(?P<list>\(([^()]|(?P>list))*\)))\s*)?(?:[,)]|$)/i";
 		$result  = array();
 
 		$found = preg_match_all( $pattern, $source, $matches, PREG_SET_ORDER );
@@ -1294,23 +1305,31 @@ class String_Utils {
 			$value = isset( $match['value'] ) ? $match['value'] : '';
 
 			if ( isset( $match['list'] ) ) {
-				$sub_mode = false !== strpos( $value, '=' ) ? 'key_value_non_empty' : 'list';
+				$sub_mode = preg_match( '/[{$divider_chars}]/', $value ) ? 'key_value_non_empty' : 'list';
 				$value    = $this->split_list_string( $value, $sub_mode, $valid_chars );
+			}
+
+			if ( is_string( $value ) && $convert_bool ) {
+				if ( 'true' === strtolower( $value ) ) {
+					$value = true;
+				} elseif ( 'false' === strtolower( $value ) ) {
+					$value = false;
+				}
 			}
 
 			if ( ! $value && 'key_value_non_empty' === $mode ) {
 				continue;
 			}
 
-			$result_key   = $replace_masked( $key, true );
+			$result_key   = $replace_masked( $key, $divider_chars, true );
 			$result_value = is_array( $value ) ?
 				array_map(
-					function ( $value_element ) use ( $replace_masked ) {
-						return $replace_masked( $value_element, true );
+					function ( $value_element ) use ( $replace_masked, $divider_chars ) {
+						return $replace_masked( $value_element, $divider_chars, true );
 					},
 					$value
 				) :
-				$replace_masked( $value, true );
+				$replace_masked( $value, $divider_chars, true );
 
 			$result[ $result_key ] = $result_value;
 		}
