@@ -1151,9 +1151,11 @@ abstract class Base {
 	 * @param string $plugin_slug Name of the plugin whose options should be cleaned up.
 	 */
 	public function perform_plugin_option_cleanup( $plugin_slug ) {
-		if ( $plugin_slug === $this->plugin_slug ) {
-			$outdated = $this->clean_up_plugin_options( true );
+		if ( ! $plugin_slug === $this->plugin_slug ) {
+			return;
 		}
+
+		$outdated = $this->clean_up_plugin_options( true );
 
 		// @codingStandardsIgnoreLine
 		$options = apply_filters( "{$this->plugin_slug}_options_after_activation", $this->plugin_options );
