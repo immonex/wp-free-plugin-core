@@ -1151,7 +1151,7 @@ abstract class Base {
 	 * @param string $plugin_slug Name of the plugin whose options should be cleaned up.
 	 */
 	public function perform_plugin_option_cleanup( $plugin_slug ) {
-		if ( ! $plugin_slug === $this->plugin_slug ) {
+		if ( $plugin_slug !== $this->plugin_slug ) {
 			return;
 		}
 
@@ -1216,7 +1216,7 @@ abstract class Base {
 	 * @param string $plugin_slug Name of the plugin whose might have to be updated.
 	 */
 	public function maybe_update_plugin_version( $plugin_slug ) {
-		if ( ! $plugin_slug === $this->plugin_slug ) {
+		if ( $plugin_slug !== $this->plugin_slug ) {
 			return;
 		}
 
