@@ -370,7 +370,7 @@ class Template_Utils {
 	 * @return string|bool File URL or false if nonexistent or indeterminable.
 	 */
 	public function get_template_file_url( $file ) {
-		if ( DIRECTORY_SEPARATOR !== $file[0] ) {
+		if ( DIRECTORY_SEPARATOR !== $file[0] && ':' !== $file[1] ) {
 			$file = $this->locate_template_file( $file );
 
 			if ( ! $file ) {

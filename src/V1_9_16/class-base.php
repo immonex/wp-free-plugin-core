@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_9_15;
+namespace immonex\WordPressFreePluginCore\V1_9_16;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 1.9.15
+ * @version 1.9.16
  */
 abstract class Base {
 
-	const CORE_VERSION = '1.9.15';
+	const CORE_VERSION = '1.9.16';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
