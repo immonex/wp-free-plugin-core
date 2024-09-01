@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_9_16;
+namespace immonex\WordPressFreePluginCore\V1_9_20;
 
 /**
  * Utility methods for a very simple kind of templating.
@@ -200,50 +200,74 @@ class Template_Utils {
 	 *
 	 * @since 0.8.3
 	 *
-	 * @param string      $filename Template filename.
-	 * @param string[]    $add_folders Additional search folders (absolute paths).
-	 * @param string      $add_folder_mode Where to insert the additional folders (before, after or override).
-	 * @param string|bool $force_skin Temporary use the given skin instead of the main one.
+	 * @param string|string[] $filenames Template filename(s).
+	 * @param string[]        $add_folders Additional search folders (absolute paths).
+	 * @param string          $add_folder_mode Where to insert the additional folders (before, after or override).
+	 * @param string|bool     $force_skin Temporary use the given skin instead of the main one.
 	 *
 	 * @return string|bool Full template file path or false if not found.
 	 */
-	public function locate_template_file( $filename, $add_folders = array(), $add_folder_mode = 'before', $force_skin = false ) {
-		if ( ! is_string( $filename ) ) {
+	public function locate_template_file( $filenames, $add_folders = array(), $add_folder_mode = 'before', $force_skin = false ) {
+		if ( empty( $filenames ) ) {
 			return false;
 		}
 
-		$full_ext = preg_match( '/\.([a-z.]+)$/i', $filename, $matches );
-
-		if ( $full_ext ) {
-			$ext = $matches[1];
-		} else {
-			$ext       = 'php';
-			$filename .= '.php';
+		if ( ! is_array( $filenames ) ) {
+			$filenames = array( $filenames );
 		}
 
 		$dirsep = array_unique( array( DIRECTORY_SEPARATOR, '/' ) );
 
-		if ( in_array( $filename[0], $dirsep, true ) && file_exists( $filename ) ) {
-			return $filename;
+		foreach ( $filenames as $i => $filename ) {
+			if ( ! is_string( $filename ) ) {
+				unset( $filenames[ $i ] );
+				continue;
+			}
+
+			$full_ext = preg_match( '/\.([a-z.]+)$/i', $filename, $matches );
+
+			if ( ! $full_ext ) {
+				$filename       .= '.php';
+				$filenames[ $i ] = $filename;
+			}
+
+			if ( in_array( $filename[0], $dirsep, true ) && file_exists( $filename ) ) {
+				return $filename;
+			}
 		}
 
-		$ext_regex = str_replace( '.', '\\.', $ext );
+		if ( empty( $filenames ) ) {
+			return false;
+		}
 
-		if ( preg_match( '/[\[]?-([a-z]{2}(_[A-Z]{2})?(_(in)?formal)?)[\]]?\.' . $ext_regex . '/', $filename, $matches ) ) {
-			$locale              = $matches[1];
-			$localized_filenames = array( str_replace( $matches[0], "-{$locale}", $filename ) );
+		$localized_filenames = array();
 
-			if ( preg_match( '/_(in)?formal/', $locale ) ) {
-				$lang_country          = preg_replace( '/_(in)?formal/', '', $locale );
-				$localized_filenames[] = str_replace( $matches[0], "-{$lang_country}", $filename );
+		foreach ( $filenames as $filename ) {
+			$full_ext  = preg_match( '/\.([a-z.]+)$/i', $filename, $matches );
+			$ext_regex = str_replace( '.', '\\.', $matches[1] );
+
+			if ( preg_match( '/[\[]?-([a-z]{2}(_[A-Z]{2})?(_(in)?formal)?)[\]]?\.' . $ext_regex . '/', $filename, $matches ) ) {
+				$locale              = $matches[1];
+				$localized_filenames = array_merge(
+					$localized_filenames,
+					array( str_replace( $matches[0], "-{$locale}", $filename ) )
+				);
+
+				if ( preg_match( '/_(in)?formal/', $locale ) ) {
+					$lang_country          = preg_replace( '/_(in)?formal/', '', $locale );
+					$localized_filenames[] = str_replace( $matches[0], "-{$lang_country}", $filename );
+				}
+				if ( preg_match( '/[a-z]{2}_[A-Z]{2}/', $locale ) ) {
+					$lang                  = substr( $locale, 0, 2 );
+					$localized_filenames[] = str_replace( $matches[0], "-{$lang}", $filename );
+				}
+				$localized_filenames[] = str_replace( $matches[0], '', $filename );
+			} else {
+				$localized_filenames = array_merge(
+					$localized_filenames,
+					array( $filename )
+				);
 			}
-			if ( preg_match( '/[a-z]{2}_[A-Z]{2}/', $locale ) ) {
-				$lang                  = substr( $locale, 0, 2 );
-				$localized_filenames[] = str_replace( $matches[0], "-{$lang}", $filename );
-			}
-			$localized_filenames[] = str_replace( $matches[0], '', $filename );
-		} else {
-			$localized_filenames = array( $filename );
 		}
 
 		if ( is_array( $add_folders ) && ! empty( $add_folders['template_folders'] ) ) {
@@ -370,6 +394,10 @@ class Template_Utils {
 	 * @return string|bool File URL or false if nonexistent or indeterminable.
 	 */
 	public function get_template_file_url( $file ) {
+		if ( empty( $file ) ) {
+			return false;
+		}
+
 		if ( DIRECTORY_SEPARATOR !== $file[0] && ':' !== $file[1] ) {
 			$file = $this->locate_template_file( $file );
 
@@ -658,6 +686,7 @@ class Template_Utils {
 				'autoescape' => false,
 			)
 		);
+		$this->twig->addExtension( new \Twig\Extra\Intl\IntlExtension() );
 
 		return $this->twig;
 	} // get_twig

@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V1_9_16;
+namespace immonex\WordPressFreePluginCore\V1_9_20;
 
 /**
  * String related utility methods.
@@ -1336,5 +1336,33 @@ class String_Utils {
 
 		return $result;
 	} // split_list_string
+
+	/**
+	 * Perform an extended string comparison: RegEx based if $compare begins with
+	 * a slash, one to one comparison (lowercase strings) otherwise.
+	 *
+	 * @since 1.9.17
+	 *
+	 * @param string $compare String or regular expression to compare the source
+	 *                        string with.
+	 * @param string $source  Source string.
+	 *
+	 * @return bool True if lowercase strings are equal or the regular expression
+	 *              matches, false if the strings are not equal or the RegEx is
+	 *              invalid.
+	 */
+	public function ext_compare( $compare, $source ) {
+		if ( '/' === $compare[0] ) {
+			try {
+				$match = preg_match( $compare, $source );
+
+				return $match ? true : false;
+			} catch ( \Exception $e ) {
+				return false;
+			}
+		}
+
+		return strtolower( $source ) === strtolower( $compare );
+	} // ext_compare
 
 } // String_Utils
