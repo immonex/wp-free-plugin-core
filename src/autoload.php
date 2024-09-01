@@ -7,11 +7,6 @@
 
 namespace immonex\WordPressFreePluginCore;
 
-/**
- * Initialize the Composer autoloader first.
- */
-require_once __DIR__ . '/vendor/autoload.php';
-
 spl_autoload_register(
 	/**
 	 * Automatically locate and load files based on their namespaces and their
