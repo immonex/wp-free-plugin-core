@@ -25,7 +25,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\DEV_1;
+namespace immonex\WordPressFreePluginCore\V2_0_0;
 
 /**
  * Base class for free immonex WordPress plugins.

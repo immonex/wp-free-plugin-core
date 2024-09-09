@@ -686,7 +686,6 @@ class Template_Utils {
 				'autoescape' => false,
 			)
 		);
-		$this->twig->addExtension( new \Twig\Extra\Intl\IntlExtension() );
 
 		return $this->twig;
 	} // get_twig
