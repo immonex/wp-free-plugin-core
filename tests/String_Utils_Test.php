@@ -14,6 +14,8 @@ class String_Utils_Test extends WP_UnitTestCase {
 		$base_class  = get_parent_class( $test_plugin );
 		$reflection  = new \ReflectionClass( $base_class );
 		$this->ns    = $reflection->getNamespaceName();
+
+		switch_to_locale( 'de_DE' );
 	} // setUp
 
 	public function test_leading_timestamp() {
@@ -153,5 +155,21 @@ class String_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( 1900000, ( "{$this->ns}\String_Utils" )::smooth_round( $value ) );
 		$this->assertEquals( 1890000, ( "{$this->ns}\String_Utils" )::smooth_round( $value, true ) );
 	} // test_smooth_round
+
+	public function test_format_number() {
+		$this->assertEquals( '123,00', ( "{$this->ns}\String_Utils" )::format_number( 123 ) );
+		$this->assertEquals( '123', ( "{$this->ns}\String_Utils" )::format_number( 123, 0 ) );
+		$this->assertEquals( '123,10', ( "{$this->ns}\String_Utils" )::format_number( 123.1, 2 ) );
+		$this->assertEquals( '123,1', ( "{$this->ns}\String_Utils" )::format_number( 123.1, 9 ) );
+		$this->assertEquals( '123,1', ( "{$this->ns}\String_Utils" )::format_number( '123.1000', 9 ) );
+		$this->assertEquals( '120.500,3', ( "{$this->ns}\String_Utils" )::format_number( 120500.3, 9 ) );
+		$this->assertEquals( '120.500,4', ( "{$this->ns}\String_Utils" )::format_number( 'foo 120.500,40 bar', 9 ) );
+		$this->assertEquals( '120.500', ( "{$this->ns}\String_Utils" )::format_number( '120.500,000', 9 ) );
+		$this->assertEquals( '123,00 m²', ( "{$this->ns}\String_Utils" )::format_number( 123, 2, 'm²' ) );
+		$this->assertEquals( '€ 123,00', ( "{$this->ns}\String_Utils" )::format_number( 123, 2, '€', [ 'unit_pos' => 'before' ] ) );
+		$this->assertEquals( '123,00 €', ( "{$this->ns}\String_Utils" )::format_number( 123, 2, '€', [ 'unit_pos' => 'after', 'unit_sep' => ' ' ] ) );
+		$this->assertEquals( 'not specified', ( "{$this->ns}\String_Utils" )::format_number( 0, 2, '€', [ 'if_zero' => 'not specified' ] ) );
+		$this->assertEquals( '', ( "{$this->ns}\String_Utils" )::format_number( 0, 2, '€' ) );
+	} // test_filter_detail_items_by_name
 
 } // class String_Utils_Test

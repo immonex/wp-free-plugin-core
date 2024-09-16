@@ -342,6 +342,8 @@ class String_Utils {
 	 * @return float Converted float value.
 	 */
 	public static function get_float( $num ) {
+		global $wp_locale;
+
 		$period_pos = strrpos( $num, '.' );
 		$comma_pos  = strrpos( $num, ',' );
 		$sep        = ( ( $period_pos > $comma_pos ) && $period_pos ) ?
@@ -370,6 +372,80 @@ class String_Utils {
 	public static function get_nice_number( $value ) {
 		return str_replace( '.', ',', floatval( $value ) );
 	} // get_nice_number
+
+	/**
+	 * Perform an "extended" and localized number value formatting (incl. optionally
+	 * appending/prepending a unit or returning an alternative string if the value
+	 * string is zero).
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param int|float|string $value Source value.
+	 * @param int              $decimals Number of decimal places (optional, default 2):
+	 *                                     - 9: delete all trailing zeros after the decimal point,
+	 *                                          examples:
+	 *                                            - 12.20 -> 12,2
+	 *                                            - 12.00 -> 12
+	 *                                     - 99: format integer-style values without decimal places,
+	 *                                           floats with two, examples:
+	 *                                             - 12.0 -> 12
+	 *                                             - 12.123 -> 12,12
+	 * @param string           $unit Unit string to append or prepend (optional).
+	 * @param mixed[]          $args Additional arguments (optional):
+	 *                                 - if_zero: String to return if the value is zero.
+	 *                                 - unit_pos: Unit position ("before" or "after" the value).
+	 *                                 - unit_sep: Unit spacing character or string (default: no-break space).
+	 *
+	 * @return float Formatted number or zero string.
+	 */
+	public static function format_number( $value, $decimals = 2, $unit = '', $args = array() ) {
+		global $wp_locale;
+
+		if ( ! $value && ! empty( $args['if_zero'] ) ) {
+			return $args['if_zero'];
+		}
+
+		if ( ! is_numeric( $value ) ) {
+			$value = self::get_float( $value );
+		}
+
+		if ( ! is_numeric( $value ) ) {
+			return $value;
+		}
+
+		if ( empty( $value ) ) {
+			return '';
+		}
+
+		if ( 99 === $decimals ) {
+			// Format integer values without decimal places, floats with two.
+			$whole    = (int) $value;
+			$fraction = round( $value - $whole, 2 );
+			$decimals = $fraction > 0 ? 2 : 0;
+		}
+
+		$formatted = number_format_i18n( $value, 9 === $decimals ? 2 : (int) $decimals );
+
+		if ( 9 === $decimals ) {
+			// Remove all trailing zeros.
+			$dec_sep = ! empty( $wp_locale->number_format['decimal_point'] ) ?
+				$wp_locale->number_format['decimal_point'] : ',';
+			if ( '.' === $dec_sep ) {
+				$dec_sep = '\.';
+			}
+			$formatted = preg_replace( "/(({$dec_sep}([0]+)?[1-9]{1,})|{$dec_sep})0+$/", '$2', $formatted );
+		}
+
+		if ( $unit ) {
+			$sep       = ! empty( $args['unit_sep'] ) ? $args['unit_sep'] : ' ';
+			$unit_pos  = ! empty( $args['unit_pos'] ) ? $args['unit_pos'] : 'after';
+			$formatted = 'after' === $unit_pos ?
+				$formatted . $sep . $unit :
+				$unit . $sep . $formatted;
+		}
+
+		return $formatted;
+	} // format_number
 
 	/**
 	 * "Smooth" a value by rounding depending on its lenght and the number of

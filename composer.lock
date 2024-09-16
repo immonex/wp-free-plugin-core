@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f7e8f0dbb8bfc3ccc00c142a397178a",
+    "content-hash": "660f12a339e4190843947ca083eefcaf",
     "packages": [
         {
             "name": "html2text/html2text",
@@ -2334,12 +2334,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "6d29dd9340b372fa603f04e6df4dd76bb808591e"
+                "reference": "3d2f88e9f5013a5938ed5aad1ee9db2f50ea765f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/6d29dd9340b372fa603f04e6df4dd76bb808591e",
-                "reference": "6d29dd9340b372fa603f04e6df4dd76bb808591e",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/3d2f88e9f5013a5938ed5aad1ee9db2f50ea765f",
+                "reference": "3d2f88e9f5013a5938ed5aad1ee9db2f50ea765f",
                 "shasum": ""
             },
             "require": {
@@ -2393,7 +2393,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-06-28T09:36:24+00:00"
+            "time": "2024-09-11T10:39:08+00:00"
         },
         {
             "name": "symfony/finder",
@@ -2625,12 +2625,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "8be1d484951ff5ca995eaf8edcbcb8b9a5888450"
+                "reference": "2ce7db660f091e05c484cbc1f6c38ab4b9ff04b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/8be1d484951ff5ca995eaf8edcbcb8b9a5888450",
-                "reference": "8be1d484951ff5ca995eaf8edcbcb8b9a5888450",
+                "url": "https://api.github.com/repos/symfony/string/zipball/2ce7db660f091e05c484cbc1f6c38ab4b9ff04b8",
+                "reference": "2ce7db660f091e05c484cbc1f6c38ab4b9ff04b8",
                 "shasum": ""
             },
             "require": {
@@ -2703,7 +2703,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-08-01T10:24:28+00:00"
+            "time": "2024-09-11T08:22:25+00:00"
         },
         {
             "name": "symfony/translation-contracts",
