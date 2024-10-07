@@ -8,9 +8,10 @@ This lightweight **PHP library** provides shared basic functionality for free **
 - autoloading of CSS and JS files
 - option handling / shared settings pages
 - geocoding
-- simple templating
+- simple templating (incl. Twig)
 - special string checking and manipulation
 - color calculations
+- domain and URL handling
 
 **immonex**® is an umbrella brand for various **real estate related software** solutions and services with a focus on german-speaking countries/users.
 

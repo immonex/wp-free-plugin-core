@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-MAKEPOT_CMD="php vendor/inverisoss/wp-i18n-tools/makepot.php generic"
+MAKEPOT_CMD="wp i18n make-pot --domain=immonex-wp-free-plugin-core --exclude=vendor,lib,assets,bin,data"
 
 for folder in ./src/*/ ; do
   if [[ -d "$folder" && ! -L "$folder" && -d "$folder/languages" ]]; then
-    CMD="$MAKEPOT_CMD src ${folder}languages/immonex-wp-free-plugin-core.pot"
+    CMD="$MAKEPOT_CMD ${folder} ${folder}languages/immonex-wp-free-plugin-core.pot"
     echo $CMD
-    $($CMD)
+    $CMD
   fi
 done
