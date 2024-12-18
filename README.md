@@ -43,7 +43,7 @@ With the [Composer-based installation](#via-composer), the plugin core library g
 
 ```json
     "require": {
-        "immonex/wp-free-plugin-core": "^1.9.6"
+        "immonex/wp-free-plugin-core": "^2.1.8"
     },
 ```
 
@@ -59,7 +59,7 @@ $myimmonex_example_plugin->init();
 The **main plugin class** is located in the file `includes/class-example-plugin.php`. It is derived from the latest **core Base class**:
 
 ```php
-class Example_Plugin extends \immonex\WordPressFreePluginCore\V1_9_6\Base {
+class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_1_8\Base {
 
 	const
 		PLUGIN_NAME = 'My immonex Plugin',
