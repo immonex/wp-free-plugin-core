@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_1_9;
+namespace immonex\WordPressFreePluginCore\V2_1_11;
 
 /**
  * Helper class for dealing with the WordPress Settings API.
@@ -368,6 +368,11 @@ class Settings_Helper {
 					)
 				)
 			);
+			$sections_html = str_replace(
+				'<th scope="row"></th><td>',
+				'<td colspan="2" class="subsection-header">',
+				$sections_html
+			);
 
 			ob_end_clean();
 			echo $sections_html;
@@ -707,7 +712,10 @@ class Settings_Helper {
 			$this->render_text( $args );
 		}
 
-		if ( isset( $args['description'] ) ) {
+		if (
+			isset( $args['description'] )
+			&& 'subsection_header' !== $args['type']
+		) {
 			echo '<p class="description">' . $args['description'] . '</p>' . PHP_EOL;
 		}
 	} // render_field
@@ -740,6 +748,37 @@ class Settings_Helper {
 			'<div class="immonex-plugin-options__ext-description-content">' . $content . '</div>'
 		);
 	} // get_extended_description_section
+
+	/**
+	 * Render a subsection header.
+	 *
+	 * @since 2.1.11
+	 *
+	 * @param array $args Section properties.
+	 */
+	public function render_subsection_header( $args ) {
+		$ext_description = '';
+		$description     = ! empty( $args['description'] ) ?
+			$args['description'] : '';
+
+		if ( is_array( $description ) ) {
+			$ext_description = ! empty( $description[1] ) ? $description[1] : '';
+			$description     = $description[0];
+		}
+
+		if ( ! empty( $args['title'] ) ) {
+			printf( '<h3>%s</h3>' . PHP_EOL, $args['title'] );
+		}
+
+		if ( $description ) {
+			echo wp_sprintf(
+				'<div class="section-description%1$s">%2$s</div>%3$s' . PHP_EOL,
+				$ext_description ? ' has-ext-contents' : '',
+				$description,
+				$ext_description ? $this->get_extended_description_section( $ext_description, $args['id'] ) : ''
+			);
+		}
+	} // render_subsection_header
 
 	/**
 	 * Render a text field.

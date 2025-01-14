@@ -29,6 +29,10 @@
 	vertical-align: top;
 }
 
+.immonex-plugin-options td.subsection-header {
+	padding-left: 0;
+}
+
 .immonex-plugin-options .debug-mode-info {
 	margin-bottom: 16px;
 	padding: 8px;

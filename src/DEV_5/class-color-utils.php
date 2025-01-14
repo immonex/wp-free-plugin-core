@@ -112,7 +112,7 @@ class Color_Utils {
 		// Convert to decimal and change luminosity.
 		for ( $i = 0; $i < 3; $i++ ) {
 			$dec      = hexdec( substr( $hex, $i * 2, 2 ) );
-			$dec      = min( max( 0, $dec + $dec * $percent_dec ), 255 );
+			$dec      = (int) min( max( 0, $dec + $dec * $percent_dec ), 255 );
 			$new_hex .= str_pad( dechex( $dec ), 2, 0, STR_PAD_LEFT );
 		}
 
@@ -334,7 +334,7 @@ class Color_Utils {
 		$hex = '#';
 
 		for ( $i = 0; $i < 3; $i++ ) {
-			$hex .= str_pad( dechex( $rgb[ $i ] ), 2, 0, STR_PAD_LEFT );
+			$hex .= str_pad( dechex( (int) $rgb[ $i ] ), 2, 0, STR_PAD_LEFT );
 		}
 
 		return $hex;
