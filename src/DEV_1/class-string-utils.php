@@ -516,12 +516,14 @@ class String_Utils {
 	 * @return bool Check result.
 	 */
 	public static function is_local_url( $url, $case_sensitive = false, $add_local_urls = [] ) {
+		$url       = rawurldecode( $url );
 		$url_parts = wp_parse_url( $url );
+
 		if ( false === $url_parts ) {
 			return false;
 		}
 
-		$url_comp  = trailingslashit(
+		$url_comp = trailingslashit(
 			( isset( $url_parts['host'] ) ? $url_parts['host'] : '' ) .
 			( isset( $url_parts['path'] ) ? $url_parts['path'] : '' )
 		);
@@ -530,7 +532,7 @@ class String_Utils {
 			$url_comp = strtolower( $url_comp );
 		}
 
-		$local_urls =  [
+		$local_urls = [
 			home_url(),
 			site_url(),
 		];
@@ -556,7 +558,7 @@ class String_Utils {
 				continue;
 			}
 
-			$local_url_comp  = trailingslashit(
+			$local_url_comp = trailingslashit(
 				( isset( $local_url_parts['host'] ) ? $local_url_parts['host'] : '' ) .
 				( isset( $local_url_parts['path'] ) ? $local_url_parts['path'] : '' )
 			);
