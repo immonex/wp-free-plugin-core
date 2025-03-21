@@ -9,7 +9,7 @@ class My_Plugin_Test extends WP_UnitTestCase {
 
 	private $test_plugin;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->test_plugin = new Test_Plugin( 'immonex-test-plugin' );
 
 		$this->test_plugin->register_plugin_settings();

@@ -10,7 +10,7 @@ class Local_FS_Utils_Test extends WP_UnitTestCase {
 	private $class;
 	private $util;
 
-	public function setUp() {
+	public function setUp(): void {
 		$test_plugin = new Test_Plugin( 'immonex-test-plugin' );
 		$base_class  = get_parent_class( $test_plugin );
 		$reflection  = new \ReflectionClass( $base_class );

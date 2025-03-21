@@ -7,11 +7,13 @@ This lightweight **PHP library** provides shared basic functionality for free **
 - consistent initialization
 - autoloading of CSS and JS files
 - option handling / shared settings pages
-- geocoding
+- geocoding and domains
 - simple templating (incl. Twig)
 - special string checking and manipulation
 - color calculations
 - domain and URL handling
+- emails
+- videos
 
 **immonex**® is an umbrella brand for various **real estate related software** solutions and services with a focus on german-speaking countries/users.
 
@@ -59,7 +61,7 @@ $myimmonex_example_plugin->init();
 The **main plugin class** is located in the file `includes/class-example-plugin.php`. It is derived from the latest **core Base class**:
 
 ```php
-class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_1_8\Base {
+class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_2_0\Base {
 
 	const
 		PLUGIN_NAME = 'My immonex Plugin',
@@ -84,7 +86,7 @@ src
 ├── DEV <────┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\DEV
 ├── V1_0_0   │ optional PB
 ├── V1_1_0   │ optional PB
-└── V1_1_7 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V1_1_7
+└── V2_2_0 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V1_1_7
 ```
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.
@@ -106,8 +108,9 @@ The **autoloading chain** supplied by this lib avoids incompatibilities that can
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - [npm (Node.js)](https://www.npmjs.com/get-npm)
 - [Composer](https://getcomposer.org/)
-- [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
+- [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer/)
 - [WordPress Coding Standards for PHP_CodeSniffer](https://github.com/WordPress/WordPress-Coding-Standards)
+- [WP-CLI](https://wp-cli.org/)
 
 ### Setup
 

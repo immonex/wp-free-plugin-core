@@ -64,7 +64,7 @@ spl_autoload_register(
 		 * are the vendor and plugin name parts. The last index is always
 		 * the file so we append that at the end.
 		 */
-		$fully_qualified_path = trailingslashit( dirname( __FILE__ ) );
+		$fully_qualified_path = trailingslashit( __DIR__ );
 		$cnt_file_path        = count( $file_path ) - 1;
 
 		for ( $i = 2; $i < $cnt_file_path; $i++ ) {
