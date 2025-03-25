@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7711c06aad3ae753321a0690304ccecf",
+    "content-hash": "15a9f62cd247c5c4a393b4e8d080e1dd",
     "packages": [
         {
             "name": "html2text/html2text",
@@ -279,12 +279,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "95596ce95a0b7cd130ae9791a663005f544fcf4d"
+                "reference": "8a7d912debfa20c5b837aa6f18e99c6e3218e4d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/95596ce95a0b7cd130ae9791a663005f544fcf4d",
-                "reference": "95596ce95a0b7cd130ae9791a663005f544fcf4d",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/8a7d912debfa20c5b837aa6f18e99c6e3218e4d5",
+                "reference": "8a7d912debfa20c5b837aa6f18e99c6e3218e4d5",
                 "shasum": ""
             },
             "require": {
@@ -351,7 +351,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-03-14T20:18:50+00:00"
+            "time": "2025-03-24T21:34:23+00:00"
         }
     ],
     "packages-dev": [
@@ -1199,12 +1199,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "0ba51826060145c283f852646230783151b3ff34"
+                "reference": "fbe37c3c4de3db3114c0d3569494ab6b871d0a67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/0ba51826060145c283f852646230783151b3ff34",
-                "reference": "0ba51826060145c283f852646230783151b3ff34",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fbe37c3c4de3db3114c0d3569494ab6b871d0a67",
+                "reference": "fbe37c3c4de3db3114c0d3569494ab6b871d0a67",
                 "shasum": ""
             },
             "require": {
@@ -1294,7 +1294,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-03-13T14:02:12+00:00"
+            "time": "2025-03-23T08:41:34+00:00"
         },
         {
             "name": "sebastian/cli-parser",

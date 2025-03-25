@@ -361,4 +361,25 @@ class Local_FS_Utils {
 		return array_values( array_unique( $folders ) );
 	} // validate_dir_list
 
+	/**
+	 * Get the plugin base directory (URL-based approach as recommended in the
+	 * WP development guidelines).
+	 *
+	 * @since 2.2.1
+	 *
+	 * @return string Plugin base directory path.
+	 */
+	public function get_plugin_base_dir() {
+		if ( defined( 'WP_SITEURL' ) ) {
+			$base_url = WP_SITEURL;
+		} else {
+			$base_url = get_option( 'siteurl' );
+		}
+
+		$base_url    = preg_replace( '/^https?:\/\//', '', $base_url );
+		$plugins_url = preg_replace( '/^https?:\/\//', '', plugins_url() );
+
+		return str_replace( trailingslashit( $base_url ), ABSPATH, $plugins_url );
+	} // get_plugin_base_dir
+
 } // class Local_FS_Utils

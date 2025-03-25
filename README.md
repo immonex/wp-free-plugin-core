@@ -45,7 +45,7 @@ With the [Composer-based installation](#via-composer), the plugin core library g
 
 ```json
     "require": {
-        "immonex/wp-free-plugin-core": "^2.1.8"
+        "immonex/wp-free-plugin-core": "^2.2.1"
     },
 ```
 
@@ -86,7 +86,7 @@ src
 ├── DEV <────┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\DEV
 ├── V1_0_0   │ optional PB
 ├── V1_1_0   │ optional PB
-└── V2_2_0 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V1_1_7
+└── V2_2_1 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V1_1_7
 ```
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.

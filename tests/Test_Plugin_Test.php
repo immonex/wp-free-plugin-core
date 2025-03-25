@@ -114,4 +114,11 @@ class My_Plugin_Test extends WP_UnitTestCase {
 		}
 	} // test_sanitize_page_id_or_url
 
+	public function test_is_plugin_available() {
+		activate_plugin( 'akismet/akismet.php' );
+
+		$this->assertTrue( $this->test_plugin->is_plugin_available( 'akismet' ) );
+		$this->assertTrue( $this->test_plugin->is_plugin_available( 'akismet' ) );
+	} // test_is_plugin_available
+
 } // class My_Plugin_Test

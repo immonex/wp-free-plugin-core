@@ -281,4 +281,8 @@ class Local_FS_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $default, $this->util->validate_dir_list( $source_paths, $default ) );
 	} // test_validate_dir_list_default
 
+	function test_get_plugin_base_dir() {
+		$this->assertEquals( WP_PLUGIN_DIR, $this->util->get_plugin_base_dir() );
+	} // test_get_plugin_base_dir
+
 } // class Local_FS_Utils_Test

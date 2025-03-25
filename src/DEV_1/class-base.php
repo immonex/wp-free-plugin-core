@@ -30,11 +30,11 @@ namespace immonex\WordPressFreePluginCore\DEV_1;
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 2.2.0
+ * @version 2.2.1
  */
 abstract class Base {
 
-	const CORE_VERSION = '2.2.0';
+	const CORE_VERSION = '2.2.1';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -103,6 +103,13 @@ abstract class Base {
 	 * @var mixed[]
 	 */
 	protected $admin_notices = [];
+
+	/**
+	 * Queried active plugins (plugin_slug:version).
+	 *
+	 * @var string[]
+	 */
+	protected $available_plugins = [];
 
 	/**
 	 * Plugin slug
@@ -472,6 +479,8 @@ abstract class Base {
 		add_action( 'immonex_core_after_activation', [ $this, 'perform_plugin_option_cleanup' ], 30 );
 
 		add_action( 'wp_ajax_dismiss_admin_notice', [ $this, 'dismiss_admin_notice' ] );
+
+		add_filter( static::PLUGIN_PREFIX . 'is_plugin_available', [ $this, 'is_plugin_available_cb' ], 10, 3 );
 	} // __construct
 
 	/**
@@ -2293,5 +2302,67 @@ abstract class Base {
 			[ $menu_options[0], 20 ] :
 			[ $menu_options[1], 10 ];
 	} // get_options_link_menu
+
+	/**
+	 * Check if a plugin is installed and active – optionally with the stated
+	 * minimum version.
+	 *
+	 * (Single-file and MU plugins are not supported.)
+	 *
+	 * @since 2.2.1
+	 *
+	 * @param string $slug Plugin slug.
+	 * @param string $min_version Minimum version required (optional).
+	 *
+	 * @return bool True if the plugin with the given slug and min. version is active.
+	 */
+	public function is_plugin_available( $slug, $min_version = '' ) {
+		$cache_key = $min_version ? "{$slug}:{$min_version}" : $slug;
+
+		if ( in_array( $cache_key, $this->available_plugins, true ) ) {
+			return true;
+		}
+
+		$rel_plugin_main_file = "{$slug}/{$slug}.php";
+		$is_active            = is_plugin_active( $rel_plugin_main_file );
+
+		if ( ! $is_active || ! $min_version ) {
+			if ( $is_active ) {
+				$this->available_plugins[] = $cache_key;
+			}
+
+			return $is_active;
+		}
+
+		if ( ! function_exists( 'get_plugin_data' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$plugin_main_file = trailingslashit( $this->utils['local_fs']->get_plugin_base_dir() ) . $rel_plugin_main_file;
+		$plugin_data      = get_plugin_data( $plugin_main_file, false, false );
+
+		$result = version_compare( $plugin_data['Version'], $min_version, '>=' );
+
+		if ( $result ) {
+			$this->available_plugins[] = $cache_key;
+		}
+
+		return $result;
+	} // is_plugin_available
+
+	/**
+	 * Filter callback version of the is_plugin_available method.
+	 *
+	 * @since 2.2.1
+	 *
+	 * @param bool   $result Check result.
+	 * @param string $slug Plugin slug.
+	 * @param string $min_version Minimum version required (optional).
+	 *
+	 * @return bool True if the plugin with the given slug and min. version is active.
+	 */
+	public function is_plugin_available_cb( $result, $slug, $min_version = '' ) {
+		return $this->is_plugin_available( $slug, $min_version );
+	} // is_plugin_available_cb
 
 } // Base
