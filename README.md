@@ -86,7 +86,7 @@ src
 ├── DEV <────┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\DEV
 ├── V1_0_0   │ optional PB
 ├── V1_1_0   │ optional PB
-└── V2_2_1 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V1_1_7
+└── V2_2_3 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V2_2_3
 ```
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.
