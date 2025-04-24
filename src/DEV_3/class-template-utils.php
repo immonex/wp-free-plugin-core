@@ -231,7 +231,11 @@ class Template_Utils {
 				$filenames[ $i ] = $filename;
 			}
 
-			if ( in_array( $filename[0], $dirsep, true ) && file_exists( $filename ) ) {
+			if (
+				( in_array( $filename[0], $dirsep, true ) || preg_match( '/^[A-Z]:/', $filename ) )
+				&& file_exists( $filename )
+			) {
+				// Return given absolute path of an existing file.
 				return $filename;
 			}
 		}
