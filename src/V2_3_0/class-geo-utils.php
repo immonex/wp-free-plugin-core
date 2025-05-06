@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_2_4;
+namespace immonex\WordPressFreePluginCore\V2_3_0;
 
 /**
  * Geocoding related utility methods.
@@ -192,6 +192,82 @@ class Geo_Utils {
 
 		return ! empty( $provider_states ) ? implode( ', ', $provider_states ) : false;
 	} // get_geocoding_status
+
+	/**
+	 * Validate/Sanitize/Convert a given latitude, longitude or combined (comma-separated)
+	 * coordinate string or float value. Examples:
+	 *
+	 *  - (string) 12.345                       -> (float) 12.345
+	 *  - (float) -123.456                      -> (float) -123.456
+	 *  - (string) foo 51.163375, 10.447683 bar -> (string) 51.163375,10.447683
+	 *  - (float) 185.123                       -> false
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string|float $source Latitude/Longitude or Coordinate pair to check.
+	 * @param string       $type   Optional validation type (lat, lng or default: coords).
+	 *
+	 * @return float|string|bool Validated/Sanitized/Converted value or false if invalid.
+	 */
+	public static function validate_coords( $source, $type = 'coords' ) {
+		if ( ! in_array( $type, [ 'lat', 'lng', 'coords' ], true ) ) {
+			$type = 'coords';
+		}
+
+		switch ( $type ) {
+			case 'coords':
+				if ( ! is_string( $source ) || false === strpos( $source, ',' ) ) {
+					return false;
+				}
+
+				$split     = [];
+				$split_raw = explode( ',', $source );
+
+				if ( count( $split_raw ) < 2 ) {
+					return false;
+				}
+
+				foreach ( $split_raw as $element ) {
+					if ( preg_match( '/[-0-9]+\.[0-9]+/', $element, $matches ) ) {
+						$split[] = $matches[0];
+					}
+				}
+
+				$lat = $split[0];
+				$lng = $split[1];
+
+				if (
+					count( $split ) < 2
+					|| ! is_numeric( $lat )
+					|| ! is_numeric( $lng )
+					|| ( (float) $lat < -90 || (float) $lat > 90 )
+					|| ( (float) $lng < -180 || (float) $lng > 180 )
+				) {
+					return false;
+				}
+
+				return "{$lat},{$lng}";
+			default:
+				$minmax_deg = 'lat' === $type ? 90 : 180;
+
+				if ( is_string( $source ) ) {
+					$found = preg_match( '/[-0-9]+\.[0-9]+/', $source, $matches );
+					if ( ! $found ) {
+						return false;
+					}
+
+					$source = (float) $matches[0];
+				}
+
+				if ( ! is_numeric( $source ) ) {
+					false;
+				}
+
+				$source = (float) $source;
+
+				return $source >= $minmax_deg * -1 && $source <= $minmax_deg ? $source : false;
+		}
+	} // validate_coords
 
 	/**
 	 * Geocode a given address using Nominatim (OpenStreetMap).
