@@ -23,18 +23,22 @@ class Geo_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( -23.6784, $this->util->validate_coords( 'foo-23.6784 bar', 'lat' ) );
 		$this->assertEquals( 58.123, $this->util->validate_coords( '58.123 bar', 'lat' ) );
 		$this->assertEquals( 23.987, $this->util->validate_coords( 23.987, 'lat' ) );
-		$this->assertEquals( -23, $this->util->validate_coords( -23, 'lat' ) );
+		$this->assertEquals( 53.210242, $this->util->validate_coords( '47/2:53.210242', 'lat' ) );
+		$this->assertEquals( -23, $this->util->validate_coords( '-23.0', 'lat' ) );
+		$this->assertFalse( $this->util->validate_coords( '-23', 'lat' ) );
 		$this->assertFalse( $this->util->validate_coords( -98, 'lat' ) );
 		$this->assertFalse( $this->util->validate_coords( '91.123 bar', 'lat' ) );
 
 		$this->assertEquals( -123.6784, $this->util->validate_coords( 'foo -123.6784 bar', 'lng' ) );
 		$this->assertEquals( 58.123, $this->util->validate_coords( '58.123 bar', 'lng' ) );
 		$this->assertEquals( 23.987, $this->util->validate_coords( 23.987, 'lng' ) );
+		$this->assertEquals( 7.406623, $this->util->validate_coords( '7.406623 - 248/8:53.263831,7.514415 - 286/1:53.264098, 7.514749', 'lng' ) );
 		$this->assertEquals( -123, $this->util->validate_coords( -123, 'lng' ) );
 		$this->assertFalse( $this->util->validate_coords( -181, 'lng' ) );
 		$this->assertFalse( $this->util->validate_coords( '191.123 bar', 'lng' ) );
 
 		$this->assertEquals( '58.123,-123.6784', $this->util->validate_coords( 'foo 58.123, ! -123.6784 bar' ) );
+		$this->assertEquals( '58.123,-123.6784', $this->util->validate_coords( '47 foo 58.123, ! -123.6784 bar' ) );
 		$this->assertFalse( $this->util->validate_coords( 'foo 98.123, ! -123.6784 bar', 'coords' ) );
 		$this->assertFalse( $this->util->validate_coords( 'foo 58.123, ! -181.6784 bar', 'coords' ) );
 	} // test_validate_coords
