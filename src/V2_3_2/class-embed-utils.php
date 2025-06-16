@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_3_1;
+namespace immonex\WordPressFreePluginCore\V2_3_2;
 
 /**
  * Embedding related utilities.

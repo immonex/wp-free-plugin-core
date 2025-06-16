@@ -2,7 +2,7 @@
 /**
  * The library immonex WP Free Plugin Core provides shared basic functionality
  * for free immonex WordPress plugins.
- * Copyright (C) 2014, 2023  inveris OHG / immonex
+ * Copyright (C) 2014, 2025  inveris OHG / immonex
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_3_1;
+namespace immonex\WordPressFreePluginCore\V2_3_2;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 2.3.1
+ * @version 2.3.2
  */
 abstract class Base {
 
-	const CORE_VERSION = '2.3.1';
+	const CORE_VERSION = '2.3.2';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -789,13 +789,7 @@ abstract class Base {
 			}
 
 			$this->plugin_infos['settings_page'] = $this->settings_page;
-
-			if ( empty( $this->options_page_title ) ) {
-				$this->options_page_title = static::PLUGIN_NAME . ' - ' .
-					__( 'Settings', 'immonex-wp-free-plugin-core' );
-			}
-
-			$enable_separate_option_page = true;
+			$enable_separate_option_page         = true;
 		}
 
 		$this->enable_separate_option_page = apply_filters(
@@ -868,6 +862,11 @@ abstract class Base {
 
 		// Enqueue frontend CSS and JS files.
 		add_action( 'wp_enqueue_scripts', [ $this, 'frontend_scripts_and_styles' ] );
+
+		if ( $this->enable_separate_option_page && empty( $this->options_page_title ) ) {
+			$this->options_page_title = static::PLUGIN_NAME . ' - ' .
+				__( 'Settings', 'immonex-wp-free-plugin-core' );
+		}
 
 		if ( $fire_after_hook ) {
 			do_action( 'immonex_core_after_init', $this->plugin_slug );
