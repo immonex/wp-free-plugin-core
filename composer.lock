@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "98ad5cc1005f36c0e9bb026d9cb34456",
+    "content-hash": "68bf44d71787a3fcad5b1e23aae84c38",
     "packages": [
         {
             "name": "html2text/html2text",
@@ -518,12 +518,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/deprecations.git",
-                "reference": "459c2f5dd3d6a4633d3b5f46ee2b1c40f57d3f38"
+                "reference": "fad1854935ed49eeca580d1b878cac358ec02d04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/459c2f5dd3d6a4633d3b5f46ee2b1c40f57d3f38",
-                "reference": "459c2f5dd3d6a4633d3b5f46ee2b1c40f57d3f38",
+                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/fad1854935ed49eeca580d1b878cac358ec02d04",
+                "reference": "fad1854935ed49eeca580d1b878cac358ec02d04",
                 "shasum": ""
             },
             "require": {
@@ -557,9 +557,9 @@
             "homepage": "https://www.doctrine-project.org/",
             "support": {
                 "issues": "https://github.com/doctrine/deprecations/issues",
-                "source": "https://github.com/doctrine/deprecations/tree/1.1.5"
+                "source": "https://github.com/doctrine/deprecations/tree/1.1.x"
             },
-            "time": "2025-04-07T20:06:18+00:00"
+            "time": "2025-06-09T20:23:56+00:00"
         },
         {
             "name": "doctrine/event-manager",
@@ -859,16 +859,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.4.0",
+            "version": "v5.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "447a020a1f875a434d62f2a401f53b82a396e494"
+                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/447a020a1f875a434d62f2a401f53b82a396e494",
-                "reference": "447a020a1f875a434d62f2a401f53b82a396e494",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/ae59794362fe85e051a58ad36b289443f57be7a9",
+                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9",
                 "shasum": ""
             },
             "require": {
@@ -911,9 +911,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.4.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.5.0"
             },
-            "time": "2024-12-30T11:07:19+00:00"
+            "time": "2025-05-31T08:24:38+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -1359,12 +1359,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e3874aa4afb83cb6afa3689f22a300a9d7882e0f"
+                "reference": "8e0fbdd9d5427cee29cd1de16583bac1ec51d160"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e3874aa4afb83cb6afa3689f22a300a9d7882e0f",
-                "reference": "e3874aa4afb83cb6afa3689f22a300a9d7882e0f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8e0fbdd9d5427cee29cd1de16583bac1ec51d160",
+                "reference": "8e0fbdd9d5427cee29cd1de16583bac1ec51d160",
                 "shasum": ""
             },
             "require": {
@@ -1462,7 +1462,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-05-14T13:32:26+00:00"
+            "time": "2025-05-25T05:43:41+00:00"
         },
         {
             "name": "sebastian/cli-parser",
