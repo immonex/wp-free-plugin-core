@@ -11,7 +11,7 @@ $iwpfpc_plugin_infos   = apply_filters( "{$this->plugin_slug}_plugin_infos", [] 
 $iwpfpc_is_custom_logo = file_exists( "{$this->plugin_dir}/assets/options-logo.png" );
 
 $iwpfpc_immonex_os_logo_url = plugins_url(
-	'/vendor/immonex/wp-free-plugin-core/assets/immonex-os-logo-tiny.png',
+	'/vendor/immonex/wp-free-plugin-core/assets/immonex-logo-tiny.png',
 	$iwpfpc_plugin_infos['plugin_main_file']
 );
 

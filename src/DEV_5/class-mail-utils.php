@@ -386,7 +386,7 @@ class Mail_Utils {
 			&& ! isset( $org_data['footer'] )
 			&& ! isset( $org_data['footer_text'] )
 		) {
-			$defaults['logo']                    = 'immonex-wp-logo-tiny.png';
+			$defaults['logo']                    = 'immonex-logo-tiny.png';
 			$defaults['logo_alt']                = 'immonex® - ' . __( 'Professional Real Estate Solutions for WordPress', 'immonex-wp-free-plugin-core' );
 			$defaults['layout']['logo_position'] = 'footer_right';
 

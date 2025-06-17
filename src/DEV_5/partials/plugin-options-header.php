@@ -18,18 +18,12 @@ if ( file_exists( $iwpfpc_options_logo ) ) {
 	);
 	$iwpfpc_options_logo_alt = $iwpfpc_plugin_infos['name'];
 	$iwpfpc_is_custom_logo   = true;
-} elseif ( $iwpfpc_plugin_infos['has_free_license'] ) {
-	$iwpfpc_options_logo_url = plugins_url(
-		'/vendor/immonex/wp-free-plugin-core/assets/immonex-os-logo-small.png',
-		$iwpfpc_plugin_infos['plugin_main_file']
-	);
-	$iwpfpc_options_logo_alt = 'Logo: immonex Open Source Software';
 } else {
 	$iwpfpc_options_logo_url = plugins_url(
-		'/vendor/immonex/wp-free-plugin-core/assets/immonex-wp-logo-small.png',
+		'/vendor/immonex/wp-free-plugin-core/assets/immonex-wp-plugin-suite-logo-small.png',
 		$iwpfpc_plugin_infos['plugin_main_file']
 	);
-	$iwpfpc_options_logo_alt = 'Logo: immonex Solutions for WordPress';
+	$iwpfpc_options_logo_alt = 'Logo: immonex WordPress Plugin Suite';
 }
 
 $iwpfpc_has_tabbed_sections = ! empty( $this->option_page_tabs[ $this->current_tab ]['attributes']['tabbed_sections'] );

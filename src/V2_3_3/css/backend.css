@@ -115,12 +115,17 @@
 }
 
 .immonex-plugin-options h1.options-hl {
-	margin-bottom:48px
+	margin-bottom: 48px;
+}
+
+.immonex-plugin-options .developer-logos {
+	display: flex;
+	align-items: center;
 }
 
 .immonex-plugin-options .developer-logos a {
-	margin-bottom: 16px;
 	margin-right: 24px;
+	margin-bottom: 16px;
 }
 
 .immonex-plugin-options .tab-description,
