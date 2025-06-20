@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a0fe612111ba76861b6b5bc8151b0dc",
+    "content-hash": "61ba1c8458760b5baf117051dc2bcd9a",
     "packages": [
         {
             "name": "html2text/html2text",
@@ -1359,12 +1359,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "8e0fbdd9d5427cee29cd1de16583bac1ec51d160"
+                "reference": "a9e1112505effabbc6a0b3dde09e62999280f029"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8e0fbdd9d5427cee29cd1de16583bac1ec51d160",
-                "reference": "8e0fbdd9d5427cee29cd1de16583bac1ec51d160",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a9e1112505effabbc6a0b3dde09e62999280f029",
+                "reference": "a9e1112505effabbc6a0b3dde09e62999280f029",
                 "shasum": ""
             },
             "require": {
@@ -1462,7 +1462,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-05-25T05:43:41+00:00"
+            "time": "2025-06-19T14:51:41+00:00"
         },
         {
             "name": "sebastian/cli-parser",
