@@ -172,4 +172,14 @@ class String_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( '', ( "{$this->ns}\String_Utils" )::format_number( 0, 2, '€' ) );
 	} // test_filter_detail_items_by_name
 
+	public function test_convert_urls() {
+		$source   = 'foo immonex.de bar';
+		$expected = 'foo <a href="https://immonex.de" target="_blank">immonex.de</a> bar';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::convert_urls( $source ) );
+
+		$source   = 'foo http://immonex.de/ bar';
+		$expected = 'foo <a href="http://immonex.de/" target="_blank">http://immonex.de/</a> bar';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::convert_urls( $source ) );
+	} // test_convert_urls
+
 } // class String_Utils_Test
