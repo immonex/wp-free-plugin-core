@@ -61,7 +61,7 @@ $myimmonex_example_plugin->init();
 The **main plugin class** is located in the file `includes/class-example-plugin.php`. It is derived from the latest **core Base class**:
 
 ```php
-class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_4_2\Base {
+class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_4_3\Base {
 
 	const
 		PLUGIN_NAME = 'My immonex Plugin',
@@ -86,7 +86,7 @@ src
 ├── DEV <────┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\DEV
 ├── V1_0_0   │ optional PB
 ├── V1_1_0   │ optional PB
-└── V2_4_2 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V2_4_2
+└── V2_4_3 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V2_4_3
 ```
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.
