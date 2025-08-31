@@ -2158,7 +2158,7 @@ abstract class Base {
 		}
 
 		if ( $plugin_key && $plugin_key !== $key ) {
-			return array();
+			return $options;
 		}
 
 		if ( ! is_array( $options ) ) {
