@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_4_6;
+namespace immonex\WordPressFreePluginCore\V2_4_7;
 
 /**
  * Utility methods for color calculations.

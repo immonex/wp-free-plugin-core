@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_4_6;
+namespace immonex\WordPressFreePluginCore\V2_4_7;
 
 /**
  * Exclude immonex plugin related JS/CSS from "optimizations" of common caching solutions.

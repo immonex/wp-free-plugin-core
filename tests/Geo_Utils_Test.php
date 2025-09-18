@@ -43,4 +43,11 @@ class Geo_Utils_Test extends WP_UnitTestCase {
 		$this->assertFalse( $this->util->validate_coords( 'foo 58.123, ! -181.6784 bar', 'coords' ) );
 	} // test_validate_coords
 
+	function test_convert_iso_country_code() {
+		$this->assertEquals( 'DE', $this->util->convert_iso_country_code( 'DEU' ) );
+		$this->assertEquals( 'DEU', $this->util->convert_iso_country_code( 'DE' ) );
+		$this->assertEquals( 'ES', $this->util->convert_iso_country_code( 'esp' ) );
+		$this->assertEquals( 'AD', $this->util->convert_iso_country_code( 'And' ) );
+	} // test_convert_iso_country_code
+
 } // class Geo_Utils_Test

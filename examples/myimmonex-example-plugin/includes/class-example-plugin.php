@@ -10,7 +10,7 @@ namespace myimmonex\ExamplePlugin;
 /**
  * Main plugin class.
  */
-class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_4_6\Base {
+class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_4_7\Base {
 
 	const PLUGIN_NAME                = 'My immonex Example Plugin';
 	const PLUGIN_PREFIX              = 'myplugin_';
