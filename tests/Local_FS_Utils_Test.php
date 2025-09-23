@@ -285,4 +285,12 @@ class Local_FS_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( WP_PLUGIN_DIR, $this->util->get_plugin_base_dir() );
 	} // test_get_plugin_base_dir
 
+	function test_sanitize_path() {
+		$this->assertEquals( '/foo/bar', $this->util->sanitize_path( '/foo$/ba%r' ) );
+		$this->assertEquals( 'foo/bar', $this->util->sanitize_path( '\foo\//bar' ) );
+		$this->assertEquals( 'foo123/bar/4', $this->util->sanitize_path( 'f$$\%=oo123/bar?=`../4$%' ) );
+		$this->assertEquals( 'bar', $this->util->sanitize_path( 'foo/../../bar' ) );
+		$this->assertEquals( '/foo/bar', $this->util->sanitize_path( '/foo/.//zx/../bar' ) );
+	} // test_sanitize_path
+
 } // class Local_FS_Utils_Test

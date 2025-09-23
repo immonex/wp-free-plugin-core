@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_4_7;
+namespace immonex\WordPressFreePluginCore\V2_5_0;
 
 /**
  * Local filesystem related utilities.
@@ -381,5 +381,42 @@ class Local_FS_Utils {
 
 		return str_replace( trailingslashit( $base_url ), ABSPATH, $plugins_url );
 	} // get_plugin_base_dir
+
+	/**
+	 * Sanitize the given path by removing invalid characters via sanitize_file_name()
+	 * and resolving relative path segments.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param string $path Source path.
+	 *
+	 * @return string Sanitized path.
+	 */
+	public function sanitize_path( $path ) {
+		$dirsep = DIRECTORY_SEPARATOR;
+
+		if ( '/' !== $dirsep && false !== strpos( $path, $dirsep ) ) {
+			$path   = str_replace( $dirsep, '/', $path );
+			$dirsep = '/';
+		}
+
+		$leading_slash = '/' === $path[0];
+		$parts         = explode( '/', $path );
+		$absolutes     = [];
+
+		foreach ( $parts as $part ) {
+			if ( '.' === $part || '' === $part ) {
+				continue;
+			}
+
+			if ( '..' === $part ) {
+				array_pop( $absolutes );
+			} else {
+				$absolutes[] = sanitize_file_name( $part );
+			}
+		}
+
+		return ( $leading_slash ? $dirsep : '' ) . implode( '/', $absolutes );
+	} // sanitize_path
 
 } // class Local_FS_Utils

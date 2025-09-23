@@ -30,11 +30,11 @@ namespace immonex\WordPressFreePluginCore\DEV_4;
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 2.4.7
+ * @version 2.5.0
  */
 abstract class Base {
 
-	const CORE_VERSION = '2.4.7';
+	const CORE_VERSION = '2.5.0';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
