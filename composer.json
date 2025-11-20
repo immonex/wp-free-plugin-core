@@ -1,6 +1,6 @@
 {
     "name": "immonex/wp-free-plugin-core",
-    "version": "2.6.0",
+    "version": "2.6.1",
     "config": {
         "platform": {
             "php": "7.4.33"
