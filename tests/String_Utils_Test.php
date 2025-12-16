@@ -182,4 +182,27 @@ class String_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::convert_urls( $source ) );
 	} // test_convert_urls
 
+	public function test_split_list_string() {
+		$source   = 'foo:bar, url: https://domain.tld/foo/@2x?key=23bar , sna:fu, foofoo=(x: abc, y: https://domain.tld?zx=spectrum)';
+		$expected = [
+			'foo'    => 'bar',
+			'url'    => 'https://domain.tld/foo/@2x?key=23bar',
+			'sna'    => 'fu',
+			'foofoo' => [
+				'x' => 'abc',
+				'y' => 'https://domain.tld?zx=spectrum',
+			],
+		];
+
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::split_list_string( $source ) );
+
+		$source   = 'url:https://domain.tld/styles/v1/immonex/cm12345/tiles/256/{z}/{x}/{y}@2x?access_token=gt.guJ1IjoiaW1tb25leCIsImEiOiJjbWo3ZGUwcnYwM2NkM2ZzZGhhczBob2dqIn0.vwFES21,foo=bar';
+		$expected = [
+			'url' => 'https://domain.tld/styles/v1/immonex/cm12345/tiles/256/{z}/{x}/{y}@2x?access_token=gt.guJ1IjoiaW1tb25leCIsImEiOiJjbWo3ZGUwcnYwM2NkM2ZzZGhhczBob2dqIn0.vwFES21',
+			'foo' => 'bar',
+		];
+
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::split_list_string( $source ) );
+	} // test_split_list_string
+
 } // class String_Utils_Test

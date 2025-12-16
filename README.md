@@ -45,7 +45,7 @@ With the [Composer-based installation](#via-composer), the plugin core library g
 
 ```json
     "require": {
-        "immonex/wp-free-plugin-core": "^2.6.1"
+        "immonex/wp-free-plugin-core": "^2.6.3"
     },
 ```
 
@@ -61,7 +61,7 @@ $myimmonex_example_plugin->init();
 The **main plugin class** is located in the file `includes/class-example-plugin.php`. It is derived from the latest **core Base class**:
 
 ```php
-class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_6_1\Base {
+class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_6_3\Base {
 
 	const
 		PLUGIN_NAME = 'My immonex Plugin',
@@ -86,7 +86,7 @@ src
 ├── DEV <────┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\DEV
 ├── V1_0_0   │ optional PB
 ├── V1_1_0   │ optional PB
-└── V2_6_1 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V2_6_1
+└── V2_6_3 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V2_6_2
 ```
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.
@@ -209,7 +209,7 @@ $ npm run copy-mo
 
 [GPLv2 or later](LICENSE)
 
-Copyright (C) 2014, 2020 [inveris OHG](https://inveris.de/) / [immonex](https://immonex.dev/)
+Copyright (C) 2014, 2025 [inveris OHG](https://inveris.de/) / [immonex](https://immonex.dev/)
 
 This library is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
