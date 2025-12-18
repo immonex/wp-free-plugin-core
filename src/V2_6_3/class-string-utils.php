@@ -26,6 +26,7 @@ class String_Utils {
 		"'"  => '-!SQT!-',
 		'"'  => '-!DQT!-',
 		'`'  => '-!GRAV!-',
+		'='  => '-!EQ!-',
 	];
 
 	/**
@@ -1133,7 +1134,7 @@ class String_Utils {
 	 */
 	public static function decode_special_chars( $source_text ) {
 		return str_replace( array_values( self::SPECIAL_CHAR_MAP ), array_keys( self::SPECIAL_CHAR_MAP ), $source_text );
-	} // encode_special_chars
+	} // decode_special_chars
 
 	/**
 	 * Shorten one or multiple filesystem paths for output purposes.
@@ -1389,45 +1390,27 @@ class String_Utils {
 			return $source;
 		}
 
-		$replace_masked = function ( $value, $divider_chars, $decode = false ) {
-			$mapping = [
-				'(' => '|--',
-				')' => '--|',
-				'=' => '|--|',
-				',' => '|_|',
-			];
+		$divider_wrapper_chars     = array_unique( str_split( '(),' . $divider_chars ) );
+		$divider_wrapper_chars_map = [];
 
-			$divider_chars_length = strlen( $divider_chars );
-			for ( $i = 0; $i < $divider_chars_length; $i++ ) {
-				$mapping[ $divider_chars[ $i ] ] = "|-{$i}-|";
-			}
+		foreach ( $divider_wrapper_chars as $i => $char ) {
+			$divider_wrapper_chars_map[ $char ] = "|-{$i}-|";
+		}
 
-			if ( ! $decode ) {
-				$masked_keys = array_map(
+		$replace_divider_wrapper_chars = function ( $value, $masked = false, $decode = false ) use ( $divider_wrapper_chars_map ) {
+			$keys = ! $decode && $masked ?
+				array_map(
 					function ( $key ) {
 						return "\\{$key}";
 					},
-					array_keys( $mapping )
-				);
-			}
+					array_keys( $divider_wrapper_chars_map )
+				) :
+				array_keys( $divider_wrapper_chars_map );
 
 			return $decode ?
-				str_replace( array_values( $mapping ), array_keys( $mapping ), $value ) :
-				str_replace( $masked_keys, array_values( $mapping ), $value );
-		}; // replace_masked
-
-		$replace_dividers_in_url = function ( $url, $divider_chars, $decode = false ) {
-			$mapping = [];
-
-			$divider_chars_length = strlen( $divider_chars );
-			for ( $i = 0; $i < $divider_chars_length; $i++ ) {
-				$mapping[ $divider_chars[ $i ] ] = "|-{$i}-|";
-			}
-
-			return $decode ?
-				str_replace( array_values( $mapping ), array_keys( $mapping ), $url ) :
-				str_replace( array_keys( $mapping ), array_values( $mapping ), $url );
-		}; // replace_dividers_in_url
+				str_replace( array_values( $divider_wrapper_chars_map ), $keys, $value ) :
+				str_replace( $keys, array_values( $divider_wrapper_chars_map ), $value );
+		}; // replace_divider_wrapper_chars
 
 		if ( 'auto' === $mode ) {
 			if ( false !== strpos( $source, '=' ) ) {
@@ -1440,22 +1423,31 @@ class String_Utils {
 		}
 
 		if ( empty( $valid_chars ) ) {
-			$valid_chars = 'a-z0-9äöüÄÖÜß_ {}\[\]\'"\.:;*#\-!$%&\/|?<>@';
-		}
-		if ( 'key_value' === substr( $mode, 0, 9 ) ) {
-			$valid_chars = preg_replace( "/[$divider_chars]/", '', $valid_chars );
+			$valid_chars = '^' . implode( $divider_wrapper_chars );
 		}
 
 		$empty_return_value = 'list_or_single' === $mode ? '' : [];
 
-		// "Hide" divider characters in URLs first.
-		$source = preg_replace_callback(
-			'#(?<=^|\s|\:)(?i)(http|https)?(://)?(([-\w^@]{2,}\.)+([a-zA-Z]{2,16})(?:[^,)\s\<\>\"\']*))(?=[,)\s]|$)#',
-			function ( $url_parts ) use ( $replace_dividers_in_url, $divider_chars ) {
-				return $replace_dividers_in_url( $url_parts[0], $divider_chars );
-			},
-			$source
-		);
+		/**
+		 * Temporarily "hide" divider/wrapper characters in tags, URLs and
+		 * special strings enclosed in "^^" first.
+		 */
+
+		$special_char_repl_regex = [
+			'/\^\^.*?\^\^|(?<=>)[^<]{2,}(?=<)/',
+			"/<(\"[^\"]*\"|'[^']*'|[^'\">])*>/",
+			'#(http|https)?(://)?(([-\w@]{2,}\.)+([a-zA-Z]{2,16})(?:[^,)\<\>\"\'\s]*))(?=[,)\"\'\s]|$)#',
+		];
+
+		foreach ( $special_char_repl_regex as $regex ) {
+			$source = preg_replace_callback(
+				$regex,
+				function ( $fragment ) use ( $replace_divider_wrapper_chars ) {
+					return str_replace( '^^', '', $replace_divider_wrapper_chars( $fragment[0] ) );
+				},
+				$source
+			);
+		}
 
 		$source = preg_replace( '/^(\s*)?\((\s*)?(.*?)(\s*)?(?<!\\\)\)(\s*)?$/', '$3', $source );
 		$source = preg_replace(
@@ -1474,7 +1466,7 @@ class String_Utils {
 			return 'list_or_single' === $mode && 1 === count( $matches ) ? $matches[0] : $matches;
 		}
 
-		$source  = $replace_masked( $source, $divider_chars );
+		$source  = $replace_divider_wrapper_chars( $source, true );
 		$pattern = "/\s*(?P<key>[{$valid_chars}]+)\s*([{$divider_chars}]\s*(?P<value>[{$valid_chars}]+|(?P<list>\(([^()]|(?P>list))*\)))\s*)?(?:[,)]|$)/i";
 		$result  = [];
 
@@ -1509,15 +1501,15 @@ class String_Utils {
 				continue;
 			}
 
-			$result_key   = $replace_masked( $key, $divider_chars, true );
+			$result_key   = $replace_divider_wrapper_chars( $key, true, true );
 			$result_value = is_array( $value ) ?
 				array_map(
-					function ( $value_element ) use ( $replace_masked, $divider_chars ) {
-						return $replace_masked( $value_element, $divider_chars, true );
+					function ( $value_element ) use ( $replace_divider_wrapper_chars ) {
+						return $replace_divider_wrapper_chars( $value_element, true, true );
 					},
 					$value
 				) :
-				$replace_masked( $value, $divider_chars, true );
+				$replace_divider_wrapper_chars( $value, true, true );
 
 			$result[ $result_key ] = $result_value;
 		}

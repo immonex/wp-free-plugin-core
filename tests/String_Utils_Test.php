@@ -193,7 +193,6 @@ class String_Utils_Test extends WP_UnitTestCase {
 				'y' => 'https://domain.tld?zx=spectrum',
 			],
 		];
-
 		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::split_list_string( $source ) );
 
 		$source   = 'url:https://domain.tld/styles/v1/immonex/cm12345/tiles/256/{z}/{x}/{y}@2x?access_token=gt.guJ1IjoiaW1tb25leCIsImEiOiJjbWo3ZGUwcnYwM2NkM2ZzZGhhczBob2dqIn0.vwFES21,foo=bar';
@@ -201,7 +200,29 @@ class String_Utils_Test extends WP_UnitTestCase {
 			'url' => 'https://domain.tld/styles/v1/immonex/cm12345/tiles/256/{z}/{x}/{y}@2x?access_token=gt.guJ1IjoiaW1tb25leCIsImEiOiJjbWo3ZGUwcnYwM2NkM2ZzZGhhczBob2dqIn0.vwFES21',
 			'foo' => 'bar',
 		];
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::split_list_string( $source ) );
 
+		$source   = "url:https://api.domain.tld/styles/v1/immonex/cm12345/tiles/256/{z}/{x}/{y}@2x?access_token=gt.guJ1IjoiaW1tb25leCIsImEiOiJjbWo3ZGUwcnYwM2NkM2ZzZGhhczBob2dqIn0.vwFES21, attributions: © <a href='https://www.domain.tld/about/maps'>Map</a> © <a href='http://www.domain.tld/copyright'>Map Copyright</a> <strong><a href='https://apps.domain.tld/feedback/' target='_blank'>Feedback Link</a></strong>";
+		$expected = [
+			'url'          => 'https://api.domain.tld/styles/v1/immonex/cm12345/tiles/256/{z}/{x}/{y}@2x?access_token=gt.guJ1IjoiaW1tb25leCIsImEiOiJjbWo3ZGUwcnYwM2NkM2ZzZGhhczBob2dqIn0.vwFES21',
+			'attributions' => "© <a href='https://www.domain.tld/about/maps'>Map</a> © <a href='http://www.domain.tld/copyright'>Map Copyright</a> <strong><a href='https://apps.domain.tld/feedback/' target='_blank'>Feedback Link</a></strong>",
+		];
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::split_list_string( $source ) );
+
+		$source   = "url:https://api.domain.tld/styles/v1/immonex/cm12345/tiles/256/{z}/{x}/{y}@2x?access_token=gt.guJ1IjoiaW1tb25leCIsImEiOiJjbWo3ZGUwcnYwM2NkM2ZzZGhhczBob2dqIn0.vwFES21, attributions: © <a href='https://www.domain.tld/about/maps'>Map</a> © <a href='http://www.domain.tld/copyright'>Map Copyright</a> <strong><a href='https://apps.domain.tld/feedback/' target='_blank'>Feedback Link</a></strong>,foo:  bar ";
+		$expected = [
+			'url'          => 'https://api.domain.tld/styles/v1/immonex/cm12345/tiles/256/{z}/{x}/{y}@2x?access_token=gt.guJ1IjoiaW1tb25leCIsImEiOiJjbWo3ZGUwcnYwM2NkM2ZzZGhhczBob2dqIn0.vwFES21',
+			'attributions' => "© <a href='https://www.domain.tld/about/maps'>Map</a> © <a href='http://www.domain.tld/copyright'>Map Copyright</a> <strong><a href='https://apps.domain.tld/feedback/' target='_blank'>Feedback Link</a></strong>",
+			'foo'          => 'bar',
+		];
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::split_list_string( $source ) );
+
+		$source   = "url:https://api.domain.tld/styles/v1/immonex/cm12345/tiles/256/{z}/{x}/{y}@2x?access_token=gt.guJ1IjoiaW1tb25leCIsImEiOiJjbWo3ZGUwcnYwM2NkM2ZzZGhhczBob2dqIn0.vwFES21, attributions: ^^© <a href='https://www.domain.tld/about/maps'>Map</a> © <a href='http://www.domain.tld/copyright'>Map = (Copyright)</a> <strong><a href='https://apps.domain.tld/feedback/' target='_blank'>Feedback, Link</a></strong>^^,foo:  bar ";
+		$expected = [
+			'url'          => 'https://api.domain.tld/styles/v1/immonex/cm12345/tiles/256/{z}/{x}/{y}@2x?access_token=gt.guJ1IjoiaW1tb25leCIsImEiOiJjbWo3ZGUwcnYwM2NkM2ZzZGhhczBob2dqIn0.vwFES21',
+			'attributions' => "© <a href='https://www.domain.tld/about/maps'>Map</a> © <a href='http://www.domain.tld/copyright'>Map = (Copyright)</a> <strong><a href='https://apps.domain.tld/feedback/' target='_blank'>Feedback, Link</a></strong>",
+			'foo'          => 'bar',
+		];
 		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::split_list_string( $source ) );
 	} // test_split_list_string
 
