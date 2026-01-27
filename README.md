@@ -15,7 +15,11 @@ This lightweight **PHP library** provides shared basic functionality for free **
 - emails
 - videos
 
-**immonex**® is an umbrella brand for various **real estate related software** solutions and services with a focus on german-speaking countries/users.
+## immonex®
+
+**immonex** is the *PropTech umbrella brand* of a versatile portfolio of software solutions for the German-speaking real estate industry.
+
+As a part of this, the **immonex WP Plugin Suite** includes a wide range of WordPress plugins for the implementation of sophisticated real estate agency websites and portals, which can be flexibly combined depending on the specific project requirements.
 
 ## Installation
 
@@ -45,7 +49,7 @@ With the [Composer-based installation](#via-composer), the plugin core library g
 
 ```json
     "require": {
-        "immonex/wp-free-plugin-core": "^2.6.3"
+        "immonex/wp-free-plugin-core": "^2.6.4"
     },
 ```
 
@@ -61,7 +65,7 @@ $myimmonex_example_plugin->init();
 The **main plugin class** is located in the file `includes/class-example-plugin.php`. It is derived from the latest **core Base class**:
 
 ```php
-class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_6_3\Base {
+class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_6_4\Base {
 
 	const
 		PLUGIN_NAME = 'My immonex Plugin',
@@ -86,7 +90,7 @@ src
 ├── DEV <────┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\DEV
 ├── V1_0_0   │ optional PB
 ├── V1_1_0   │ optional PB
-└── V2_6_3 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V2_6_2
+└── V2_6_4 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V2_6_4
 ```
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.
@@ -124,7 +128,7 @@ $ npm install
 $ composer install
 ```
 
-> :warning: PHP_CodeSniffer and the related WP sniffs are **not** part of the default dependencies and should be [installed globally](https://github.com/WordPress/WordPress-Coding-Standards#composer).
+> :warning: PHP_CodeSniffer and the related WP sniffs are **not** part of the default dependencies and should be [installed globally](https://github.com/WordPress/WordPress-Coding-Standards?tab=readme-ov-file#composer-global-installation)).
 
 ### Git
 
@@ -139,7 +143,7 @@ $ composer install
 
 The source code formatting corresponds to the [WordPress PHP Coding Standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/php/).
 
-The source files can be checked with PHP_CodeSniffer (if, as recommended, installed globally as described [here](https://github.com/WordPress/WordPress-Coding-Standards#composer)):
+The source files can be checked with PHP_CodeSniffer (if, as recommended, installed globally as described [here](https://github.com/WordPress/WordPress-Coding-Standards?tab=readme-ov-file#composer-global-installation))):
 
 ```bash
 $ phpcs
@@ -209,7 +213,7 @@ $ npm run copy-mo
 
 [GPLv2 or later](LICENSE)
 
-Copyright (C) 2014, 2025 [inveris OHG](https://inveris.de/) / [immonex](https://immonex.dev/)
+Copyright (C) 2014, 2026 [inveris OHG](https://inveris.de/) / [immonex](https://immonex.dev/)
 
 This library is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 

@@ -10,7 +10,7 @@ namespace myimmonex\ExamplePlugin;
 /**
  * Main plugin class.
  */
-class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_6_3\Base {
+class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_6_4\Base {
 
 	const PLUGIN_NAME                = 'My immonex Example Plugin';
 	const PLUGIN_PREFIX              = 'myplugin_';
@@ -51,7 +51,7 @@ class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_6_3\Base {
 
 		// Tabs (extendable by filter function).
 		$tabs = apply_filters(
-			// @codingStandardsIgnoreLine
+			// phpcs:ignore
 			$this->plugin_slug . '_option_tabs',
 			array(
 				'tab_general' => array(
@@ -72,7 +72,7 @@ class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_6_3\Base {
 
 		// Sections (extendable by filter function).
 		$sections = apply_filters(
-			// @codingStandardsIgnoreLine
+			// phpcs:ignore
 			$this->plugin_slug . '_option_sections',
 			array(
 				'section_demo' => array(
@@ -93,7 +93,7 @@ class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_6_3\Base {
 
 		// Fields (extendable by filter function).
 		$fields = apply_filters(
-			// @codingStandardsIgnoreLine
+			// phpcs:ignore
 			$this->plugin_slug . '_option_fields',
 			array(
 				array(
