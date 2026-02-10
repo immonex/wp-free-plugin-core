@@ -1,14 +1,14 @@
-<img src="assets/immonex-os-logo-small.png" width="230" height="48" align="right" alt="immonex Open Source Software" >
-
 # immonex WP Free Plugin Core
 
-This lightweight **PHP library** provides shared basic functionality for free **immonex WordPress plugins**, i.a.
+<img src="assets/immonex-open-source-proptech-software.webp" width="320" height="74" align="right" alt="immonex Open Source Software" >
+
+This lightweight **PHP/JS library** provides shared basic functionality for free **immonex WordPress plugins**, i.a.
 
 - consistent initialization
 - autoloading of CSS and JS files
 - option handling / shared settings pages
 - geocoding and domains
-- simple templating (incl. Twig)
+- simple templating (incl. Twig 3)
 - special string checking and manipulation
 - color calculations
 - domain and URL handling
@@ -49,7 +49,7 @@ With the [Composer-based installation](#via-composer), the plugin core library g
 
 ```json
     "require": {
-        "immonex/wp-free-plugin-core": "^2.6.4"
+        "immonex/wp-free-plugin-core": "^2.7.0"
     },
 ```
 
@@ -65,7 +65,7 @@ $myimmonex_example_plugin->init();
 The **main plugin class** is located in the file `includes/class-example-plugin.php`. It is derived from the latest **core Base class**:
 
 ```php
-class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_6_4\Base {
+class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_7_0\Base {
 
 	const
 		PLUGIN_NAME = 'My immonex Plugin',
@@ -90,7 +90,7 @@ src
 ├── DEV <────┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\DEV
 ├── V1_0_0   │ optional PB
 ├── V1_1_0   │ optional PB
-└── V2_6_4 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V2_6_4
+└── V2_7_0 ──┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V2_7_0
 ```
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.

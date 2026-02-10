@@ -9,7 +9,7 @@
     "copy-mo": "for LANG in de_DE_formal de_AT de_CH de_CH_informal; do find src -mindepth 1 -maxdepth 1 -type d -exec cp -n {}/languages/$npm_package_config_libName-de_DE.mo {}/languages/$npm_package_config_libName-$LANG.mo ';'; done",
     "test:install": "bin/invoke_test_installer.sh",
     "test": "vendor/phpunit/phpunit/phpunit -c tests/phpunit/plugin.xml",
-    "apidoc": "bin/phpdoc run --sourcecode",
+    "apidoc": "[ -f bin/phpdoc ] || bin/install-phpdoc.sh; bin/phpdoc run --sourcecode --template=clean --title='immonex WP Free Plugin Core'",
     "apidoc:view": "node_modules/.bin/lws --stack lws-static lws-index -d apidoc -o",
     "apidoc:delete": "rimraf --glob apidoc && rimraf --glob .tmp/apidoc"
   },
