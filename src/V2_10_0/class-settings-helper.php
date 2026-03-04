@@ -562,7 +562,7 @@ class Settings_Helper {
 	 * @param array $args Additional information for page rendering (e.g. plugin name and version).
 	 */
 	public function render_page( $args = [] ) {
-		if ( did_action( 'wp_enqueue_media' ) && ! empty( $this->fields ) ) {
+		if ( ! did_action( 'wp_enqueue_media' ) && ! empty( $this->fields ) ) {
 			foreach ( $this->fields as $tab => $fields ) {
 				if ( ! empty( $fields ) ) {
 					foreach ( $fields as $key => $field ) {
