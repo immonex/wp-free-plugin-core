@@ -566,7 +566,7 @@ class Settings_Helper {
 			foreach ( $this->fields as $tab => $fields ) {
 				if ( ! empty( $fields ) ) {
 					foreach ( $fields as $key => $field ) {
-						if ( 'media_' === substr( $key, 0, 6 ) ) {
+						if ( 'media_' === substr( $field['type'], 0, 6 ) ) {
 							wp_enqueue_media();
 							break 2;
 						}
