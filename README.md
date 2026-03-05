@@ -49,7 +49,7 @@ With the [Composer-based installation](#via-composer), the plugin core library g
 
 ```json
     "require": {
-        "immonex/wp-free-plugin-core": "^2.10.0"
+        "immonex/wp-free-plugin-core": "^2.10.1"
     },
 ```
 
@@ -65,7 +65,7 @@ $myimmonex_example_plugin->init();
 The **main plugin class** is located in the file `includes/class-example-plugin.php`. It is derived from the latest **core Base class**:
 
 ```php
-class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_10_0\Base {
+class Example_Plugin extends \immonex\WordPressFreePluginCore\V2_10_1\Base {
 
 	const
 		PLUGIN_NAME = 'My immonex Plugin',
@@ -90,7 +90,7 @@ src
 ├── DEV <────┐ Development Branch (DB), NS: immonex\WordPressFreePluginCore\DEV
 ├── V1_0_0   │ optional PB
 ├── V1_1_0   │ optional PB
-└── V2_10_0 ─┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V2_10_0
+└── V2_10_1 ─┘ Latest Production Branch (PB), NS: immonex\WordPressFreePluginCore\V2_10_1
 ```
 
 The folder names are also part of the related PHP namespaces in the included files, e.g. `immonex\WordPressFreePluginCore\V1_0_1`.

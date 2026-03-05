@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_10_0;
+namespace immonex\WordPressFreePluginCore\V2_10_1;
 
 /**
  * Video (embedding) related utilities.

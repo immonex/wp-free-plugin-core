@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "691538e4f91f4dddd3e762b5a414410a",
+    "content-hash": "007886618bb96ad8d3011bc15c7696cb",
     "packages": [
         {
             "name": "html2text/html2text",
