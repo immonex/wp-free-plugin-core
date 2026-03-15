@@ -5,15 +5,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_10_1;
+namespace immonex\WordPressFreePluginCore\V2_11_0;
 
 /**
  * Simple plugin-related common cache.
  */
 class Plugin_Cache {
 
-	const DEFAULT_TRANSIENT_EXPIRATION    = DAY_IN_SECONDS;
-	const DEFAULT_MAX_ITEMS_PER_TRANSIENT = 3;
+	const DEFAULT_TRANSIENT_EXPIRATION_SEC = DAY_IN_SECONDS;
+	const DEFAULT_MAX_ITEMS_PER_TRANSIENT  = 3;
+	const DEFAULT_COMPRESSION_THRESHOLD_KB = 20;
 
 	/**
 	 * Plugin prefix
@@ -107,16 +108,16 @@ class Plugin_Cache {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param mixed       $value     Default value.
-	 * @param string      $transient Transient key.
-	 * @param string|bool $part_key  Part key (optional).
+	 * @param mixed       $default_value Default value.
+	 * @param string      $transient     Transient key.
+	 * @param string|bool $part_key      Part key (optional).
 	 *
 	 * @return mixed Cache part value, false if nonexistent or expired.
 	 */
-	public function get_cache_transient( $value, $transient, $part_key = false ) {
+	public function get_cache_transient( $default_value, $transient, $part_key = false ) {
 		$transient_value = get_transient( $transient );
-		if ( ! $transient_value ) {
-			return $value;
+		if ( false === $transient_value ) {
+			return $default_value;
 		}
 
 		if ( ! $part_key ) {
@@ -124,7 +125,7 @@ class Plugin_Cache {
 		}
 
 		if ( empty( $transient_value[ $part_key ] ) ) {
-			return $value;
+			return $default_value;
 		}
 
 		if (
@@ -135,14 +136,22 @@ class Plugin_Cache {
 			unset( $transient_value[ $part_key ] );
 
 			$timeout    = get_option( "_transient_timeout_{$transient}" );
-			$expiration = (int) $timeout ? (int) $timeout - time() : self::DEFAULT_TRANSIENT_EXPIRATION;
+			$expiration = (int) $timeout ? (int) $timeout - time() : self::DEFAULT_TRANSIENT_EXPIRATION_SEC;
 
 			set_transient( $transient, $transient_value, $expiration );
 
-			return $value;
+			return $default_value;
 		}
 
-		return ! empty( $transient_value[ $part_key ]['value'] ) ? $transient_value[ $part_key ]['value'] : $value;
+		$value = $transient_value[ $part_key ]['value'];
+		if ( ! empty( $transient_value[ $part_key ]['compr'] ) ) {
+			// phpcs:ignore -- Base64 encoding is required to avoid issues with storing binary data in the database.
+			$value = gzinflate( base64_decode( $value ) );
+		}
+
+		$value = maybe_unserialize( $value );
+
+		return $value ? $value : $default_value;
 	} // get_cache_transient
 
 	/**
@@ -150,43 +159,60 @@ class Plugin_Cache {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param string      $transient       Transient key.
-	 * @param mixed       $value           Value to cache.
-	 * @param string|bool $part_key        Part key (optional).
-	 * @param int|bool    $expiration      Transient expiration time in seconds (optional).
-	 * @param int|bool    $part_expiration Cache part expiration time in seconds (optional).
-	 * @param int|bool    $max_cache_items Maximum number of cache items per transient (optional).
+	 * @param string        $transient  Transient key.
+	 * @param mixed|mixed[] $value      Value to cache.
+	 * @param string|bool   $part_key   Part key (optional).
+	 * @param int|bool      $expiration Transient expiration time in seconds (optional).
+	 * @param mixed[]       $params     Optional additional parameters:
+	 *                                    - part_expiration: part expiration time in seconds
+	 *                                      (-1 = never expire)
+	 *                                    - max_items: maximum number of cache items per transient
+	 *                                    - compress_th: compression threshold in KB
+	 *                                      (-1 = no compression)
 	 */
-	public function set_cache_transient( $transient, $value, $part_key = false, $expiration = false, $part_expiration = false, $max_cache_items = false ) {
+	public function set_cache_transient( $transient, $value, $part_key = false, $expiration = false, $params = [] ) {
 		if ( ! $part_key ) {
 			$part_key = 'default';
 		}
 
 		if ( ! $expiration ) {
-			$expiration = self::DEFAULT_TRANSIENT_EXPIRATION;
+			$expiration = self::DEFAULT_TRANSIENT_EXPIRATION_SEC;
 		}
 
-		if ( ! $max_cache_items ) {
-			$max_cache_items = self::DEFAULT_MAX_ITEMS_PER_TRANSIENT;
-		}
+		$part_expiration = isset( $params['part_expiration'] ) ?
+			(int) $params['part_expiration'] : self::DEFAULT_TRANSIENT_EXPIRATION_SEC;
+		$max_items       = ! empty( $params['max_items'] ) ?
+			$params['max_items'] : self::DEFAULT_MAX_ITEMS_PER_TRANSIENT;
+		$compress_th     = isset( $params['compress_th'] ) ?
+			(int) $params['compress_th'] : self::DEFAULT_COMPRESSION_THRESHOLD_KB;
 
 		$cache = get_transient( $transient );
 		if ( empty( $cache ) || ! is_array( $cache ) ) {
 			$cache = [];
 		}
 
+		$value      = maybe_serialize( $value );
+		$compressed = false;
+
+		if ( $compress_th && strlen( $value ) > $compress_th * 1024 ) {
+			// phpcs:ignore -- Base64 encoding is required to avoid issues with storing binary data in the database.
+			$value      = base64_encode( gzdeflate( $value ) );
+			$compressed = true;
+		}
+
 		$cache[ $part_key ] = [
 			'value' => $value,
-			'exp'   => (int) $part_expiration ? time() + (int) $part_expiration : self::DEFAULT_TRANSIENT_EXPIRATION,
+			'compr' => $compressed,
+			'exp'   => time() + $part_expiration,
 		];
 
-		if ( count( $cache ) > $max_cache_items ) {
+		if ( count( $cache ) > $max_items ) {
 			$part_keys = array_reverse( array_keys( $cache ) );
 			$new_cache = [];
 
 			$i = 0;
 			foreach ( $part_keys as $key ) {
-				if ( $i >= $max_cache_items ) {
+				if ( $i >= $max_items ) {
 					break;
 				}
 

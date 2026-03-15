@@ -12,18 +12,21 @@ $iwpfpc_options_logo   = $this->plugin_dir . '/assets/options-logo.png';
 $iwpfpc_is_custom_logo = false;
 
 if ( file_exists( $iwpfpc_options_logo ) ) {
-	$iwpfpc_options_logo_url = plugins_url(
+	$iwpfpc_options_logo_url  = plugins_url(
 		'/assets/options-logo.png',
 		$iwpfpc_plugin_infos['plugin_main_file']
 	);
-	$iwpfpc_options_logo_alt = $iwpfpc_plugin_infos['name'];
-	$iwpfpc_is_custom_logo   = true;
+	$iwpfpc_options_logo_alt  = $iwpfpc_plugin_infos['name'];
+	$iwpfpc_options_logo_size = wp_getimagesize( $iwpfpc_options_logo );
+	$iwpfpc_is_custom_logo    = true;
 } else {
-	$iwpfpc_options_logo_url = plugins_url(
-		'/vendor/immonex/wp-free-plugin-core/assets/immonex-wp-plugin-suite-logo-small.png',
+	$iwpfpc_options_logo_rel  = '/vendor/immonex/wp-free-plugin-core/assets/immonex-wp-plugin-suite-logo-small.png';
+	$iwpfpc_options_logo_url  = plugins_url(
+		$iwpfpc_options_logo_rel,
 		$iwpfpc_plugin_infos['plugin_main_file']
 	);
-	$iwpfpc_options_logo_alt = 'Logo: immonex WordPress Plugin Suite';
+	$iwpfpc_options_logo_alt  = 'Logo: immonex WordPress Plugin Suite';
+	$iwpfpc_options_logo_size = wp_getimagesize( $this->plugin_dir . $iwpfpc_options_logo_rel );
 }
 
 $iwpfpc_has_tabbed_sections = ! empty( $this->option_page_tabs[ $this->current_tab ]['attributes']['tabbed_sections'] );
@@ -34,9 +37,11 @@ if ( ! empty( $iwpfpc_current_screen->parent_base ) && 'options-general' !== $iw
 }
 ?>
 <div id="main" class="wrap immonex-plugin-options immonex-plugin-core-<?php echo strtolower( str_replace( '.', '-', $iwpfpc_plugin_infos['core_version'] ) ); ?>">
-	<?php echo isset( $iwpfpc_plugin_infos['logo_link_url'] ) ? '<a href="' . $iwpfpc_plugin_infos['logo_link_url'] . '" target="_blank">' : ''; ?>
-	<img src="<?php echo esc_url( $iwpfpc_options_logo_url ); ?>" alt="<?php echo $iwpfpc_options_logo_alt; ?>" class="options-logo">
-	<?php echo isset( $iwpfpc_plugin_infos['logo_link_url'] ) ? '</a>' : ''; ?>
+	<div class="options-logo-wrap">
+		<?php echo isset( $iwpfpc_plugin_infos['logo_link_url'] ) ? '<a href="' . $iwpfpc_plugin_infos['logo_link_url'] . '" target="_blank">' : ''; ?>
+		<img src="<?php echo esc_url( $iwpfpc_options_logo_url ); ?>" alt="<?php echo $iwpfpc_options_logo_alt; ?>" width="<?php echo $iwpfpc_options_logo_size[0]; ?>" height="<?php echo $iwpfpc_options_logo_size[1]; ?>" class="options-logo">
+		<?php echo isset( $iwpfpc_plugin_infos['logo_link_url'] ) ? '</a>' : ''; ?>
+	</div>
 
 	<?php echo isset( $iwpfpc_plugin_infos['name'] ) ? '<h1 class="options-hl">' . $iwpfpc_plugin_infos['name'] . '</h1>' : ''; ?>
 

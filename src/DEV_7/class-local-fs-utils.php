@@ -419,4 +419,37 @@ class Local_FS_Utils {
 		return ( $leading_slash ? $dirsep : '' ) . implode( '/', $absolutes );
 	} // sanitize_path
 
+	/**
+	 * Get a writable directory path and its URL for dynamic plugin assets
+	 * in the uploads folder.
+	 *
+	 * @since 2.11.0
+	 *
+	 * @param string $prefix Folder name prefix (optional, default: immonex).
+	 * @param string $subdir Subdirectory within the plugin assets directory (optional).
+	 *
+	 * @return string[]|bool Array with path and URL or false on failure.
+	 */
+	public function get_dynamic_assets_dir( $prefix = 'immonex', $subdir = '' ) {
+		$uploads = wp_upload_dir( null, false );
+
+		if ( is_ssl() ) {
+			$uploads['baseurl'] = str_replace( 'http://', 'https://', $uploads['baseurl'] );
+		}
+
+		$subdir     = trailingslashit( "{$prefix}-dynamic-assets" . ( $subdir ? '/' . trim( $subdir, '/' ) : '' ) );
+		$path       = trailingslashit( $uploads['basedir'] ) . $subdir;
+		$url        = trailingslashit( $uploads['baseurl'] ) . $subdir;
+		$dir_exists = wp_mkdir_p( $path );
+
+		if ( ! $dir_exists ) {
+			return false;
+		}
+
+		return [
+			'path' => $path,
+			'url'  => $url,
+		];
+	} // get_dynamic_assets_dir
+
 } // class Local_FS_Utils

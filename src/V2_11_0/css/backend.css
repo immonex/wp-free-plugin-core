@@ -32,6 +32,10 @@
 	padding-left: 0;
 }
 
+.immonex-plugin-options tr:first-child td.subsection-header h3 {
+	margin-top: 0;
+}
+
 .immonex-plugin-options .debug-mode-info {
 	margin-bottom: 16px;
 	padding: 8px;
@@ -99,6 +103,23 @@
 	padding-left: 2em;
 }
 
+.immonex-plugin-options h1.options-hl {
+	margin-bottom: 48px;
+}
+
+.immonex-plugin-options .options-logo-wrap,
+.immonex-plugin-options > .options-logo,
+.immonex-plugin-options > a > .options-logo {
+	position: absolute;
+	top: 8px;
+	right: 20px;
+	z-index: 10;
+}
+
+.immonex-plugin-options .options-logo-wrap a {
+	display: block;
+}
+
 .immonex-plugin-options .tab-footer-info {
 	padding: 8px;
 	color: #A0A0A0;
@@ -106,15 +127,17 @@
 	text-align: right;
 }
 
-.immonex-plugin-options .options-logo {
-	position: absolute;
-	top: 8px;
-	right: 20px;
-	z-index: 10;
+.immonex-plugin-options .tab-footer-info .tab-footer-info-inner-wrap {
+	display: inline-block;
+	padding: 10px 12px;
+	border-radius: 3px;
+	color: #6297D2;
+	background-color: #FAFAFA;
+	box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.immonex-plugin-options h1.options-hl {
-	margin-bottom: 48px;
+.immonex-plugin-options .tab-footer-info .tab-footer-info-inner-wrap strong {
+	margin-right: 8px;
 }
 
 .immonex-plugin-options .developer-logos {
@@ -124,7 +147,6 @@
 
 .immonex-plugin-options .developer-logos a {
 	margin-right: 24px;
-	margin-bottom: 16px;
 }
 
 .immonex-plugin-options .tab-description,
@@ -356,8 +378,17 @@
 	visibility: visible;
 }
 
+.immonex-plugin-options .options-page-footer {
+	padding-top: 16px;
+	border-top: 1px solid #C3C4C7;
+}
+
 .immonex-plugin-options .options-page-footer a > span {
 	margin-right: 2px;
+}
+
+.immonex-plugin-options .options-page-footer > div {
+	margin-bottom: 16px;
 }
 
 @media screen and (min-width: 800px) {
@@ -365,10 +396,6 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-	}
-
-	.immonex-plugin-options .developer-logos a {
-		margin: 0 0 0 24x;
 	}
 }
 

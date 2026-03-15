@@ -8,6 +8,16 @@
 // phpcs:ignore
 $iwpfpc_plugin_infos        = apply_filters( "{$this->plugin_slug}_plugin_infos", [] );
 $iwpfpc_has_tabbed_sections = ! empty( $this->option_page_tabs[ $this->current_tab ]['attributes']['tabbed_sections'] );
+$iwpfpc_tab_footer_info     = '';
+
+if ( ! empty( $this->option_page_tabs[ $this->current_tab ]['attributes']['footer_info'] ) ) {
+	$iwpfpc_tab_footer_info = preg_replace(
+		'/(\<span [^\>]*\>\<\/span\>)[^\<]+/',
+		'$1',
+		$this->option_page_tabs[ $this->current_tab ]['attributes']['footer_info']
+	);
+	$iwpfpc_tab_footer_info = str_replace( ' |', '', $iwpfpc_tab_footer_info );
+}
 
 // phpcs:ignore
 do_action( "{$iwpfpc_plugin_infos['prefix']}render_option_page_header" );
@@ -48,8 +58,8 @@ else :
 
 			<?php settings_fields( isset( $this->option_page_tabs[ $this->current_tab ]['attributes']['plugin_slug'] ) ? $this->option_page_tabs[ $this->current_tab ]['attributes']['plugin_slug'] . '_options' : $this->plugin_slug . '_options' ); ?>
 			<?php $this->display_tab_sections( $this->current_tab, $section_page ); ?>
-			<?php if ( isset( $this->option_page_tabs[ $this->current_tab ]['attributes']['footer_info'] ) ) : ?>
-			<div class="tab-footer-info"><?php echo $this->option_page_tabs[ $this->current_tab ]['attributes']['footer_info']; ?></div>
+			<?php if ( $iwpfpc_tab_footer_info ) : ?>
+			<div class="tab-footer-info"><div class="tab-footer-info-inner-wrap"><?php echo $iwpfpc_tab_footer_info; ?></div></div>
 			<?php endif; ?>
 		</div>
 

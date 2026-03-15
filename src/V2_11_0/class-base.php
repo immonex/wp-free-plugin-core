@@ -25,16 +25,16 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_10_1;
+namespace immonex\WordPressFreePluginCore\V2_11_0;
 
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 2.10.1
+ * @version 2.11.0
  */
 abstract class Base {
 
-	const CORE_VERSION = '2.10.1';
+	const CORE_VERSION = '2.11.0';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -435,6 +435,8 @@ abstract class Base {
 		} else {
 			throw new \Exception( 'inveris WP Free Plugin Core: Plugin slug (= directory name) not provided.' );
 		}
+
+		add_action( 'pre_uninstall_plugin', [ $this, 'pre_uninstall_cleanup' ], 10, 2 );
 
 		add_filter( static::PLUGIN_PREFIX . 'plugin_infos', [ $this, 'get_plugin_infos' ] );
 		// For compatibility reasons only.
@@ -950,6 +952,36 @@ abstract class Base {
 	} // init_plugin_admin
 
 	/**
+	 * Perform cleanup tasks before plugin unistallation (action callback).
+	 *
+	 * @since 2.11.0
+	 *
+	 * @param string  $plugin                Path to the plugin file relative to the plugins directory.
+	 * @param mixed[] $uninstallable_plugins Uninstallable plugins.
+	 */
+	public function pre_uninstall_cleanup( $plugin, $uninstallable_plugins ) {
+		$plugin_slug = dirname( $plugin );
+		if (
+			$plugin_slug !== $this->plugin_slug
+			|| ! in_array( $plugin, $uninstallable_plugins, true )
+		) {
+			return;
+		}
+
+		global $wp_filesystem;
+
+		$dyn_assets_dir = $this->utils['local_fs']->get_dynamic_assets_dir( $plugin_slug );
+		if ( ! $dyn_assets_dir ) {
+			return;
+		}
+
+		if ( file_exists( $dyn_assets_dir['path'] ) ) {
+			WP_Filesystem();
+			$wp_filesystem->delete( $dyn_assets_dir['path'], true, 'd' );
+		}
+	} // pre_uninstall_cleanup
+
+	/**
 	 * Instantiate plugin-related CPT "hook classes" (affiliated actions and
 	 * filters will be registered).
 	 *
@@ -998,9 +1030,9 @@ abstract class Base {
 		$this->geo_utils       = new Geo_Utils();
 		$this->template_utils  = new Template_Utils( $this );
 		$this->color_utils     = new Color_Utils( $this );
-		$this->local_fs_utils  = new Local_FS_Utils( $this );
-		$this->remote_fs_utils = new Remote_FS_Utils( $this );
-		$this->ml_utils        = new Multilingual_Utils( $this );
+		$this->local_fs_utils  = new Local_FS_Utils();
+		$this->remote_fs_utils = new Remote_FS_Utils();
+		$this->ml_utils        = new Multilingual_Utils();
 		$this->domain_utils    = new Domain_Utils();
 		$this->video_utils     = new Video_Utils();
 		$this->embed_utils     = new Embed_Utils();
