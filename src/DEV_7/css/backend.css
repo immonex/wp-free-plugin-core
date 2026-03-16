@@ -131,9 +131,10 @@
 	display: inline-block;
 	padding: 10px 12px;
 	border-radius: 3px;
-	color: #6297D2;
+	color: #3C434A;
 	background-color: #FAFAFA;
 	box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+	line-height: 20px;
 }
 
 .immonex-plugin-options .tab-footer-info .tab-footer-info-inner-wrap strong {
