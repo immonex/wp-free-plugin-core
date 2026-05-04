@@ -226,4 +226,49 @@ class String_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::split_list_string( $source ) );
 	} // test_split_list_string
 
+	public function test_update_url_pagination() {
+		$source   = 'https://foo.bar/dev/?page_id=123&paged=3&immonex-var=punch';
+		$expected = 'https://foo.bar/dev/?page_id=123&paged=8&immonex-var=punch';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::update_url_pagination( $source, 8 ) );
+		$expected = 'https://foo.bar/dev/?page_id=123&immonex-var=punch';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::update_url_pagination( $source, 1 ) );
+
+		$source   = 'https://foo.bar/?paged=3&page_id=123';
+		$expected = 'https://foo.bar/?page_id=123';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::update_url_pagination( $source, 1 ) );
+
+		$source   = 'https://foo.bar/properties/page/3/?immonex-var=punch&mango=loco';
+		$expected = 'https://foo.bar/properties/page/8/?immonex-var=punch&mango=loco';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::update_url_pagination( $source, 8 ) );
+		$expected = 'https://foo.bar/properties/?immonex-var=punch&mango=loco';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::update_url_pagination( $source, 1 ) );
+
+		$source   = 'https://foo.bar/properties/page/3';
+		$expected = 'https://foo.bar/properties/page/8/';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::update_url_pagination( $source, 8 ) );
+		$expected = 'https://foo.bar/properties/';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::update_url_pagination( $source, 0 ) );
+
+		$source   = 'https://foo.bar/properties/';
+		$expected = 'https://foo.bar/properties/?paged=8';
+		$this->assertEquals( $expected, ( "{$this->ns}\String_Utils" )::update_url_pagination( $source, 8 ) );
+	} // test_update_url_pagination
+
+	public function test_get_page_num_from_url() {
+		$source   = 'https://foo.bar/dev/?page_id=123&paged=3&immonex-var=punch';
+		$this->assertEquals( 3, ( "{$this->ns}\String_Utils" )::get_page_num_from_url( $source ) );
+
+		$source   = 'https://foo.bar/properties/page/8';
+		$this->assertEquals( 8, ( "{$this->ns}\String_Utils" )::get_page_num_from_url( $source ) );
+
+		$source   = 'https://foo.bar/properties/page/8/?immonex-var=punch&mango=loco';
+		$this->assertEquals( 8, ( "{$this->ns}\String_Utils" )::get_page_num_from_url( $source ) );
+
+		$source   = 'https://foo.bar/properties/';
+		$this->assertEquals( 1, ( "{$this->ns}\String_Utils" )::get_page_num_from_url( $source, 1 ) );
+
+		$source   = 'https://foo.bar/properties/';
+		$this->assertFalse( ( "{$this->ns}\String_Utils" )::get_page_num_from_url( $source ) );
+	} // test_get_page_num_from_url
+
 } // class String_Utils_Test
