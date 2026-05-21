@@ -651,11 +651,37 @@ class String_Utils {
 	 * @since 0.9
 	 *
 	 * @param string $text Plain text source string.
+	 * @param bool   $convert_mail_addresses True if mail addresses shall be converted (optional, true by default).
+	 * @param bool   $convert_video_urls True if video URLs shall be converted (optional, true by default).
 	 *
 	 * @return string String with (possibly) included link tags.
 	 */
-	public static function convert_urls( $text ) {
-		return preg_replace_callback( '#(?<=^|\s)(?i)(http|https)?(://)?(([-\w^@]{2,}\.)+([a-zA-Z]{2,16})(?:/[^,.\s\<\>\"\']*|))(?=\s|$)#', self::class . '::convert_urls_cb', $text );
+	public static function convert_urls( $text, $convert_mail_addresses = true, $convert_video_urls = true ) {
+		return preg_replace_callback(
+			'#(?<=^|\s)(?i)(http|https)?(://)?(([-\w^@]{2,}\.)*[-\w^@]{2,}\.[a-zA-Z]{2,16})(?:/[^,.\s\<\>\"\']*)?(?:\.[a-zA-Z]{2,})?(?=\s|$)#',
+			function ( $matches ) use ( $convert_mail_addresses, $convert_video_urls ) {
+				if (
+					! $convert_mail_addresses
+					&& false !== strpos( $matches[0], '@' )
+					&& preg_match( '#([a-z0-9&\-_.]+?)@([\w\-]+\.([\w\-\.]+\.)*[\w]+)#', $matches[0] )
+				) {
+					return $matches[0];
+				}
+
+				if (
+					! $convert_video_urls
+					&& (
+						false !== strpos( $matches[0], 'youtu' )
+						|| false !== strpos( $matches[0], 'vimeo' )
+					)
+				) {
+					return $matches[0];
+				}
+
+				return self::convert_urls_cb( $matches );
+			},
+			$text
+		);
 	} // convert_urls
 
 	/**
@@ -665,25 +691,37 @@ class String_Utils {
 	 *
 	 * @param string[] $m Found text fragments.
 	 *
-	 * @return string HTML link.
+	 * @return string HTML link tag or original string if invalid.
 	 */
 	public static function convert_urls_cb( $m ) {
-		$tld          = array_slice( $m, -1 )[0];
 		$domain_utils = new Domain_Utils();
+		$org_url      = $m[0];
 
+		if (
+			false !== strpos( $org_url, '@' )
+			&& preg_match( '#([a-z0-9&\-_.]+?)@([\w\-]+\.([\w\-\.]+\.)*[\w]+)#', $org_url )
+		) {
+			// Extracted string fragment email address.
+			$tld = array_slice( explode( '.', $org_url ), -1 )[0];
+
+			return $domain_utils->is_valid_tld( $tld ) ?
+				wp_sprintf( '<a href="mailto:%1$s">%1$s</a>', $org_url ) :
+				$org_url;
+		}
+
+		$url   = 0 === stripos( $org_url, 'http' ) ? $org_url : 'https://' . $org_url;
+		$parts = wp_parse_url( $url );
+
+		if ( empty( $parts['host'] ) ) {
+			return $org_url;
+		}
+
+		$tld = array_slice( explode( '.', $parts['host'] ), -1 )[0];
 		if ( ! $domain_utils->is_valid_tld( $tld ) ) {
-			return $m[0];
+			return $org_url;
 		}
 
-		$m_str = $m[1] . $m[2] . $m[3];
-
-		if ( preg_match( '#([a-z0-9&\-_.]+?)@([\w\-]+\.([\w\-\.]+\.)*[\w]+)#', $m_str ) ) {
-			// "URL" is an email address.
-			return '<a href="mailto:' . $m[2] . $m[3] . '">' . $m[1] . $m[2] . $m[3] . '</a>';
-		} else {
-			$protocol = ( preg_match( '#(http://)#', $m_str ) ) ? 'http://' : 'https://';
-			return '<a href="' . $protocol . $m[3] . '" target="_blank">' . $m[1] . $m[2] . $m[3] . '</a>';
-		}
+		return wp_sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $url, $org_url );
 	} // convert_urls_cb
 
 	/**
