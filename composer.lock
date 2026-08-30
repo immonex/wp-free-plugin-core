@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "16aca5330e9eb2f5d309c195aa55f428",
+    "content-hash": "07b482c7005bd12822a52baf804090a7",
     "packages": [
         {
             "name": "html2text/html2text",
@@ -287,12 +287,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "84c50511513f4a522fd3c957b05c789f0960bea5"
+                "reference": "c32656815b2f4c6bea4633ee4045aebda83bc460"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/84c50511513f4a522fd3c957b05c789f0960bea5",
-                "reference": "84c50511513f4a522fd3c957b05c789f0960bea5",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/c32656815b2f4c6bea4633ee4045aebda83bc460",
+                "reference": "c32656815b2f4c6bea4633ee4045aebda83bc460",
                 "shasum": ""
             },
             "require": {
@@ -360,7 +360,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-19T17:01:15+00:00"
+            "time": "2026-08-28T22:19:33+00:00"
         }
     ],
     "packages-dev": [
@@ -713,12 +713,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "fbd47f7ebcbb450138d92642a0a53b72a5285dda"
+                "reference": "1aa08bf07171e5237490f05e9db648f50abfce0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/fbd47f7ebcbb450138d92642a0a53b72a5285dda",
-                "reference": "fbd47f7ebcbb450138d92642a0a53b72a5285dda",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/1aa08bf07171e5237490f05e9db648f50abfce0a",
+                "reference": "1aa08bf07171e5237490f05e9db648f50abfce0a",
                 "shasum": ""
             },
             "require": {
@@ -763,7 +763,7 @@
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
                 "source": "https://github.com/nikic/PHP-Parser/tree/master"
             },
-            "time": "2026-07-11T16:03:13+00:00"
+            "time": "2026-08-23T19:01:01+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -1209,12 +1209,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "abab27ed286d3e1246fbbfe6b56bfd732d945ec9"
+                "reference": "7df8892ad609276cd0119f0e6182530f28b9312c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/abab27ed286d3e1246fbbfe6b56bfd732d945ec9",
-                "reference": "abab27ed286d3e1246fbbfe6b56bfd732d945ec9",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/7df8892ad609276cd0119f0e6182530f28b9312c",
+                "reference": "7df8892ad609276cd0119f0e6182530f28b9312c",
                 "shasum": ""
             },
             "require": {
@@ -1296,7 +1296,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-08-11T06:25:15+00:00"
+            "time": "2026-08-27T13:41:26+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -2316,12 +2316,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "57c8294ed37d4a055b77057827c67f9558c95c54"
+                "reference": "c4a6cc5733386414f6d17d744ee5ad8b445e349d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/57c8294ed37d4a055b77057827c67f9558c95c54",
-                "reference": "57c8294ed37d4a055b77057827c67f9558c95c54",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/c4a6cc5733386414f6d17d744ee5ad8b445e349d",
+                "reference": "c4a6cc5733386414f6d17d744ee5ad8b445e349d",
                 "shasum": ""
             },
             "require": {
@@ -2371,11 +2371,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-22T13:05:35+00:00"
+            "time": "2026-08-30T06:54:06+00:00"
         },
         {
             "name": "symfony/finder",

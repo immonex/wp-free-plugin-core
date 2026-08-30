@@ -2181,10 +2181,6 @@ abstract class Base {
 		// (Re)fetch current plugin options.
 		$this->plugin_options = $this->fetch_plugin_options();
 
-		if ( false === strpos( static::PLUGIN_NAME, $message ) ) {
-			$message = '[<strong>' . static::PLUGIN_NAME . "</strong>] {$message}";
-		}
-
 		if ( empty( $this->plugin_options['deferred_admin_notices'] ) ) {
 			$this->plugin_options['deferred_admin_notices'] = [];
 		} else {
