@@ -170,6 +170,8 @@ class String_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( '123,00 €', ( "{$this->ns}\String_Utils" )::format_number( 123, 2, '€', [ 'unit_pos' => 'after', 'unit_sep' => ' ' ] ) );
 		$this->assertEquals( 'not specified', ( "{$this->ns}\String_Utils" )::format_number( 0, 2, '€', [ 'if_zero' => 'not specified' ] ) );
 		$this->assertEquals( '', ( "{$this->ns}\String_Utils" )::format_number( 0, 2, '€' ) );
+		$this->assertEquals( '123,–', ( "{$this->ns}\String_Utils" )::format_number( 123, 2, '', [ 'zerodash' => true ] ) );
+		$this->assertEquals( '123,FOO', ( "{$this->ns}\String_Utils" )::format_number( 123, 2, '', [ 'zerodash' => 'FOO' ] ) );
 	} // test_filter_detail_items_by_name
 
 	public function test_convert_urls() {
