@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "07b482c7005bd12822a52baf804090a7",
+    "content-hash": "b8e9e8b650a25abbbb9c0ded474b0cd2",
     "packages": [
         {
             "name": "html2text/html2text",
@@ -287,12 +287,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "c32656815b2f4c6bea4633ee4045aebda83bc460"
+                "reference": "a414c3a491defb5a60f2fc88ef79ff37c90010cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/c32656815b2f4c6bea4633ee4045aebda83bc460",
-                "reference": "c32656815b2f4c6bea4633ee4045aebda83bc460",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/a414c3a491defb5a60f2fc88ef79ff37c90010cd",
+                "reference": "a414c3a491defb5a60f2fc88ef79ff37c90010cd",
                 "shasum": ""
             },
             "require": {
@@ -360,7 +360,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-28T22:19:33+00:00"
+            "time": "2026-09-12T07:49:05+00:00"
         }
     ],
     "packages-dev": [
@@ -713,12 +713,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "1aa08bf07171e5237490f05e9db648f50abfce0a"
+                "reference": "23c8e363d9546e22afa9053d84846f597954b26c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/1aa08bf07171e5237490f05e9db648f50abfce0a",
-                "reference": "1aa08bf07171e5237490f05e9db648f50abfce0a",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/23c8e363d9546e22afa9053d84846f597954b26c",
+                "reference": "23c8e363d9546e22afa9053d84846f597954b26c",
                 "shasum": ""
             },
             "require": {
@@ -763,7 +763,7 @@
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
                 "source": "https://github.com/nikic/PHP-Parser/tree/master"
             },
-            "time": "2026-08-23T19:01:01+00:00"
+            "time": "2026-09-05T16:16:18+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -1209,12 +1209,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "7df8892ad609276cd0119f0e6182530f28b9312c"
+                "reference": "944b4a016d4f87092bb5211803ac6e16207f2236"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/7df8892ad609276cd0119f0e6182530f28b9312c",
-                "reference": "7df8892ad609276cd0119f0e6182530f28b9312c",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/944b4a016d4f87092bb5211803ac6e16207f2236",
+                "reference": "944b4a016d4f87092bb5211803ac6e16207f2236",
                 "shasum": ""
             },
             "require": {
@@ -1296,7 +1296,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-08-27T13:41:26+00:00"
+            "time": "2026-09-11T06:27:48+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -2454,12 +2454,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-grapheme.git",
-                "reference": "bb899c1db0aa8127dc3afe8cda4a67eb24915f8d"
+                "reference": "5c69701711222b93e048afa5b2e8a3f821e00f31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-grapheme/zipball/bb899c1db0aa8127dc3afe8cda4a67eb24915f8d",
-                "reference": "bb899c1db0aa8127dc3afe8cda4a67eb24915f8d",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-grapheme/zipball/5c69701711222b93e048afa5b2e8a3f821e00f31",
+                "reference": "5c69701711222b93e048afa5b2e8a3f821e00f31",
                 "shasum": ""
             },
             "require": {
@@ -2529,7 +2529,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-28T08:25:59+00:00"
+            "time": "2026-09-10T07:29:42+00:00"
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
