@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_14_0;
+namespace immonex\WordPressFreePluginCore\V2_14_1;
 
 /**
  * Array-related helpers.

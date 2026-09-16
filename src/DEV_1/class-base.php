@@ -30,11 +30,11 @@ namespace immonex\WordPressFreePluginCore\DEV_1;
 /**
  * Base class for free immonex WordPress plugins.
  *
- * @version 2.14.0
+ * @version 2.14.1
  */
 abstract class Base {
 
-	const CORE_VERSION = '2.14.0';
+	const CORE_VERSION = '2.14.1';
 
 	/**
 	 * Minimun WP capability to access the plugin options page
@@ -1147,8 +1147,11 @@ abstract class Base {
 		$default_skin_css_handle = static::PUBLIC_PREFIX . 'default-skin';
 		$default_skin_css_url    = '';
 
-		// phpcs:ignore
-		if ( apply_filters( "{$this->plugin_prefix}use_default_skin_assets_as_fallback", true ) ) {
+		if (
+			// phpcs:ignore
+			apply_filters( "{$this->plugin_prefix}use_default_skin_assets_as_fallback", true )
+			&& file_exists( trailingslashit( $this->plugin_dir ) . 'skins/default/assets/index.css' )
+		) {
 			// Always enqueue default skin main CSS file first if not disabled via filter function.
 			$default_skin_css_url = plugins_url( "{$this->plugin_slug}/skins/default/assets/index.css" );
 			$required             = wp_style_is( $this->frontend_base_css_handle ) ?
