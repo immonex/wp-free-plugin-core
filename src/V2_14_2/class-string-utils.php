@@ -5,7 +5,7 @@
  * @package immonex\WordPressFreePluginCore
  */
 
-namespace immonex\WordPressFreePluginCore\V2_14_1;
+namespace immonex\WordPressFreePluginCore\V2_14_2;
 
 /**
  * String related utility methods.
@@ -903,6 +903,7 @@ class String_Utils {
 	public static function update_url_pagination( $url, $page_number ) {
 		$url_parts = wp_parse_url( $url );
 		$path      = ! empty( $url_parts['path'] ) ? $url_parts['path'] : '';
+		$host      = ! empty( $url_parts['host'] ) ? $url_parts['host'] : '';
 
 		if (
 			( ! get_option( 'permalink_structure' ) || preg_match( '/[?&]paged=[0-9]/', $url ) )
@@ -932,7 +933,7 @@ class String_Utils {
 			$page_number > 1
 			&& false === strpos( $path, '/page/' )
 		) {
-			$replace = trailingslashit( $url_parts['host'] . $path );
+			$replace = trailingslashit( $host . $path );
 			$by      = untrailingslashit( $replace ) . "/page/{$page_number}/";
 
 			return str_replace( $replace, $by, $url );
