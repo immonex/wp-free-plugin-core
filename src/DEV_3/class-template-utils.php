@@ -65,8 +65,12 @@ class Template_Utils {
 	 *                     Twig is unavailable.
 	 */
 	public function render_twig_template( $filename, $template_data = [] ) {
-		if ( ! pathinfo( basename( $filename ), PATHINFO_EXTENSION ) ) {
+		if ( ! pathinfo( $filename, PATHINFO_EXTENSION ) ) {
 			$filename .= '.twig';
+		}
+
+		if ( 'twig' !== pathinfo( $filename, PATHINFO_EXTENSION ) ) {
+			return false;
 		}
 
 		$template_data = apply_filters( 'immonex_core_template_data', $template_data, $this->plugin->plugin_slug );
@@ -129,6 +133,14 @@ class Template_Utils {
 	 * @return string|bool Parsed template content or false if not found.
 	 */
 	public function render_php_template( $filename, $template_data = [], $utils = [] ) {
+		if ( ! pathinfo( $filename, PATHINFO_EXTENSION ) ) {
+			$filename .= '.php';
+		}
+
+		if ( 'php' !== pathinfo( $filename, PATHINFO_EXTENSION ) ) {
+			return false;
+		}
+
 		$template_file = $this->locate_template_file( $filename, $template_data );
 
 		if ( ! $template_file ) {
